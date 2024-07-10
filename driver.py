@@ -7,11 +7,7 @@ from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Thisisasecret!'
-app.config['RECAPTCHA_PUBLIC_KEY'] = '6LeExf4pAAAAAJzes5LkRTZ9Nr32B8gJcVPk4O9z'
-app.config['RECAPTCHA_PRIVATE_KEY'] = '6LeExf4pAAAAAHfoV0qx1V8OErVu5vb4xEALKX0z'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-# For reCAPTCHA validation
-app.config['TESTING'] = True
 
 db.init_app(app)
 

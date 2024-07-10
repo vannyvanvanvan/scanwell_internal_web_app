@@ -15,7 +15,6 @@ b_login = Blueprint('b_login', __name__,
 class LoginForm(FlaskForm):
     request_username = StringField('username', validators=[InputRequired('A username is required!'), Length(min=5, max=30, message='Must be between 5 and 10 characters.')])
     request_password = PasswordField('password', validators=[InputRequired('Password is required!')])
-    recaptcha = RecaptchaField()
     
 @b_login.before_request
 def make_session_permanent():

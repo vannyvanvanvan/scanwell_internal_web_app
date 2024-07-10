@@ -14,11 +14,6 @@
 
     {{ render_field(login_detail.request_password) }}
 
-    {{ login_detail.recaptcha }}
-    {% for error in login_detail.recaptcha.errors %}
-      <li style="color:red;">{{ error }}</li>
-    {% endfor %}
-
     <input type="submit" value="Submit" />
   </form>
 {% endblock %}
