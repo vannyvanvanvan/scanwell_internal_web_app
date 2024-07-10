@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% from '_render_field.html' import render_field %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+  <h1>Our form will be here!</h1>
+  <form method="POST" action="{{ url_for('b_login.login') }}">
+    {{ login_detail.csrf_token }}
+
+    {{ render_field(login_detail.request_username) }}
+
+    {{ render_field(login_detail.request_password) }}
+
+    {{ login_detail.recaptcha }}
+    {% for error in login_detail.recaptcha.errors %}
+      <li style="color:red;">{{ error }}</li>
+    {% endfor %}
+
+    <input type="submit" value="Submit" />
+  </form>
+{% endblock %}

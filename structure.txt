@@ -1,0 +1,25 @@
+project/
+├── app/
+│   ├── __init__.py
+│   ├── models.py
+│   ├── hashing.py
+│   ├── restriction.py
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── login.py
+│   │   ├── user.py
+│   │   ├── admin.py
+├── templates/
+│   ├── _render_field.html
+│   ├── admin.html
+│   ├── base.html
+│   ├── home.html
+│   ├── login.html
+│   ├── user.html
+├── static/
+│   ├── main.css
+├── instances/
+│   ├── database.db
+├── driver.py
+├── db_setup.py
+├── structure.txt
