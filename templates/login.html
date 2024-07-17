@@ -6,13 +6,17 @@
 {% endblock %}
 
 {% block body %}
-  <h1>Our form will be here!</h1>
+  <h1>Login</h1>
   <form method="POST" action="{{ url_for('b_login.login') }}">
     {{ login_detail.csrf_token }}
 
     {{ render_field(login_detail.request_username) }}
 
     {{ render_field(login_detail.request_password) }}
+
+    <div>
+      {{ login_detail.remember_me() }} {{ login_detail.remember_me.label }}
+    </div>
 
     <input type="submit" value="Submit" />
   </form>
