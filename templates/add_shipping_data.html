@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<!-- You can add custom CSS or other head elements here if needed -->
+{% endblock %}
+
+{% block body %}
+  <h1>Add Shipping Data</h1>
+  <form method="POST">
+    <label for="CS">CS</label>
+    <input type="text" name="CS" id="CS" required>
+    
+    <label for="week">Week</label>
+    <input type="number" name="week" id="week" required>
+    
+    <label for="carrier">Carrier</label>
+    <input type="text" name="carrier" id="carrier" required>
+    
+    <label for="service">Service</label>
+    <input type="text" name="service" id="service" required>
+    
+    <label for="MV">MV</label>
+    <input type="text" name="MV" id="MV" required>
+    
+    <label for="SO">SO</label>
+    <input type="text" name="SO" id="SO" required>
+    
+    <label for="size">Size</label>
+    <input type="text" name="size" id="size" required>
+    
+    <label for="POL">POL</label>
+    <input type="text" name="POL" id="POL" required>
+    
+    <label for="POD">POD</label>
+    <input type="text" name="POD" id="POD" required>
+    
+    <label for="Final_Destination">Final Destination</label>
+    <input type="text" name="Final_Destination" id="Final_Destination" required>
+    
+    <label for="routing">Routing</label>
+    <input type="text" name="routing" id="routing" required>
+    
+    <label for="CY_Open">CY Open</label>
+    <input type="text" name="CY_Open" id="CY_Open" required>
+    
+    <label for="SI_Cut_Off">SI Cut Off</label>
+    <input type="text" name="SI_Cut_Off" id="SI_Cut_Off" required>
+    
+    <label for="CY_CV_CLS">CY CV CLS</label>
+    <input type="text" name="CY_CV_CLS" id="CY_CV_CLS" required>
+    
+    <label for="ETD">ETD</label>
+    <input type="text" name="ETD" id="ETD" required>
+    
+    <label for="ETA">ETA</label>
+    <input type="text" name="ETA" id="ETA" required>
+    
+    <label for="Contract_or_Coloader">Contract or Coloade</label>
+    <input type="text" name="Contract_or_Coloader" id="Contract_or_Coloader" required>
+    
+    <label for="shipper">Shipper</label>
+    <input type="text" name="shipper" id="shipper" required>
+    
+    <label for="consignee">Consignee</label>
+    <input type="text" name="consignee" id="consignee" required>
+    
+    <label for="term">Term</label>
+    <input type="text" name="term" id="term" required>
+    
+    <label for="salesman">Salesman</label>
+    <input type="text" name="salesman" id="salesman" required>
+    
+    <label for="cost">Cost</label>
+    <input type="number" name="cost" id="cost" required>
+    
+    <label for="ATE_Valid">ATE Valid</label>
+    <input type="text" name="ATE_Valid" id="ATE_Valid" required>
+    
+    <label for="SR">SR</label>
+    <input type="text" name="SR" id="SR" required>
+    
+    <label for="HB_L">HB L</label>
+    <input type="text" name="HB_L" id="HB_L" required>
+    
+    <label for="Remark">Remark</label>
+    <input type="text" name="Remark" id="Remark" required>
+    
+    <input type="submit" value="Submit">
+  </form>
+{% endblock %}
