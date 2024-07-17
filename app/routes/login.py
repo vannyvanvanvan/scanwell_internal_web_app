@@ -1,7 +1,7 @@
 from datetime import timedelta
 from flask import Blueprint, flash, redirect, render_template, session, url_for
-from flask_wtf import FlaskForm, RecaptchaField
-from wtforms import StringField, PasswordField
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField
 from flask_login import login_required, login_user, logout_user
 from wtforms.validators import InputRequired, Length
 
@@ -15,6 +15,7 @@ b_login = Blueprint('b_login', __name__,
 class LoginForm(FlaskForm):
     request_username = StringField('username', validators=[InputRequired('A username is required!'), Length(min=5, max=30, message='Must be between 5 and 10 characters.')])
     request_password = PasswordField('password', validators=[InputRequired('Password is required!')])
+    remember_me = BooleanField('Remember me')
     
 @b_login.before_request
 def make_session_permanent():
@@ -38,23 +39,25 @@ def login():
             flash('Invalid username or password, error message: 100')
             return render_template('login.html', login_detail=login_detail)
         
+        # Hashing the requested password
         hashed_request_password = hash_string(_request_password)
         
         # Debugging delete later
         #----------------------------------------------------------------
-        print(user.username)
-        print(_request_username)
-        print(hashed_request_password)
-        print(user.password)
+        #print(user.username)
+        #print(_request_username)
+        #print(hashed_request_password)
+        #print(user.password)
         #----------------------------------------------------------------
-
-
+        
+        remember = login_detail.remember_me.data
+        
         if user.password == hashed_request_password and user.username == _request_username and user.rank == 'admin':
-            login_user(user)
+            login_user(user, remember=remember)
             return redirect(url_for('admin.admin_dashboard'))
         
         elif user.password == hashed_request_password and user.username == _request_username and user.rank == 'user':
-            login_user(user)
+            login_user(user, remember=remember)
             return redirect(url_for('user.user_dashboard'))
         
         else:
