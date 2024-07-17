@@ -4,4 +4,5 @@ def hash_string(input_string):
     byte_array = input_string.encode('utf-8')
     return hash.sha3_256(byte_array).hexdigest()
 
-print(hash_string('test'))
+#Del later
+#print(hash_string('test'))
