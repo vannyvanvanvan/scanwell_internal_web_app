@@ -44,3 +44,4 @@ class Shipping_data(db.Model):
     SR = db.Column(db.String(100), nullable=False)  #Will change later                      #   Selling rate 
     HB_L = db.Column(db.String(100), nullable=False)  #Will change later                    #   House build of lading
     Remark = db.Column(db.String(1000), nullable=False)                                     #   Comments
+    user_id = db.Column(db.Integer, db.ForeignKey('user_data.id'), nullable=False)

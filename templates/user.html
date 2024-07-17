@@ -1,10 +1,85 @@
 {% extends 'base.html' %}
 
 {% block head %}
-
+  <!-- You can add custom CSS or other head elements here if needed -->
 {% endblock %}
 
 {% block body %}
-  <h1>user page!</h1>
+  <h1>User Dashboard</h1>
   <a href="{{ url_for('b_login.logout') }}">Logout</a>
+  <a href="{{ url_for('user.add_shipping_data') }}">Add Shipping Data</a>
+
+  {% if user_data %}
+    <table>
+      <thead>
+        <tr>
+          <th>CS</th>
+          <th>Week</th>
+          <th>Carrier</th>
+          <th>Service</th>
+          <th>MV</th>
+          <th>SO</th>
+          <th>size</th>
+          <th>POL</th>
+          <th>POD</th>
+          <th>Final_Destination</th>
+          <th>routing</th>
+          <th>CY_Open</th>
+          <th>SI_Cut_Off</th>
+          <th>CY_CV_CLS</th>
+          <th>ETD</th>
+          <th>ETA</th>
+          <th>Contract_or_Coloader</th>
+          <th>shipper</th>
+          <th>consignee</th>
+          <th>term</th>
+          <th>salesman</th>
+          <th>cost</th>
+          <th>ATE_Valid</th>
+          <th>SR</th>
+          <th>HB_L</th>
+          <th>Remark</th>
+
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in user_data %}
+          <tr>
+            <td>{{ data.CS }}</td>
+            <td>{{ data.week }}</td>
+            <td>{{ data.carrier }}</td>
+            <td>{{ data.service }}</td>
+            <td>{{ data.MV }}</td>
+            <td>{{ data.SO }}</td>
+            <td>{{ data.size }}</td>
+            <td>{{ data.POL }}</td>
+            <td>{{ data.POD }}</td>
+            <td>{{ data.Final_Destination }}</td>
+            <td>{{ data.CY_Open }}</td>
+            <td>{{ data.SI_Cut_Off }}</td>
+            <td>{{ data.CY_CV_CLS }}</td>
+            <td>{{ data.ETD }}</td>
+            <td>{{ data.ETA }}</td>
+            <td>{{ data.Contract_or_Coloader }}</td>
+            <td>{{ data.shipper }}</td>
+            <td>{{ data.consignee }}</td>
+            <td>{{ data.term }}</td>
+            <td>{{ data.salesman }}</td>
+            <td>{{ data.cost }}</td>
+            <td>{{ data.ATE_Valid }}</td>
+            <td>{{ data.SR }}</td>
+            <td>{{ data.HB_L }}</td>
+            <td>{{ data.Remark }}</td>
+
+            <td>
+              <a href="{{ url_for('user.edit_shipping_data', id=data.id) }}">Edit</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No shipping data available.</p>
+  {% endif %}
 {% endblock %}
