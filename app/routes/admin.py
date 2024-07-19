@@ -3,7 +3,8 @@ from app.routes.login import login_required
 from app.restriction import role_required
 
 admin = Blueprint('admin', __name__,
-                        template_folder='../templates', static_folder='../static')
+                  template_folder='../templates', static_folder='../static')
+
 
 @admin.route('/')
 @login_required

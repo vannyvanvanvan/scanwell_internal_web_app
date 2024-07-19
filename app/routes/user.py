@@ -4,14 +4,17 @@ from app.restriction import role_required
 from app.model import db, Shipping_data
 
 user = Blueprint('user', __name__,
-                        template_folder='../templates', static_folder='../static')
+                 template_folder='../templates', static_folder='../static')
+
 
 @user.route('/')
 @login_required
 @role_required('user')
 def user_dashboard():
+    # Getting the current user id for later use
     user_data = Shipping_data.query.filter_by(user_id=current_user.id).all()
     return render_template('user.html', user_data=user_data)
+
 
 @user.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -52,6 +55,7 @@ def add_shipping_data():
         return redirect(url_for('user.user_dashboard'))
     return render_template('add_shipping_data.html')
 
+
 @user.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 @role_required('user')
@@ -59,7 +63,7 @@ def edit_shipping_data(id):
     shipping_data = Shipping_data.query.get_or_404(id)
     if shipping_data.user_id != current_user.id:
         return redirect(url_for('user.user_dashboard'))
-    
+
     if request.method == 'POST':
         shipping_data.CS = request.form['CS']
         shipping_data.week = request.form['week']

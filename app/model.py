@@ -9,14 +9,17 @@ class User_data(db.Model, UserMixin):
     username = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(200), nullable=False)
     rank = db.Column(db.String(50), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    #UTC time
+    date_created = db.Column(db.String(20), default=lambda: datetime.utcnow().strftime('%Y-%m-%d %H:%M'))
+
 
     def __repr__(self):
         return '<User_data %r>' % self.id
     
 class Shipping_data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    #UTC time
+    date_created = db.Column(db.String(20), default=lambda: datetime.utcnow().strftime('%Y-%m-%d %H:%M'))
     # Above for debugging purposes
     CS = db.Column(db.String(50), nullable=False)                                           #   Customer service 
     week = db.Column(db.Integer, nullable=False)                                            #
