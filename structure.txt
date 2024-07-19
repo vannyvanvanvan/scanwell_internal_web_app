@@ -16,6 +16,8 @@ project/
 │   ├── home.html
 │   ├── login.html
 │   ├── user.html
+│   ├── add_shipping_data.html
+│   ├── edit_shipping_data.html
 ├── static/
 │   ├── main.css
 ├── instances/
