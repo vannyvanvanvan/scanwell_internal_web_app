@@ -4,6 +4,7 @@ project/
 │   ├── models.py
 │   ├── hashing.py
 │   ├── restriction.py
+│   ├── search.py
 │   ├── routes/
 │   │   ├── __init__.py
 │   │   ├── login.py
@@ -25,3 +26,4 @@ project/
 ├── driver.py
 ├── db_setup.py
 ├── structure.txt
+├── requirements.txt

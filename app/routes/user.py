@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import current_user, login_required
 from app.restriction import role_required
-from app.model import db, Shipping_data
+from app.model import User_data, db, Shipping_data
+from app.search import search_products
 
 user = Blueprint('user', __name__,
                  template_folder='../templates', static_folder='../static')
@@ -94,3 +95,21 @@ def edit_shipping_data(id):
         db.session.commit()
         return redirect(url_for('user.user_dashboard'))
     return render_template('edit_shipping_data.html', shipping_data=shipping_data)
+
+@user.route('/search/<int:id>', methods=['GET', 'POST'])
+@login_required
+@role_required('user')
+def search_details(id):
+    # Retrieve the shipping data for the given id or return a 404 error if not found
+    shipping_data = Shipping_data.query.get_or_404(id)
+
+    if request.method == 'POST':
+        product_id = request.form.get('id')
+        date_created = request.form.get('date_created')
+        # Call the search function to get the products based on the input criteria
+        products = search_products(product_id, date_created)
+    else:
+        products = None
+
+    # Render the user.html template with the search results 
+    return render_template('user.html', products=products, shipping_data=shipping_data)
