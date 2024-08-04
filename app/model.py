@@ -34,7 +34,7 @@ class Shipping_data(db.Model):
     routing = db.Column(db.String(100), nullable=False)                                     #   Routing
     CY_Open = db.Column(db.String(100), nullable=False) #Will change later                  #   Container yard open
     SI_Cut_Off = db.Column(db.String(100), nullable=False) #Will change later               #   Shipping information off
-    CY_CV_CLS = db.Column(db.String(100), nullable=False) #Will change later                #
+    CY_CY_CLS = db.Column(db.String(100), nullable=False) #Will change later                #   Closing date (should be in datetime format)
     ETD =  db.Column(db.String(100), nullable=False) #Will change later                     #   Estimated Time of Departure
     ETA =  db.Column(db.String(100), nullable=False) #Will change later                     #   Estimated Time of Arrival
     Contract_or_Coloader = db.Column(db.String(100), nullable=False) #Will change later     #   Contract/Co-loader 

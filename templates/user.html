@@ -1,85 +1,131 @@
 {% extends 'base.html' %}
 
 {% block head %}
-
 {% endblock %}
 
 {% block body %}
-  <h1>User Dashboard</h1>
-  <a href="{{ url_for('b_login.logout') }}">Logout</a>
-  <a href="{{ url_for('user.add_shipping_data') }}">Add Shipping Data</a>
+<header>
+  <div id="oaxaca-menu-bar" class="wrap">
+    <h1>User Dashboard</h1>
+  </div>
+  <div class="wrap">
+    <nav id="menu-bar-nav">
+      <a href="{{ url_for('b_login.logout') }}">Logout</a>
+      <a href="{{ url_for('user.add_shipping_data') }}">Add Shipping Data</a>
+    </nav>
+  </div>
+</header>
 
-  {% if user_data %}
-    <table>
-      <thead>
-        <tr>
-          <th>CS</th>
-          <th>Week</th>
-          <th>Carrier</th>
-          <th>Service</th>
-          <th>MV</th>
-          <th>SO</th>
-          <th>size</th>
-          <th>POL</th>
-          <th>POD</th>
-          <th>Final_Destination</th>
-          <th>routing</th>
-          <th>CY_Open</th>
-          <th>SI_Cut_Off</th>
-          <th>CY_CV_CLS</th>
-          <th>ETD</th>
-          <th>ETA</th>
-          <th>Contract_or_Coloader</th>
-          <th>shipper</th>
-          <th>consignee</th>
-          <th>term</th>
-          <th>salesman</th>
-          <th>cost</th>
-          <th>ATE_Valid</th>
-          <th>SR</th>
-          <th>HB_L</th>
-          <th>Remark</th>
+<!-- Search Form -->
+<section class="wrap">
+  <h3>Search Products</h3>
+  <form action="{{ url_for('user.search_details', id=current_user.id) }}" method="POST">
+    <label for="id">Product ID:</label>
+    <input type="text" id="id" name="id">
+    <br>
+    <label for="date_created">Date Created:</label>
+    <input type="date" id="date_created" name="date_created">
+    <br>
+    <input type="submit" value="Search">
+  </form>
+</section>
 
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for data in user_data %}
-          <tr>
-            <td>{{ data.CS }}</td>
-            <td>{{ data.week }}</td>
-            <td>{{ data.carrier }}</td>
-            <td>{{ data.service }}</td>
-            <td>{{ data.MV }}</td>
-            <td>{{ data.SO }}</td>
-            <td>{{ data.size }}</td>
-            <td>{{ data.POL }}</td>
-            <td>{{ data.POD }}</td>
-            <td>{{ data.Final_Destination }}</td>
-            <td>{{ data.CY_Open }}</td>
-            <td>{{ data.SI_Cut_Off }}</td>
-            <td>{{ data.CY_CV_CLS }}</td>
-            <td>{{ data.ETD }}</td>
-            <td>{{ data.ETA }}</td>
-            <td>{{ data.Contract_or_Coloader }}</td>
-            <td>{{ data.shipper }}</td>
-            <td>{{ data.consignee }}</td>
-            <td>{{ data.term }}</td>
-            <td>{{ data.salesman }}</td>
-            <td>{{ data.cost }}</td>
-            <td>{{ data.ATE_Valid }}</td>
-            <td>{{ data.SR }}</td>
-            <td>{{ data.HB_L }}</td>
-            <td>{{ data.Remark }}</td>
+<!-- Display Search Results -->
+{% if products %}
+<section class="wrap">
+  <h3>Search Results</h3>
+  <ul>
+    {% for product in products %}
+    <li>
+      <strong>ID:</strong> {{ product.id }}<br>
+      <strong>Date Created:</strong> {{ product.date_created }}<br>
+      <!-- Add other fields as needed -->
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% else %}
+<section class="wrap">
+  <p>No products found.</p>
+</section>
+{% endif %}
 
-            <td>
-              <a href="{{ url_for('user.edit_shipping_data', id=data.id) }}">Edit</a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>No shipping data available.</p>
-  {% endif %}
+<!-- Display Shipping Data -->
+{% if user_data %}
+<section class="wrap-wide">
+  <h3>Shipping Data</h3>
+  <table class="full-width">
+    <thead>
+      <tr>
+        <th>CS</th>
+        <th>Week</th>
+        <th>Carrier</th>
+        <th>Service</th>
+        <th>MV</th>
+        <th>SO</th>
+        <th>Size</th>
+        <th>POL</th>
+        <th>POD</th>
+        <th>Final Destination</th>
+        <th>Routing</th>
+        <th>CY Open</th>
+        <th>SI Cut Off</th>
+        <th>CY CY CLS</th>
+        <th>ETD</th>
+        <th>ETA</th>
+        <th>Contract/Coloader</th>
+        <th>Shipper</th>
+        <th>Consignee</th>
+        <th>Term</th>
+        <th>Salesman</th>
+        <th>Cost</th>
+        <th>Rate Valid</th>
+        <th>SR</th>
+        <th>HB L</th>
+        <th>Remark</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for shipping in user_data %}
+      <tr>
+        <td>{{ shipping.CS }}</td>
+        <td>{{ shipping.week }}</td>
+        <td>{{ shipping.carrier }}</td>
+        <td>{{ shipping.service }}</td>
+        <td>{{ shipping.MV }}</td>
+        <td>{{ shipping.SO }}</td>
+        <td>{{ shipping.size }}</td>
+        <td>{{ shipping.POL }}</td>
+        <td>{{ shipping.POD }}</td>
+        <td>{{ shipping.Final_Destination }}</td>
+        <td>{{ shipping.routing }}</td>
+        <td>{{ shipping.CY_Open }}</td>
+        <td>{{ shipping.SI_Cut_Off }}</td>
+        <td>{{ shipping.CY_CY_CLS }}</td>
+        <td>{{ shipping.ETD }}</td>
+        <td>{{ shipping.ETA }}</td>
+        <td>{{ shipping.Contract_or_Coloader }}</td>
+        <td>{{ shipping.shipper }}</td>
+        <td>{{ shipping.consignee }}</td>
+        <td>{{ shipping.term }}</td>
+        <td>{{ shipping.salesman }}</td>
+        <td>{{ shipping.cost }}</td>
+        <td>{{ shipping.ATE_Valid }}</td>
+        <td>{{ shipping.SR }}</td>
+        <td>{{ shipping.HB_L }}</td>
+        <td>{{ shipping.Remark }}</td>
+        <td>
+          <a class="button-block" href="{{ url_for('user.edit_shipping_data', id=shipping.id) }}">Edit</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% else %}
+<section class="wrap">
+  <p>No shipping data available.</p>
+</section>
+{% endif %}
 {% endblock %}
