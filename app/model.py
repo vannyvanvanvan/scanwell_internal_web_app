@@ -31,19 +31,19 @@ class Shipping_data(db.Model):
     POL = db.Column(db.String(100), nullable=False)                                         #   Port of loading 
     POD = db.Column(db.String(100), nullable=False)                                         #   Port of discharge 
     Final_Destination = db.Column(db.String(100), nullable= False)                          #   Final destination 
-    routing = db.Column(db.String(100), nullable=False)                                     #   Routing
-    CY_Open = db.Column(db.String(100), nullable=False) #Will change later                  #   Container yard open
-    SI_Cut_Off = db.Column(db.String(100), nullable=False) #Will change later               #   Shipping information off
-    CY_CV_CLS = db.Column(db.String(100), nullable=False) #Will change later                #
-    ETD =  db.Column(db.String(100), nullable=False) #Will change later                     #   Estimated Time of Departure
-    ETA =  db.Column(db.String(100), nullable=False) #Will change later                     #   Estimated Time of Arrival
+    routing = db.Column(db.String(100), nullable=False)                                     #   Routing 
+    CY_Open = db.Column(db.String(100), nullable=False) #Will change later                  #   Container yard open (should be in datetime format)
+    SI_Cut_Off = db.Column(db.String(100), nullable=False) #Will change later               #   Shipping information off (should be in datetime format)
+    CY_CY_CLS = db.Column(db.String(100), nullable=False) #Will change later                #   Closing date (should be in datetime format)
+    ETD =  db.Column(db.String(100), nullable=False) #Will change later                     #   Estimated Time of Departure (should be in datetime format)
+    ETA =  db.Column(db.String(100), nullable=False) #Will change later                     #   Estimated Time of Arrival (should be in datetime format)
     Contract_or_Coloader = db.Column(db.String(100), nullable=False) #Will change later     #   Contract/Co-loader 
     shipper = db.Column(db.String(100), nullable=False)                                     #   Shipper 
     consignee = db.Column(db.String(100), nullable=False)                                   #   Consignee 
     term = db.Column(db.String(100), nullable=False)                                        #   Shipping term
     salesman = db.Column(db.String(100), nullable=False)                                    #   Salesman
     cost = db.Column(db.Integer, nullable=False)                                            #   Cost
-    ATE_Valid = db.Column(db.String(100), nullable=False)                                   #   Rate valid 
+    Rate_Valid = db.Column(db.String(100), nullable=False)                                  #   Rate valid (should be in datetime format)
     SR = db.Column(db.String(100), nullable=False)  #Will change later                      #   Selling rate 
     HB_L = db.Column(db.String(100), nullable=False)  #Will change later                    #   House build of lading
     Remark = db.Column(db.String(1000), nullable=False)                                     #   Comments

@@ -1,0 +1,15 @@
+{% if results %}
+  {% for result in results %}
+  <tr>
+      <td>{{ result.CS }}</td>
+      <td>{{ result.week }}</td>
+      <td>{{ result.carrier }}</td>
+      <td>{{ result.service }}</td>
+      <td>{{ result.MV }}</td>
+  </tr>
+  {% endfor %}
+{% else %}
+  <tr>
+    <td colspan="5">No results found.</td>
+  </tr>
+{% endif %}
