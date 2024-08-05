@@ -8,5 +8,6 @@ def search_products(product_id=None, date_created=None):
     elif date_created:
         #perform a "LIKE" query in SQL, which is useful for pattern matching in string fields
         query = query.filter(Shipping_data.date_created.like(f"%{date_created}%"))
+
     
     return query.all()

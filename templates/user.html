@@ -19,36 +19,28 @@
 <!-- Search Form -->
 <section class="wrap">
   <h3>Search Products</h3>
-  <form action="{{ url_for('user.search_details', id=current_user.id) }}" method="POST">
-    <label for="id">Product ID:</label>
-    <input type="text" id="id" name="id">
-    <br>
-    <label for="date_created">Date Created:</label>
-    <input type="date" id="date_created" name="date_created">
-    <br>
-    <input type="submit" value="Search">
-  </form>
+  <section class="section">
+    <div class="columns">
+      <div class="column is-one-third is-offset-one-third">
+        <input type="text" class="input" placeholder="Search" name="q" hx-get="{{ url_for('user.search') }}" hx-trigger="keyup changed delay:500ms" hx-target="#results">
+      </div>
+    </div>
+    <table class="table is-fullwidth">
+      <thead>
+        <tr>
+          <th>CS</th>
+          <th>Week</th>
+          <th>Carrier</th>
+          <th>Service</th>
+          <th>MV</th>
+        </tr>
+      </thead>
+      <tbody id="results">
+        <!-- Search results will be inserted here -->
+      </tbody>
+    </table>
+  </section>
 </section>
-
-<!-- Display Search Results -->
-{% if products %}
-<section class="wrap">
-  <h3>Search Results</h3>
-  <ul>
-    {% for product in products %}
-    <li>
-      <strong>ID:</strong> {{ product.id }}<br>
-      <strong>Date Created:</strong> {{ product.date_created }}<br>
-      <!-- Add other fields as needed -->
-    </li>
-    {% endfor %}
-  </ul>
-</section>
-{% else %}
-<section class="wrap">
-  <p>No products found.</p>
-</section>
-{% endif %}
 
 <!-- Display Shipping Data -->
 {% if user_data %}
@@ -70,7 +62,7 @@
         <th>Routing</th>
         <th>CY Open</th>
         <th>SI Cut Off</th>
-        <th>CY CV CLS</th>
+        <th>CY CY CLS</th>
         <th>ETD</th>
         <th>ETA</th>
         <th>Contract/Coloader</th>
@@ -79,7 +71,7 @@
         <th>Term</th>
         <th>Salesman</th>
         <th>Cost</th>
-        <th>ATE Valid</th>
+        <th>Rate Valid</th>
         <th>SR</th>
         <th>HB L</th>
         <th>Remark</th>
@@ -102,7 +94,7 @@
         <td>{{ shipping.routing }}</td>
         <td>{{ shipping.CY_Open }}</td>
         <td>{{ shipping.SI_Cut_Off }}</td>
-        <td>{{ shipping.CY_CV_CLS }}</td>
+        <td>{{ shipping.CY_CY_CLS }}</td>
         <td>{{ shipping.ETD }}</td>
         <td>{{ shipping.ETA }}</td>
         <td>{{ shipping.Contract_or_Coloader }}</td>
@@ -111,7 +103,7 @@
         <td>{{ shipping.term }}</td>
         <td>{{ shipping.salesman }}</td>
         <td>{{ shipping.cost }}</td>
-        <td>{{ shipping.ATE_Valid }}</td>
+        <td>{{ shipping.Rate_Valid }}</td>
         <td>{{ shipping.SR }}</td>
         <td>{{ shipping.HB_L }}</td>
         <td>{{ shipping.Remark }}</td>

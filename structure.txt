@@ -17,6 +17,7 @@ project/
 │   ├── home.html
 │   ├── login.html
 │   ├── user.html
+│   ├── _search_results.html
 │   ├── add_shipping_data.html
 │   ├── edit_shipping_data.html
 ├── static/

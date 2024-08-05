@@ -36,7 +36,7 @@ def add_shipping_data():
             routing=request.form['routing'],
             CY_Open=request.form['CY_Open'],
             SI_Cut_Off=request.form['SI_Cut_Off'],
-            CY_CV_CLS=request.form['CY_CV_CLS'],
+            CY_CY_CLS=request.form['CY_CY_CLS'],
             ETD=request.form['ETD'],
             ETA=request.form['ETA'],
             Contract_or_Coloader=request.form['Contract_or_Coloader'],
@@ -45,7 +45,7 @@ def add_shipping_data():
             term=request.form['term'],
             salesman=request.form['salesman'],
             cost=request.form['cost'],
-            ATE_Valid=request.form['ATE_Valid'],
+            Rate_Valid=request.form['Rate_Valid'],
             SR=request.form['SR'],
             HB_L=request.form['HB_L'],
             Remark=request.form['Remark'],
@@ -79,7 +79,7 @@ def edit_shipping_data(id):
         shipping_data.routing = request.form['routing']
         shipping_data.CY_Open = request.form['CY_Open']
         shipping_data.SI_Cut_Off = request.form['SI_Cut_Off']
-        shipping_data.CY_CV_CLS = request.form['CY_CV_CLS']
+        shipping_data.CY_CY_CLS = request.form['CY_CY_CLS']
         shipping_data.ETD = request.form['ETD']
         shipping_data.ETA = request.form['ETA']
         shipping_data.Contract_or_Coloader = request.form['Contract_or_Coloader']
@@ -88,7 +88,7 @@ def edit_shipping_data(id):
         shipping_data.term = request.form['term']
         shipping_data.salesman = request.form['salesman']
         shipping_data.cost = request.form['cost']
-        shipping_data.ATE_Valid = request.form['ATE_Valid']
+        shipping_data.Rate_Valid = request.form['Rate_Valid']
         shipping_data.SR = request.form['SR']
         shipping_data.HB_L = request.form['HB_L']
         shipping_data.Remark = request.form['Remark']
@@ -96,20 +96,20 @@ def edit_shipping_data(id):
         return redirect(url_for('user.user_dashboard'))
     return render_template('edit_shipping_data.html', shipping_data=shipping_data)
 
-@user.route('/search/<int:id>', methods=['GET', 'POST'])
+@user.route('/search', methods=['GET', 'POST'])
 @login_required
 @role_required('user')
-def search_details(id):
-    # Retrieve the shipping data for the given id or return a 404 error if not found
-    shipping_data = Shipping_data.query.get_or_404(id)
-
-    if request.method == 'POST':
-        product_id = request.form.get('id')
-        date_created = request.form.get('date_created')
-        # Call the search function to get the products based on the input criteria
-        products = search_products(product_id, date_created)
+def search():
+    #print("Search route")  # Debugging line
+    q = request.args.get("q")
+    if q:
+        #print(f"Search query: {q}")  # Debugging line
+        results = Shipping_data.query.filter(
+            (Shipping_data.CS.ilike(f'%{q}%')) |
+            (Shipping_data.week.ilike(f'%{q}%'))
+        ).order_by(Shipping_data.carrier.asc(), Shipping_data.service.desc()).limit(100).all()
+        #print(f"Results count: {len(results)}")  # Debugging line
     else:
-        products = None
-
-    # Render the user.html template with the search results 
-    return render_template('user.html', products=products, shipping_data=shipping_data)
+        results = []
+    
+    return render_template("_search_results.html", results=results)
