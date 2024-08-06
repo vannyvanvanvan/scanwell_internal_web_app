@@ -6,18 +6,21 @@
 {% endblock %}
 
 {% block body %}
+
+<section class="wrap">
   <h1>Login</h1>
   <form method="POST" action="{{ url_for('b_login.login') }}">
     {{ login_detail.csrf_token }}
 
     {{ render_field(login_detail.request_username) }}
-
+    
     {{ render_field(login_detail.request_password) }}
+    
+    {{ login_detail.remember_me(class_="table-cell") }} {{ login_detail.remember_me.label }}
 
-    <div>
-      {{ login_detail.remember_me() }} {{ login_detail.remember_me.label }}
+    <div class="form-buttons">
+      <input class="button button-block" type="submit" value="Submit" />
     </div>
-
-    <input type="submit" value="Submit" />
   </form>
+</section>
 {% endblock %}

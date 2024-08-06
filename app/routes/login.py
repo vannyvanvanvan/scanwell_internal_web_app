@@ -13,8 +13,8 @@ b_login = Blueprint('b_login', __name__,
 
 # Create a login form
 class LoginForm(FlaskForm):
-    request_username = StringField('username', validators=[InputRequired('A username is required!'), Length(min=5, max=30, message='Must be between 5 and 10 characters.')])
-    request_password = PasswordField('password', validators=[InputRequired('Password is required!')])
+    request_username = StringField('Username', validators=[InputRequired('A username is required!'), Length(min=5, max=30, message='Must be between 5 and 10 characters.')])
+    request_password = PasswordField('Password', validators=[InputRequired('Password is required!')])
     remember_me = BooleanField('Remember me')
     
 @b_login.before_request

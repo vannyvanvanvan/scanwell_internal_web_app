@@ -1,6 +1,6 @@
 {% macro render_field(field) %}
-{{ field.label }}
-{{ field(**kwargs)|safe }}
+{{ field.label(class_="table-cell") }}
+{{ field(class_="table-cell",**kwargs)|safe }}
 <ul>
 {% for error in field.errors %}
     <li style="color:red;">{{ error }}</li>
