@@ -7,8 +7,13 @@
 
 {% block body %}
 
+<header>
+  <div id="oaxaca-menu-bar" class="wrap">
+    <h1>User Login</h1>
+  </div>
+</header>
+
 <section class="wrap">
-  <h1>Login</h1>
   <form method="POST" action="{{ url_for('b_login.login') }}">
     {{ login_detail.csrf_token }}
 
