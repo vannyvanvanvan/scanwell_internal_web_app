@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import current_user, login_required
 from app.restriction import role_required
-from app.model import User_data, db, Shipping_data
-from app.search import search_products
+from app.model import db, Shipping_data
 
 user = Blueprint('user', __name__,
                  template_folder='../templates', static_folder='../static')
@@ -106,10 +105,32 @@ def search():
         #print(f"Search query: {q}")  # Debugging line
         results = Shipping_data.query.filter(
             (Shipping_data.CS.ilike(f'%{q}%')) |
-            (Shipping_data.week.ilike(f'%{q}%'))
+            (Shipping_data.week.ilike(f'%{q}%')) |
+            (Shipping_data.carrier.ilike(f'%{q}%')) |
+            (Shipping_data.service.ilike(f'%{q}%')) |
+            (Shipping_data.MV.ilike(f'%{q}%')) |
+            (Shipping_data.SO.ilike(f'%{q}%')) |
+            (Shipping_data.size.ilike(f'%{q}%')) |
+            (Shipping_data.POL.ilike(f'%{q}%')) |
+            (Shipping_data.POD.ilike(f'%{q}%')) |
+            (Shipping_data.Final_Destination.ilike(f'%{q}%')) |
+            (Shipping_data.routing.ilike(f'%{q}%')) |
+            (Shipping_data.CY_Open.ilike(f'%{q}%')) |
+            (Shipping_data.SI_Cut_Off.ilike(f'%{q}%')) |
+            (Shipping_data.CY_CY_CLS.ilike(f'%{q}%')) |
+            (Shipping_data.ETD.ilike(f'%{q}%')) |
+            (Shipping_data.ETA.ilike(f'%{q}%')) |
+            (Shipping_data.Contract_or_Coloader.ilike(f'%{q}%')) |
+            (Shipping_data.shipper.ilike(f'%{q}%')) |
+            (Shipping_data.consignee.ilike(f'%{q}%')) |
+            (Shipping_data.salesman.ilike(f'%{q}%')) |
+            (Shipping_data.cost.ilike(f'%{q}%')) |
+            (Shipping_data.Rate_Valid.ilike(f'%{q}%')) |
+            (Shipping_data.SR.ilike(f'%{q}%')) |
+            (Shipping_data.HB_L.ilike(f'%{q}%'))
         ).order_by(Shipping_data.carrier.asc(), Shipping_data.service.desc()).limit(100).all()
         #print(f"Results count: {len(results)}")  # Debugging line
     else:
         results = []
     
-    return render_template("_search_results.html", results=results)
+    return render_template("user_search_results.html", results=results)
