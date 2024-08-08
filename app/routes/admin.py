@@ -60,7 +60,7 @@ def add_shipping_data():
             # Handle the error and provide feedback to the user
             return f"An error occurred: {str(e)}"
         return redirect(url_for('user.user_dashboard'))
-    return render_template('add_shipping_data.html')
+    return render_template('admin_add_shipping_data.html')
 
 
 @admin.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -69,7 +69,7 @@ def add_shipping_data():
 def edit_shipping_data(id):
     shipping_data = Shipping_data.query.get_or_404(id)
     if shipping_data.user_id != current_user.id:
-        return redirect(url_for('user.user_dashboard'))
+        return redirect(url_for('admin.admin_dashboard'))
 
     if request.method == 'POST':
         try:
@@ -110,7 +110,7 @@ def edit_shipping_data(id):
             # Handle the error and provide feedback to the user
             return f"An error occurred: {str(e)}"
         return redirect(url_for('user.user_dashboard'))
-    return render_template('edit_shipping_data.html', shipping_data=shipping_data)
+    return render_template('admin_edit_shipping_data.html', shipping_data=shipping_data)
 
 
 @admin.route('/delete/<int:id>', methods=['POST'])

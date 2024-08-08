@@ -23,7 +23,7 @@ header {
   color: white;
 }
 
-header.staff {
+header.special {
   background: rgb(92, 6, 6);
   background: linear-gradient(
     13deg,
@@ -32,7 +32,7 @@ header.staff {
   );
 }
 
-header.kitchen {
+header.admin {
   background: rgb(6, 85, 10);
   background: linear-gradient(
     13deg,

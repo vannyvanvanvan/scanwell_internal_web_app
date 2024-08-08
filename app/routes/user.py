@@ -62,7 +62,7 @@ def add_shipping_data():
             # Handle the error and provide feedback to the user
             return f"An error occurred: {str(e)}"
         return redirect(url_for('user.user_dashboard'))
-    return render_template('add_shipping_data.html')
+    return render_template('user_add_shipping_data.html')
 
 
 @user.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -112,7 +112,7 @@ def edit_shipping_data(id):
             # Handle the error and provide feedback to the user
             return f"An error occurred: {str(e)}"
         return redirect(url_for('user.user_dashboard'))
-    return render_template('edit_shipping_data.html', shipping_data=shipping_data)
+    return render_template('user_edit_shipping_data.html', shipping_data=shipping_data)
 
 
 @user.route('/delete/<int:id>', methods=['POST'])

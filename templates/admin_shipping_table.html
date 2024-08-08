@@ -1,0 +1,45 @@
+<section class="wrap-wide">
+  <h3>Shipping Data</h3>
+  <div class="overflow-x-scroll">
+    <table class="full-width">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Shipping data created</th>
+          <th>CS</th>
+          <th>Week</th>
+          <th>Carrier</th>
+          <th>Service</th>
+          <th>MV</th>
+          <th>SO</th>
+          <th>Size</th>
+          <th>POL</th>
+          <th>POD</th>
+          <th>Final Destination</th>
+          <th>Routing</th>
+          <th>CY Open</th>
+          <th>SI Cut Off</th>
+          <th>CY CY CLS</th>
+          <th>ETD</th>
+          <th>ETA</th>
+          <th>Contract/Coloader</th>
+          <th>Shipper</th>
+          <th>Consignee</th>
+          <th>Term</th>
+          <th>Salesman</th>
+          <th>Cost</th>
+          <th>Rate Valid</th>
+          <th>SR</th>
+          <th>HB L</th>
+          <th>Remark</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="results">
+        {% with results=user_data %}
+        {% include 'admin_search_results.html' %}
+        {% endwith %}
+      </tbody>
+    </table>
+  </div>
+</section>
