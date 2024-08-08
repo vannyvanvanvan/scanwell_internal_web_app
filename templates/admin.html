@@ -15,11 +15,5 @@
 </section>
 
 <!-- Display Shipping Data -->
-{% if user_data %}
 {% include 'admin_shipping_table.html' %}
-{% else %}
-<section class="wrap">
-  <p>No shipping data available.</p>
-</section>
-{% endif %}
 {% endblock %}
