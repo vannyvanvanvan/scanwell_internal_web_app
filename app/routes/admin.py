@@ -162,6 +162,6 @@ def search():
         ).order_by(Shipping_data.carrier.asc(), Shipping_data.service.desc()).limit(100).all()
         # print(f"Results count: {len(results)}")  # Debugging line
     else:
-        results = []
+        results = Shipping_data.query.all()
 
     return render_template("admin_search_results.html", results=results)
