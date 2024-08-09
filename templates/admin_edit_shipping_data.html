@@ -75,14 +75,18 @@
 
     <div class="table-row">
       <label class="table-cell" for="SI_Cut_Off">SI Cut Off</label>
-      <input class="table-cell" type="date" name="SI_Cut_Off" id="SI_Cut_Off" value="{{ shipping_data.SI_Cut_Off }}"
-        required />
+      <input class="table-cell" type="date" name="SI_Cut_Off" id="SI_Cut_Off"
+        value="{{ shipping_data.SI_Cut_Off.date() }}" required />
+      <input class="table-cell" type="time" name="SI_Cut_Off_Time" id="SI_Cut_Off_Time"
+        value="{{ shipping_data.SI_Cut_Off.strftime('%H:%M') }}" required />
     </div>
 
     <div class="table-row">
       <label class="table-cell" for="CY_CY_CLS">CY CY CLS</label>
-      <input class="table-cell" type="date" name="CY_CY_CLS" id="CY_CY_CLS" value="{{ shipping_data.CY_CY_CLS }}"
+      <input class="table-cell" type="date" name="CY_CY_CLS" id="CY_CY_CLS" value="{{ shipping_data.CY_CY_CLS.date() }}"
         required />
+      <input class="table-cell" type="time" name="CY_CY_CLS_Time" id="CY_CY_CLS_Time"
+        value="{{ shipping_data.CY_CY_CLS.strftime('%H:%M') }}" required />
     </div>
 
     <div class="table-row">

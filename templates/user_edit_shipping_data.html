@@ -70,29 +70,34 @@
 
     <div class="table-row">
       <label class="table-cell" for="CY_Open">CY Open</label>
-      <input class="table-cell" type="date" name="CY_Open" id="CY_Open" value="{{ shipping_data.CY_Open }}" required />
+      <input class="table-cell" type="date" name="CY_Open" id="CY_Open" value="{{ shipping_data.CY_Open.date() }}"
+        required />
     </div>
 
     <div class="table-row">
       <label class="table-cell" for="SI_Cut_Off">SI Cut Off</label>
-      <input class="table-cell" type="date" name="SI_Cut_Off" id="SI_Cut_Off" value="{{ shipping_data.SI_Cut_Off }}"
-        required />
+      <input class="table-cell" type="date" name="SI_Cut_Off" id="SI_Cut_Off"
+        value="{{ shipping_data.SI_Cut_Off.date() }}" required />
+      <input class="table-cell" type="time" name="SI_Cut_Off_Time" id="SI_Cut_Off_Time"
+        value="{{ shipping_data.SI_Cut_Off.strftime('%H:%M') }}" required />
     </div>
 
     <div class="table-row">
       <label class="table-cell" for="CY_CY_CLS">CY CY CLS</label>
-      <input class="table-cell" type="date" name="CY_CY_CLS" id="CY_CY_CLS" value="{{ shipping_data.CY_CY_CLS }}"
+      <input class="table-cell" type="date" name="CY_CY_CLS" id="CY_CY_CLS" value="{{ shipping_data.CY_CY_CLS.date() }}"
         required />
+      <input class="table-cell" type="time" name="CY_CY_CLS_Time" id="CY_CY_CLS_Time"
+        value="{{ shipping_data.CY_CY_CLS.strftime('%H:%M') }}" required />
     </div>
 
     <div class="table-row">
       <label class="table-cell" for="ETD">ETD</label>
-      <input class="table-cell" type="date" name="ETD" id="ETD" value="{{ shipping_data.ETD }}" required />
+      <input class="table-cell" type="date" name="ETD" id="ETD" value="{{ shipping_data.ETD.date() }}" required />
     </div>
 
     <div class="table-row">
       <label class="table-cell" for="ETA">ETA</label>
-      <input class="table-cell" type="date" name="ETA" id="ETA" value="{{ shipping_data.ETA }}" required />
+      <input class="table-cell" type="date" name="ETA" id="ETA" value="{{ shipping_data.ETA.date() }}" required />
     </div>
 
     <div class="table-row">
@@ -130,8 +135,8 @@
 
     <div class="table-row">
       <label class="table-cell" for="Rate_Valid">Rate Valid</label>
-      <input class="table-cell" type="date" name="Rate_Valid" id="Rate_Valid" value="{{ shipping_data.Rate_Valid }}"
-        required />
+      <input class="table-cell" type="date" name="Rate_Valid" id="Rate_Valid"
+        value="{{ shipping_data.Rate_Valid.date() }}" required />
     </div>
 
     <div class="table-row">

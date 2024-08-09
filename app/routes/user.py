@@ -15,7 +15,9 @@ user = Blueprint(
 def user_dashboard():
     all_data = Shipping_data.query.all()
     user_data = [data for data in all_data if data.user_id == current_user.id]
-    return render_template("user.html", results=user_data, current_user_id=current_user.id)
+    return render_template(
+        "user.html", results=user_data, current_user_id=current_user.id
+    )
 
 
 @user.route("/add", methods=["GET", "POST"])
@@ -37,8 +39,20 @@ def add_shipping_data():
                 Final_Destination=request.form["Final_Destination"],
                 routing=request.form["routing"],
                 CY_Open=datetime.strptime(request.form["CY_Open"], "%Y-%m-%d"),
-                SI_Cut_Off=datetime.strptime(request.form["SI_Cut_Off"], "%Y-%m-%d"),
-                CY_CY_CLS=datetime.strptime(request.form["CY_CY_CLS"], "%Y-%m-%d"),
+                SI_Cut_Off=datetime.strptime(
+                    "{year} {time}".format(
+                        year=request.form["SI_Cut_Off"],
+                        time=request.form["SI_Cut_Off_Time"],
+                    ),
+                    "%Y-%m-%d %H:%M",
+                ),
+                CY_CY_CLS=datetime.strptime(
+                    "{year} {time}".format(
+                        year=request.form["CY_CY_CLS"],
+                        time=request.form["CY_CY_CLS_Time"],
+                    ),
+                    "%Y-%m-%d %H:%M",
+                ),
                 ETD=datetime.strptime(request.form["ETD"], "%Y-%m-%d"),
                 ETA=datetime.strptime(request.form["ETA"], "%Y-%m-%d"),
                 Contract_or_Coloader=request.form["Contract_or_Coloader"],
@@ -87,10 +101,18 @@ def edit_shipping_data(id):
                 request.form["CY_Open"], "%Y-%m-%d"
             )
             shipping_data.SI_Cut_Off = datetime.strptime(
-                request.form["SI_Cut_Off"], "%Y-%m-%d"
+                "{year} {time}".format(
+                    year=request.form["SI_Cut_Off"],
+                    time=request.form["SI_Cut_Off_Time"],
+                ),
+                "%Y-%m-%d %H:%M",
             )
             shipping_data.CY_CY_CLS = datetime.strptime(
-                request.form["CY_CY_CLS"], "%Y-%m-%d"
+                "{year} {time}".format(
+                    year=request.form["CY_CY_CLS"],
+                    time=request.form["CY_CY_CLS_Time"],
+                ),
+                "%Y-%m-%d %H:%M",
             )
             shipping_data.ETD = datetime.strptime(request.form["ETD"], "%Y-%m-%d")
             shipping_data.ETA = datetime.strptime(request.form["ETA"], "%Y-%m-%d")
@@ -177,7 +199,7 @@ def search():
     if show_all is None:
         results = [data for data in results if data.user_id == current_user.id]
 
-    print(current_user.id==results[0].user_id)
+    print(current_user.id == results[0].user_id)
     return render_template(
         "user_search_results.html", results=results, current_user_id=current_user.id
     )
