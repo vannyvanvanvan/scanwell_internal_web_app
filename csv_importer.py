@@ -13,7 +13,7 @@ csv_file_path = 'data.csv'
 df = pd.read_csv(csv_file_path)
 
 date_columns = ['CY_Open', 'SI_Cut_Off',
-                'CY_CY_CLS', 'ETD', 'ETA', 'Rate_Valid']
+                'CY_CY_CLS', 'ETD', 'ETA', 'Date_Valid']
 for col in date_columns:
     # Use 'coerce' to handle errors
     df[col] = pd.to_datetime(df[col], errors='coerce')
@@ -42,7 +42,7 @@ df.fillna({
     'consignee': '',
     'term': '',
     'salesman': '',
-    'Rate_Valid': pd.Timestamp('1970-01-01'),
+    'Date_Valid': pd.Timestamp('1970-01-01'),
     'SR': '',
     'HB_L': '',
     'Remark': '',
@@ -76,7 +76,7 @@ for index, row in df.iterrows():
         term=row['term'],
         salesman=row['salesman'],
         cost=row['cost'],
-        Rate_Valid=row['Rate_Valid'],
+        Date_Valid=row['Date_Valid'],
         SR=row['SR'],
         HB_L=row['HB_L'],
         Remark=row['Remark'],

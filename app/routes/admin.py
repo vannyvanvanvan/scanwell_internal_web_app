@@ -58,7 +58,7 @@ def add_shipping_data():
                 term=request.form["term"],
                 salesman=request.form["salesman"],
                 cost=int(request.form["cost"]),
-                Rate_Valid=datetime.strptime(request.form["Rate_Valid"], "%Y-%m-%d"),
+                Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
                 SR=request.form["SR"],
                 HB_L=request.form["HB_L"],
                 Remark=request.form["Remark"],
@@ -119,8 +119,8 @@ def edit_shipping_data(id):
             shipping_data.term = request.form["term"]
             shipping_data.salesman = request.form["salesman"]
             shipping_data.cost = int(request.form["cost"])
-            shipping_data.Rate_Valid = datetime.strptime(
-                request.form["Rate_Valid"], "%Y-%m-%d"
+            shipping_data.Date_Valid = datetime.strptime(
+                request.form["Date_Valid"], "%Y-%m-%d"
             )
             shipping_data.SR = request.form["SR"]
             shipping_data.HB_L = request.form["HB_L"]
@@ -177,7 +177,7 @@ def search():
                 | (Shipping_data.consignee.ilike(f"%{q}%"))
                 | (Shipping_data.salesman.ilike(f"%{q}%"))
                 | (Shipping_data.cost.ilike(f"%{q}%"))
-                | (Shipping_data.Rate_Valid.ilike(f"%{q}%"))
+                | (Shipping_data.Date_Valid.ilike(f"%{q}%"))
                 | (Shipping_data.SR.ilike(f"%{q}%"))
                 | (Shipping_data.HB_L.ilike(f"%{q}%"))
             )

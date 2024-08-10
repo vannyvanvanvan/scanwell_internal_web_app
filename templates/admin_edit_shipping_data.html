@@ -60,7 +60,7 @@
     <div class="table-row">
       <label class="table-cell" for="Final_Destination">Final Destination</label>
       <input class="table-cell" type="text" name="Final_Destination" id="Final_Destination"
-        value="{{ shipping_data.Final_Destination }}" required />
+        value="{{ shipping_data.Final_Destination }}" />
     </div>
 
     <div class="table-row">
@@ -133,8 +133,8 @@
     </div>
 
     <div class="table-row">
-      <label class="table-cell" for="Rate_Valid">Rate Valid</label>
-      <input class="table-cell" type="date" name="Rate_Valid" id="Rate_Valid" value="{{ shipping_data.Rate_Valid }}"
+      <label class="table-cell" for="Date_Valid">Date Valid</label>
+      <input class="table-cell" type="date" name="Date_Valid" id="Date_Valid" value="{{ shipping_data.Date_Valid }}"
         required />
     </div>
 
@@ -150,7 +150,7 @@
 
     <div class="table-row">
       <label class="table-cell" for="Remark">Remark</label>
-      <input class="table-cell" type="text" name="Remark" id="Remark" value="{{ shipping_data.Remark }}" required />
+      <input class="table-cell" type="text" name="Remark" id="Remark" value="{{ shipping_data.Remark }}" />
     </div>
     <div class="form-buttons">
       <a class="button button-block" href="{{ url_for('admin.admin_dashboard') }}">Back</a>

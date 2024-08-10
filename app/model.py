@@ -42,8 +42,8 @@ class Shipping_data(db.Model):
     term = db.Column(db.String(100), nullable=False)                                        #   Shipping term
     salesman = db.Column(db.String(100), nullable=False)                                    #   Salesman
     cost = db.Column(db.Integer, nullable=False)                                            #   Cost
-    Rate_Valid = db.Column(db.DateTime, nullable=False)                                     #   Rate valid (should be in datetime format)
-    SR = db.Column(db.String(100), nullable=False)  #Will change later                      #   Selling rate 
+    Date_Valid = db.Column(db.DateTime, nullable=False)                                     #   Rate valid (should be in datetime format)
+    SR = db.Column(db.Integer, nullable=False)  #Will change later                          #   Selling rate 
     HB_L = db.Column(db.String(100), nullable=False)  #Will change later                    #   House build of lading
     Remark = db.Column(db.String(1000), nullable=False)                                     #   Comments
     user_id = db.Column(db.Integer, db.ForeignKey('user_data.id'), nullable=False)
