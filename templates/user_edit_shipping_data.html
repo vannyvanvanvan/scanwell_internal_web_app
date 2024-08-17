@@ -24,6 +24,11 @@
     </div>
 
     <div class="table-row">
+      <label class="table-cell" for="routing">Routing</label>
+      <input class="table-cell" type="text" name="routing" id="routing" value="{{ shipping_data.routing }}" required />
+    </div>
+
+    <div class="table-row">
       <label class="table-cell" for="MV">MV</label>
       <input class="table-cell" type="text" name="MV" id="MV" value="{{ shipping_data.MV }}" required />
     </div>
@@ -42,6 +47,14 @@
       <label class="table-cell" for="CY_Open">CY Open</label>
       <input class="table-cell" type="date" name="CY_Open" id="CY_Open" value="{{ shipping_data.CY_Open.date() }}"
         required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="SI_Cut_Off">SI Cut Off</label>
+      <input class="table-cell" type="date" name="SI_Cut_Off" id="SI_Cut_Off"
+        value="{{ shipping_data.SI_Cut_Off.date() }}" required />
+      <input class="table-cell" type="time" name="SI_Cut_Off_Time" id="SI_Cut_Off_Time"
+        value="{{ shipping_data.SI_Cut_Off.strftime('%H:%M') }}" required />
     </div>
 
     <div class="table-row">
@@ -143,24 +156,11 @@
       <input class="button button-block" type="submit" value="Update" />
     </div>
 
-    <div class="table-row">
-      <label class="table-cell" for="routing">Routing</label>
-      <input class="table-cell" type="text" name="routing" id="routing" value="{{ shipping_data.routing }}" required />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="SI_Cut_Off">SI Cut Off</label>
-      <input class="table-cell" type="date" name="SI_Cut_Off" id="SI_Cut_Off"
-        value="{{ shipping_data.SI_Cut_Off.date() }}" required />
-      <input class="table-cell" type="time" name="SI_Cut_Off_Time" id="SI_Cut_Off_Time"
-        value="{{ shipping_data.SI_Cut_Off.strftime('%H:%M') }}" required />
-    </div>
-
   </form>
 </section>
 
 <!-- OLD FORM FOR REFERENCE-->
- 
+
 <!--section class="wrap">
   <h1>Edit Shipping Data</h1>
   <form method="POST" class="table">
