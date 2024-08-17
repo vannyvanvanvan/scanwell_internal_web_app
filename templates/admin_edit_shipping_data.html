@@ -11,17 +11,8 @@
 <section class="wrap">
   <h1>Edit Shipping Data</h1>
   <form method="POST" class="table">
-    <div class="table-row">
-      <label class="table-cell" for="CS">CS</label>
-      <input class="table-cell" type="text" name="CS" id="CS" value="{{ shipping_data.CS }}" required />
-    </div>
-    </div>
 
-    <div class="table-row">
-      <label class="table-cell" for="week">Week</label>
-      <input class="table-cell" type="number" name="week" id="week" value="{{ shipping_data.week }}" required />
-    </div>
-
+    <h3>Shipping Schedule</h3>
     <div class="table-row">
       <label class="table-cell" for="carrier">Carrier</label>
       <input class="table-cell" type="text" name="carrier" id="carrier" value="{{ shipping_data.carrier }}" required />
@@ -33,18 +24,13 @@
     </div>
 
     <div class="table-row">
+      <label class="table-cell" for="routing">Routing</label>
+      <input class="table-cell" type="text" name="routing" id="routing" value="{{ shipping_data.routing }}" required />
+    </div>
+
+    <div class="table-row">
       <label class="table-cell" for="MV">MV</label>
       <input class="table-cell" type="text" name="MV" id="MV" value="{{ shipping_data.MV }}" required />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="SO">SO</label>
-      <input class="table-cell" type="text" name="SO" id="SO" value="{{ shipping_data.SO }}" required />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="size">Size</label>
-      <input class="table-cell" type="text" name="size" id="size" value="{{ shipping_data.size }}" required />
     </div>
 
     <div class="table-row">
@@ -58,19 +44,9 @@
     </div>
 
     <div class="table-row">
-      <label class="table-cell" for="Final_Destination">Final Destination</label>
-      <input class="table-cell" type="text" name="Final_Destination" id="Final_Destination"
-        value="{{ shipping_data.Final_Destination }}" />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="routing">Routing</label>
-      <input class="table-cell" type="text" name="routing" id="routing" value="{{ shipping_data.routing }}" required />
-    </div>
-
-    <div class="table-row">
       <label class="table-cell" for="CY_Open">CY Open</label>
-      <input class="table-cell" type="date" name="CY_Open" id="CY_Open" value="{{ shipping_data.CY_Open }}" required />
+      <input class="table-cell" type="date" name="CY_Open" id="CY_Open" value="{{ shipping_data.CY_Open.date() }}"
+        required />
     </div>
 
     <div class="table-row">
@@ -91,12 +67,39 @@
 
     <div class="table-row">
       <label class="table-cell" for="ETD">ETD</label>
-      <input class="table-cell" type="date" name="ETD" id="ETD" value="{{ shipping_data.ETD }}" required />
+      <input class="table-cell" type="date" name="ETD" id="ETD" value="{{ shipping_data.ETD.date() }}" required />
     </div>
 
     <div class="table-row">
       <label class="table-cell" for="ETA">ETA</label>
-      <input class="table-cell" type="date" name="ETA" id="ETA" value="{{ shipping_data.ETA }}" required />
+      <input class="table-cell" type="date" name="ETA" id="ETA" value="{{ shipping_data.ETA.date() }}" required />
+    </div>
+
+    <h3>Booking</h3>
+    <div class="table-row">
+      <label class="table-cell" for="CS">CS</label>
+      <input class="table-cell" type="text" name="CS" id="CS" value="{{ shipping_data.CS }}" required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="week">Week</label>
+      <input class="table-cell" type="number" name="week" id="week" value="{{ shipping_data.week }}" required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="SO">SO</label>
+      <input class="table-cell" type="text" name="SO" id="SO" value="{{ shipping_data.SO }}" required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="size">Size</label>
+      <input class="table-cell" type="text" name="size" id="size" value="{{ shipping_data.size }}" required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="Final_Destination">Final Destination</label>
+      <input class="table-cell" type="text" name="Final_Destination" id="Final_Destination"
+        value="{{ shipping_data.Final_Destination }}" />
     </div>
 
     <div class="table-row">
@@ -105,6 +108,18 @@
         value="{{ shipping_data.Contract_or_Coloader }}" required />
     </div>
 
+    <div class="table-row">
+      <label class="table-cell" for="cost">Cost</label>
+      <input class="table-cell" type="number" name="cost" id="cost" value="{{ shipping_data.cost }}" required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="Date_Valid">Date Valid</label>
+      <input class="table-cell" type="date" name="Date_Valid" id="Date_Valid"
+        value="{{ shipping_data.Date_Valid.date() }}" required />
+    </div>
+
+    <h3>Conform Order</h3>
     <div class="table-row">
       <label class="table-cell" for="shipper">Shipper</label>
       <input class="table-cell" type="text" name="shipper" id="shipper" value="{{ shipping_data.shipper }}" required />
@@ -128,24 +143,8 @@
     </div>
 
     <div class="table-row">
-      <label class="table-cell" for="cost">Cost</label>
-      <input class="table-cell" type="number" name="cost" id="cost" value="{{ shipping_data.cost }}" required />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="Date_Valid">Date Valid</label>
-      <input class="table-cell" type="date" name="Date_Valid" id="Date_Valid" value="{{ shipping_data.Date_Valid }}"
-        required />
-    </div>
-
-    <div class="table-row">
       <label class="table-cell" for="SR">SR</label>
       <input class="table-cell" type="text" name="SR" id="SR" value="{{ shipping_data.SR }}" required />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="HB_L">HB L</label>
-      <input class="table-cell" type="text" name="HB_L" id="HB_L" value="{{ shipping_data.HB_L }}" required />
     </div>
 
     <div class="table-row">
@@ -156,6 +155,8 @@
       <a class="button button-block" href="{{ url_for('admin.admin_dashboard') }}">Back</a>
       <input class="button button-block" type="submit" value="Update" />
     </div>
+
   </form>
 </section>
+
 {% endblock %}

@@ -7,21 +7,11 @@
 {% block body %}
 
 {% include 'admin_header.html' %}
-
 <section class="wrap">
   <h1>Add Shipping Data</h1>
   <form method="POST" class="table">
-    <div class="table-row">
-      <label class="table-cell" for="CS">CS</label>
-      <input class="table-cell" type="text" name="CS" id="CS" required />
-    </div>
-    </div>
 
-    <div class="table-row">
-      <label class="table-cell" for="week">Week</label>
-      <input class="table-cell" type="number" name="week" id="week" required />
-    </div>
-
+    <h3>Shipping Schedule</h3>
     <div class="table-row">
       <label class="table-cell" for="carrier">Carrier</label>
       <input class="table-cell" type="text" name="carrier" id="carrier" required />
@@ -33,18 +23,13 @@
     </div>
 
     <div class="table-row">
+      <label class="table-cell" for="routing">Routing</label>
+      <input class="table-cell" type="text" name="routing" id="routing" required />
+    </div>
+
+    <div class="table-row">
       <label class="table-cell" for="MV">MV</label>
       <input class="table-cell" type="text" name="MV" id="MV" required />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="SO">SO</label>
-      <input class="table-cell" type="text" name="SO" id="SO" required />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="size">Size</label>
-      <input class="table-cell" type="text" name="size" id="size" required />
     </div>
 
     <div class="table-row">
@@ -55,16 +40,6 @@
     <div class="table-row">
       <label class="table-cell" for="POD">POD</label>
       <input class="table-cell" type="text" name="POD" id="POD" required />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="Final_Destination">Final Destination</label>
-      <input class="table-cell" type="text" name="Final_Destination" id="Final_Destination" />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="routing">Routing</label>
-      <input class="table-cell" type="text" name="routing" id="routing" required />
     </div>
 
     <div class="table-row">
@@ -94,11 +69,48 @@
       <input class="table-cell" type="date" name="ETA" id="ETA" required />
     </div>
 
+    <h3>Booking</h3>
+    <div class="table-row">
+      <label class="table-cell" for="CS">CS</label>
+      <input class="table-cell" type="text" name="CS" id="CS" required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="week">Week</label>
+      <input class="table-cell" type="number" name="week" id="week" required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="SO">SO</label>
+      <input class="table-cell" type="text" name="SO" id="SO" required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="size">Size</label>
+      <input class="table-cell" type="text" name="size" id="size" required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="Final_Destination">Final Destination</label>
+      <input class="table-cell" type="text" name="Final_Destination" id="Final_Destination" />
+    </div>
+
     <div class="table-row">
       <label class="table-cell" for="Contract_or_Coloader">Contract or Coloade</label>
       <input class="table-cell" type="text" name="Contract_or_Coloader" id="Contract_or_Coloader" required />
     </div>
 
+    <div class="table-row">
+      <label class="table-cell" for="cost">Cost</label>
+      <input class="table-cell" type="number" name="cost" id="cost" required />
+    </div>
+
+    <div class="table-row">
+      <label class="table-cell" for="Date_Valid">Date Valid</label>
+      <input class="table-cell" type="date" name="Date_Valid" id="Date_Valid" required />
+    </div>
+
+    <h3>Conform Order</h3>
     <div class="table-row">
       <label class="table-cell" for="shipper">Shipper</label>
       <input class="table-cell" type="text" name="shipper" id="shipper" required />
@@ -120,23 +132,8 @@
     </div>
 
     <div class="table-row">
-      <label class="table-cell" for="cost">Cost</label>
-      <input class="table-cell" type="number" name="cost" id="cost" required />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="Date_Valid">Date Valid</label>
-      <input class="table-cell" type="date" name="Date_Valid" id="Date_Valid" required />
-    </div>
-
-    <div class="table-row">
       <label class="table-cell" for="SR">SR</label>
       <input class="table-cell" type="text" name="SR" id="SR" required />
-    </div>
-
-    <div class="table-row">
-      <label class="table-cell" for="HB_L">HB L</label>
-      <input class="table-cell" type="text" name="HB_L" id="HB_L" required />
     </div>
 
     <div class="table-row">
@@ -144,9 +141,11 @@
       <input class="table-cell" type="text" name="Remark" id="Remark" />
     </div>
     <div class="form-buttons">
-      <a class="button button-block" href="{{ url_for('admin.admin_dashboard') }}">Back</a>
+      <a class="button button-block" href="{{ url_for('admin.admin_dashboard') }}">Cancel</a>
       <input class="button button-block" type="submit" value="Submit" />
     </div>
+
   </form>
 </section>
+
 {% endblock %}
