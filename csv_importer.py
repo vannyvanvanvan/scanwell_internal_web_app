@@ -12,13 +12,16 @@ session = Session()
 csv_file_path = 'data.csv'
 df = pd.read_csv(csv_file_path)
 
-date_columns = ['CY_Open', 'SI_Cut_Off',
-                'CY_CY_CLS', 'ETD', 'ETA', 'Date_Valid']
+# ensure that the necessary columns are present and correctly named
+if 'user_id' not in df.columns:
+    df['user_id'] = 1 # default to admin user ID
+    
+# convert date columns and handle errors
+date_columns = ['CY_Open', 'SI_Cut_Off', 'CY_CY_CLS', 'ETD', 'ETA', 'Date_Valid']
 for col in date_columns:
-    # Use 'coerce' to handle errors
     df[col] = pd.to_datetime(df[col], errors='coerce')
 
-# Fill NaN values with appropriate default values
+# fill NaN values with appropriate default values
 df.fillna({
     'cost': 0,
     'CS': '',
@@ -44,11 +47,13 @@ df.fillna({
     'salesman': '',
     'Date_Valid': pd.Timestamp('1970-01-01'),
     'SR': '',
-    'HB_L': '',
-    'Remark': '',
-    'user_id': 1
-    # 1 equals to admin
+    'remark': '',
+    'user_id': 1  # default to admin user ID
 }, inplace=True)
+
+# verify that there are no NaN values in critical columns
+if df['user_id'].isnull().any():
+    print("Warning: 'user_id' column contains NaN values.")
 
 # Insert data into the database
 for index, row in df.iterrows():
@@ -78,8 +83,7 @@ for index, row in df.iterrows():
         cost=row['cost'],
         Date_Valid=row['Date_Valid'],
         SR=row['SR'],
-        HB_L=row['HB_L'],
-        Remark=row['Remark'],
+        remark=row['remark'],
         user_id=row['user_id']
     )
     try:

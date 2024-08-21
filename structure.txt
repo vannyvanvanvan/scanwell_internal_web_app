@@ -12,22 +12,32 @@ project/
 │   │   ├── admin.py
 ├── templates/
 │   ├── _render_field.html
+│   ├── admin_add_shipping_data.html
+│   ├── admin_edit_shipping_data.html
+│   ├── admin_header.html
+│   ├── admin_search_results.html
+│   ├── admin_shipping_table.html
 │   ├── admin.html
 │   ├── base.html
 │   ├── home.html
 │   ├── login.html
-│   ├── user.html
-│   ├── user_search_results.html
+│   ├── user_add_shipping_data.html
+│   ├── user_edit_shipping_data.html
 │   ├── user_header.html
-│   ├── admin_header.html
-│   ├── admin_search_results.html
-│   ├── add_shipping_data.html
-│   ├── edit_shipping_data.html
+│   ├── user_search_results.html
+│   ├── user_shipping_table.html
+│   ├── user.html
 ├── static/
-│   ├── main.css
+│   ├── auto_comp.js
+│   ├── instances/
+        ├── main.css
 ├── instances/
 │   ├── database.db
-├── driver.py
+├── .gitignore
+├── csv_importer.py
+├── data.csv
 ├── db_setup.py
-├── structure.txt
+├── driver.py
+├── README.md
 ├── requirements.txt
+├── structure.txt

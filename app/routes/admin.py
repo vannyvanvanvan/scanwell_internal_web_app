@@ -60,8 +60,7 @@ def add_shipping_data():
                 cost=int(request.form["cost"]),
                 Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
                 SR=request.form["SR"],
-                HB_L=request.form["HB_L"],
-                Remark=request.form["Remark"],
+                remark=request.form["remark"],
                 user_id=current_user.id,
             )
             db.session.add(new_data)
@@ -69,7 +68,7 @@ def add_shipping_data():
         except ValueError as e:
             # Handle the error and provide feedback to the user
             return f"An error occurred: {str(e)}"
-        return redirect(url_for("user.user_dashboard"))
+        return redirect(url_for("admin.admin_dashboard"))
     return render_template("admin_add_shipping_data.html")
 
 
@@ -78,59 +77,57 @@ def add_shipping_data():
 @role_required("admin")
 def edit_shipping_data(id):
     shipping_data = Shipping_data.query.get_or_404(id)
-    if shipping_data.user_id != current_user.id:
-        return redirect(url_for("admin.admin_dashboard"))
-
-    if request.method == "POST":
-        try:
-            shipping_data.CS = request.form["CS"]
-            shipping_data.week = int(request.form["week"])
-            shipping_data.carrier = request.form["carrier"]
-            shipping_data.service = request.form["service"]
-            shipping_data.MV = request.form["MV"]
-            shipping_data.SO = request.form["SO"]
-            shipping_data.size = request.form["size"]
-            shipping_data.POL = request.form["POL"]
-            shipping_data.POD = request.form["POD"]
-            shipping_data.Final_Destination = request.form["Final_Destination"]
-            shipping_data.routing = request.form["routing"]
-            shipping_data.CY_Open = datetime.strptime(
-                request.form["CY_Open"], "%Y-%m-%d"
-            )
-            shipping_data.SI_Cut_Off = datetime.strptime(
-                "{year} {time}".format(
-                    year=request.form["SI_Cut_Off"],
-                    time=request.form["SI_Cut_Off_Time"],
-                ),
-                "%Y-%m-%d %H:%M",
-            )
-            shipping_data.CY_CY_CLS = datetime.strptime(
-                "{year} {time}".format(
-                    year=request.form["CY_CY_CLS"],
-                    time=request.form["CY_CY_CLS_Time"],
-                ),
-                "%Y-%m-%d %H:%M",
-            )
-            shipping_data.ETD = datetime.strptime(request.form["ETD"], "%Y-%m-%d")
-            shipping_data.ETA = datetime.strptime(request.form["ETA"], "%Y-%m-%d")
-            shipping_data.Contract_or_Coloader = request.form["Contract_or_Coloader"]
-            shipping_data.shipper = request.form["shipper"]
-            shipping_data.consignee = request.form["consignee"]
-            shipping_data.term = request.form["term"]
-            shipping_data.salesman = request.form["salesman"]
-            shipping_data.cost = int(request.form["cost"])
-            shipping_data.Date_Valid = datetime.strptime(
-                request.form["Date_Valid"], "%Y-%m-%d"
-            )
-            shipping_data.SR = request.form["SR"]
-            shipping_data.HB_L = request.form["HB_L"]
-            shipping_data.Remark = request.form["Remark"]
-            db.session.commit()
-        except ValueError as e:
-            # Handle the error and provide feedback to the user
-            return f"An error occurred: {str(e)}"
-        return redirect(url_for("user.user_dashboard"))
-    return render_template("admin_edit_shipping_data.html", shipping_data=shipping_data)
+    if shipping_data.user_id != current_user.id or shipping_data.user_id == current_user.id :
+        
+        if request.method == "POST":
+            try:
+                shipping_data.CS = request.form["CS"]
+                shipping_data.week = int(request.form["week"])
+                shipping_data.carrier = request.form["carrier"]
+                shipping_data.service = request.form["service"]
+                shipping_data.MV = request.form["MV"]
+                shipping_data.SO = request.form["SO"]
+                shipping_data.size = request.form["size"]
+                shipping_data.POL = request.form["POL"]
+                shipping_data.POD = request.form["POD"]
+                shipping_data.Final_Destination = request.form["Final_Destination"]
+                shipping_data.routing = request.form["routing"]
+                shipping_data.CY_Open = datetime.strptime(
+                    request.form["CY_Open"], "%Y-%m-%d"
+                )
+                shipping_data.SI_Cut_Off = datetime.strptime(
+                    "{year} {time}".format(
+                        year=request.form["SI_Cut_Off"],
+                        time=request.form["SI_Cut_Off_Time"],
+                    ),
+                    "%Y-%m-%d %H:%M",
+                )
+                shipping_data.CY_CY_CLS = datetime.strptime(
+                    "{year} {time}".format(
+                        year=request.form["CY_CY_CLS"],
+                        time=request.form["CY_CY_CLS_Time"],
+                    ),
+                    "%Y-%m-%d %H:%M",
+                )
+                shipping_data.ETD = datetime.strptime(request.form["ETD"], "%Y-%m-%d")
+                shipping_data.ETA = datetime.strptime(request.form["ETA"], "%Y-%m-%d")
+                shipping_data.Contract_or_Coloader = request.form["Contract_or_Coloader"]
+                shipping_data.shipper = request.form["shipper"]
+                shipping_data.consignee = request.form["consignee"]
+                shipping_data.term = request.form["term"]
+                shipping_data.salesman = request.form["salesman"]
+                shipping_data.cost = int(request.form["cost"])
+                shipping_data.Date_Valid = datetime.strptime(
+                    request.form["Date_Valid"], "%Y-%m-%d"
+                )
+                shipping_data.SR = request.form["SR"]
+                shipping_data.remark = request.form["remark"]
+                db.session.commit()
+            except ValueError as e:
+                # Handle the error and provide feedback to the user
+                return f"An error occurred: {str(e)}"
+            return redirect(url_for("admin.admin_dashboard"))
+        return render_template("admin_edit_shipping_data.html", shipping_data=shipping_data)
 
 
 @admin.route("/delete/<int:id>", methods=["POST"])
@@ -179,7 +176,6 @@ def search():
                 | (Shipping_data.cost.ilike(f"%{q}%"))
                 | (Shipping_data.Date_Valid.ilike(f"%{q}%"))
                 | (Shipping_data.SR.ilike(f"%{q}%"))
-                | (Shipping_data.HB_L.ilike(f"%{q}%"))
             )
             .order_by(Shipping_data.carrier.asc(), Shipping_data.service.desc())
             .limit(100)

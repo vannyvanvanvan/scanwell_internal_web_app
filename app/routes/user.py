@@ -63,8 +63,7 @@ def add_shipping_data():
                 cost=int(request.form["cost"]),
                 Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
                 SR=request.form["SR"],
-                HB_L=request.form["HB_L"],
-                Remark=request.form["Remark"],
+                remark=request.form["remark"],
                 user_id=current_user.id,
             )
             db.session.add(new_data)
@@ -126,8 +125,7 @@ def edit_shipping_data(id):
                 request.form["Date_Valid"], "%Y-%m-%d"
             )
             shipping_data.SR = request.form["SR"]
-            shipping_data.HB_L = request.form["HB_L"]
-            shipping_data.Remark = request.form["Remark"]
+            shipping_data.remark = request.form["remark"]
             db.session.commit()
         except ValueError as e:
             # Handle the error and provide feedback to the user
@@ -186,7 +184,6 @@ def search():
                 | (Shipping_data.cost.ilike(f"%{q}%"))
                 | (Shipping_data.Date_Valid.ilike(f"%{q}%"))
                 | (Shipping_data.SR.ilike(f"%{q}%"))
-                | (Shipping_data.HB_L.ilike(f"%{q}%"))
             )
             .order_by(Shipping_data.carrier.asc(), Shipping_data.service.desc())
             .limit(100)

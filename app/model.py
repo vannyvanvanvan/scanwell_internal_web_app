@@ -44,8 +44,7 @@ class Shipping_data(db.Model):
     cost = db.Column(db.Integer, nullable=False)                                            #   Cost
     Date_Valid = db.Column(db.DateTime, nullable=False)                                     #   Rate valid (should be in datetime format)
     SR = db.Column(db.Integer, nullable=False)  #Will change later                          #   Selling rate 
-    HB_L = db.Column(db.String(100), nullable=False)  #Will change later                    #   House build of lading
-    Remark = db.Column(db.String(1000), nullable=False)                                     #   Comments
+    remark = db.Column(db.String(1000), nullable=False)                                     #   Comments
     user_id = db.Column(db.Integer, db.ForeignKey('user_data.id'), nullable=False)
     
     def __repr__(self):

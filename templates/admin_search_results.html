@@ -27,8 +27,7 @@
   <td>{{ result.cost }}</td>
   <td>{{ result.Date_Valid }}</td>
   <td>{{ result.SR }}</td>
-  <td>{{ result.HB_L }}</td>
-  <td>{{ result.Remark }}</td>
+  <td>{{ result.remark }}</td>
   <td>
     <a class="button-block" href="{{ url_for('admin.edit_shipping_data', id=result.id) }}">Edit</a>
     <form action="{{ url_for('admin.delete_shipping_data', id=result.id) }}" method="POST">
