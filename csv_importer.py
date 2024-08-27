@@ -2,7 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
-from app.model import Shipping_data
+from app.model import Data_booking
 
 DATABASE_URL = 'sqlite:///instance/database.db'
 engine = create_engine(DATABASE_URL, echo=True)
@@ -57,7 +57,7 @@ if df['user_id'].isnull().any():
 
 # Insert data into the database
 for index, row in df.iterrows():
-    new_data = Shipping_data(
+    new_data = Data_booking(
         date_created=datetime.utcnow(),
         CS=row['CS'],
         week=row['week'],
