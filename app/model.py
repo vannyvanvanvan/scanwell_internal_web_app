@@ -38,12 +38,12 @@ class Data_shipping_schedule(db.Model):
     ETD =  db.Column(db.DateTime, nullable=False) #Will change later                        #   Estimated Time of Departure (should be in datetime format)
     ETA =  db.Column(db.DateTime, nullable=False) #Will change later                        #   Estimated Time of Arrival (should be in datetime format)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.String(20), nullable=False)                                       #   Status
+    status = db.Column(db.String(20), nullable=False)                                       #   Status s1 -> s2 -> s3
     
     # One-to-many relationship with Data_booking
-    data_booking = db.relationship('Data_booking', backref='data_shipping_schedule', lazy=True)
+    bookings = db.relationship('Data_booking', back_populates='data_shipping_schedule', lazy=True)
     # One-to-many relationship with Data_confirm_order
-    data_confirm_order = db.relationship('Data_confirm_order', backref='data_shipping_schedule', lazy=True)
+    confirm_orders = db.relationship('Data_confirm_order', back_populates='data_shipping_schedule', lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user_data.id'), nullable=False)
     def __repr__(self):
         return '<Data_shipping_schedule %r>' % self.id
@@ -62,7 +62,10 @@ class Data_booking(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     
     data_shipping_schedule_id = db.Column(db.Integer, db.ForeignKey('data_shipping_schedule.id'), nullable=False)
+    data_shipping_schedule = db.relationship('Data_shipping_schedule', back_populates='bookings')
+    
     user_id = db.Column(db.Integer, db.ForeignKey('user_data.id'), nullable=False)
+    
     def __repr__(self):
         return '<Data_booking %r>' % self.id
     
@@ -82,6 +85,8 @@ class Data_confirm_order(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     
     data_shipping_schedule_id = db.Column(db.Integer, db.ForeignKey('data_shipping_schedule.id'), nullable=False)
+    data_shipping_schedule = db.relationship('Data_shipping_schedule', back_populates='confirm_orders')
+
     user_id = db.Column(db.Integer, db.ForeignKey('user_data.id'), nullable=False)
     def __repr__(self):
         return '<Data_confirm_order %r>' % self.id

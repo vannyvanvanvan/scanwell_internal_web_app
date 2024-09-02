@@ -2,42 +2,37 @@ from datetime import datetime
 from flask import Blueprint, flash, render_template, request, redirect, url_for
 from flask_login import current_user, login_required
 from app.restriction import role_required
-from app.model import db, Shipping_data
+from app.model import db, Data_shipping_schedule, Data_booking, Data_confirm_order
 
 user = Blueprint(
     "user", __name__, template_folder="../templates", static_folder="../static"
 )
 
-
 @user.route("/")
 @login_required
 @role_required("user")
 def user_dashboard():
-    all_data = Shipping_data.query.all()
+    all_data = Data_shipping_schedule.query.all()
     user_data = [data for data in all_data if data.user_id == current_user.id]
     return render_template(
         "user.html", results=user_data, current_user_id=current_user.id
     )
 
+# Routes for Data_shipping_schedule
 
-@user.route("/add", methods=["GET", "POST"])
+@user.route("/add_shipping_schedule", methods=["GET", "POST"])
 @login_required
 @role_required("user")
 def add_shipping_data():
     if request.method == "POST":
         try:
-            new_data = Shipping_data(
-                CS=request.form["CS"],
-                week=int(request.form["week"]),
+            new_data = Data_shipping_schedule(
                 carrier=request.form["carrier"],
                 service=request.form["service"],
+                routing=request.form["routing"],
                 MV=request.form["MV"],
-                SO=request.form["SO"],
-                size=request.form["size"],
                 POL=request.form["POL"],
                 POD=request.form["POD"],
-                Final_Destination=request.form["Final_Destination"],
-                routing=request.form["routing"],
                 CY_Open=datetime.strptime(request.form["CY_Open"], "%Y-%m-%d"),
                 SI_Cut_Off=datetime.strptime(
                     "{year} {time}".format(
@@ -55,15 +50,7 @@ def add_shipping_data():
                 ),
                 ETD=datetime.strptime(request.form["ETD"], "%Y-%m-%d"),
                 ETA=datetime.strptime(request.form["ETA"], "%Y-%m-%d"),
-                Contract_or_Coloader=request.form["Contract_or_Coloader"],
-                shipper=request.form["shipper"],
-                consignee=request.form["consignee"],
-                term=request.form["term"],
-                salesman=request.form["salesman"],
-                cost=int(request.form["cost"]),
-                Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
-                SR=request.form["SR"],
-                remark=request.form["remark"],
+                status = 's1',
                 user_id=current_user.id,
             )
             db.session.add(new_data)
@@ -75,30 +62,23 @@ def add_shipping_data():
     return render_template("user_add_shipping_data.html")
 
 
-@user.route("/edit/<int:id>", methods=["GET", "POST"])
+@user.route("/edit_shipping_schedule/<int:id>", methods=["GET", "POST"])
 @login_required
 @role_required("user")
 def edit_shipping_data(id):
-    shipping_data = Shipping_data.query.get_or_404(id)
+    shipping_data = Data_shipping_schedule.query.get_or_404(id)
     if shipping_data.user_id != current_user.id:
         return redirect(url_for("user.user_dashboard"))
 
     if request.method == "POST":
         try:
-            shipping_data.CS = request.form["CS"]
-            shipping_data.week = int(request.form["week"])
             shipping_data.carrier = request.form["carrier"]
             shipping_data.service = request.form["service"]
+            shipping_data.routing = request.form["routing"]
             shipping_data.MV = request.form["MV"]
-            shipping_data.SO = request.form["SO"]
-            shipping_data.size = request.form["size"]
             shipping_data.POL = request.form["POL"]
             shipping_data.POD = request.form["POD"]
-            shipping_data.Final_Destination = request.form["Final_Destination"]
-            shipping_data.routing = request.form["routing"]
-            shipping_data.CY_Open = datetime.strptime(
-                request.form["CY_Open"], "%Y-%m-%d"
-            )
+            shipping_data.CY_Open = datetime.strptime(request.form["CY_Open"], "%Y-%m-%d")
             shipping_data.SI_Cut_Off = datetime.strptime(
                 "{year} {time}".format(
                     year=request.form["SI_Cut_Off"],
@@ -115,17 +95,6 @@ def edit_shipping_data(id):
             )
             shipping_data.ETD = datetime.strptime(request.form["ETD"], "%Y-%m-%d")
             shipping_data.ETA = datetime.strptime(request.form["ETA"], "%Y-%m-%d")
-            shipping_data.Contract_or_Coloader = request.form["Contract_or_Coloader"]
-            shipping_data.shipper = request.form["shipper"]
-            shipping_data.consignee = request.form["consignee"]
-            shipping_data.term = request.form["term"]
-            shipping_data.salesman = request.form["salesman"]
-            shipping_data.cost = int(request.form["cost"])
-            shipping_data.Date_Valid = datetime.strptime(
-                request.form["Date_Valid"], "%Y-%m-%d"
-            )
-            shipping_data.SR = request.form["SR"]
-            shipping_data.remark = request.form["remark"]
             db.session.commit()
         except ValueError as e:
             # Handle the error and provide feedback to the user
@@ -134,18 +103,167 @@ def edit_shipping_data(id):
     return render_template("user_edit_shipping_data.html", shipping_data=shipping_data)
 
 
-@user.route("/delete/<int:id>", methods=["POST"])
+@user.route("/delete_shipping_schedule/<int:id>", methods=["POST"])
 @login_required
 @role_required("user")
 def delete_shipping_data(id):
-    shipping_data = Shipping_data.query.get_or_404(id)
+    shipping_data = Data_shipping_schedule.query.get_or_404(id)
     if shipping_data.user_id != current_user.id:
-        flash("You do not have permission to delete this item.", "danger")
+        flash("You do not have permission to delete this item.")
         return redirect(url_for("user.user_dashboard"))
 
     db.session.delete(shipping_data)
     db.session.commit()
     flash("Shipping data has been deleted.", "success")
+    return redirect(url_for("user.user_dashboard"))
+
+
+# Routes for Data_booking
+
+@user.route("/add_booking/<int:schedule_id>", methods=["GET", "POST"])
+@login_required
+@role_required("user")
+def add_booking_data(schedule_id):
+    shipping_data = Data_shipping_schedule.query.get_or_404(schedule_id)
+    if shipping_data.user_id != current_user.id or shipping_data.status != "s2":
+        flash("You are not allowed to add booking data for this schedule.")
+        return redirect(url_for("user.user_dashboard"))
+
+    if request.method == "POST":
+        try:
+            new_data = Data_booking(
+                CS=request.form["CS"],
+                week=int(request.form["week"]),
+                size=request.form["size"],
+                Final_Destination=request.form["Final_Destination"],
+                Contract_or_Coloader=request.form["Contract_or_Coloader"],
+                cost=int(request.form["cost"]),
+                Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
+                data_shipping_schedule_id=schedule_id,
+                user_id=current_user.id,
+                status = "s2",
+            )
+            
+            db.session.add(new_data)
+            db.session.commit()
+        except ValueError as e:
+            return f"An error occurred: {str(e)}"
+        return redirect(url_for("user.user_dashboard"))
+    return render_template("user_add_booking_data.html", schedule_id=schedule_id)
+
+
+@user.route("/edit_booking/<int:id>", methods=["GET", "POST"])
+@login_required
+@role_required("user")
+def edit_booking_data(id):
+    booking_data = Data_booking.query.get_or_404(id)
+    if booking_data.user_id != current_user.id:
+        return redirect(url_for("user.user_dashboard"))
+
+    if request.method == "POST":
+        try:
+            booking_data.CS = request.form["CS"]
+            booking_data.week = int(request.form["week"])
+            booking_data.size = request.form["size"]
+            booking_data.Final_Destination = request.form["Final_Destination"]
+            booking_data.Contract_or_Coloader = request.form["Contract_or_Coloader"]
+            booking_data.cost = int(request.form["cost"])
+            booking_data.Date_Valid = datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d")
+            booking_data.data_shipping_schedule_id = request.form["data_shipping_schedule_id"]
+            db.session.commit()
+        except ValueError as e:
+            return f"An error occurred: {str(e)}"
+        return redirect(url_for("user.user_dashboard"))
+    return render_template("user_edit_booking_data.html", booking_data=booking_data)
+
+
+@user.route("/delete_booking/<int:id>", methods=["POST"])
+@login_required
+@role_required("user")
+def delete_booking_data(id):
+    booking_data = Data_booking.query.get_or_404(id)
+    if booking_data.user_id != current_user.id:
+        flash("You do not have permission to delete this item.")
+        return redirect(url_for("user.user_dashboard"))
+
+    db.session.delete(booking_data)
+    db.session.commit()
+    flash("Booking data has been deleted.", "success")
+    return redirect(url_for("user.user_dashboard"))
+
+
+# Routes for Data_confirm_order
+
+@user.route("/add_confirm_order/<int:schedule_id>", methods=["GET", "POST"])
+@login_required
+@role_required("user")
+def add_confirm_order_data(schedule_id):
+    shipping_data = Data_shipping_schedule.query.get_or_404(schedule_id)
+    if shipping_data.user_id != current_user.id or shipping_data.status != "s3":
+        flash("You are not allowed to add confirm order data for this schedule.")
+        return redirect(url_for("user.user_dashboard"))
+
+    if request.method == "POST":
+        try:
+            new_data = Data_confirm_order(
+                shipper=request.form["shipper"],
+                consignee=request.form["consignee"],
+                term=request.form["term"],
+                salesman=request.form["salesman"],
+                cost=int(request.form["cost"]),
+                Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
+                SR=int(request.form["SR"]),
+                remark=request.form["remark"],
+                data_shipping_schedule_id=schedule_id,
+                user_id=current_user.id,
+                status = "s3"
+            )
+            db.session.add(new_data)
+            db.session.commit()
+        except ValueError as e:
+            return f"An error occurred: {str(e)}"
+        return redirect(url_for("user.user_dashboard"))
+    return render_template("user_add_confirm_order_data.html", schedule_id=schedule_id)
+
+
+@user.route("/edit_confirm_order/<int:id>", methods=["GET", "POST"])
+@login_required
+@role_required("user")
+def edit_confirm_order_data(id):
+    confirm_order_data = Data_confirm_order.query.get_or_404(id)
+    if confirm_order_data.user_id != current_user.id:
+        return redirect(url_for("user.user_dashboard"))
+
+    if request.method == "POST":
+        try:
+            confirm_order_data.shipper = request.form["shipper"]
+            confirm_order_data.consignee = request.form["consignee"]
+            confirm_order_data.term = request.form["term"]
+            confirm_order_data.salesman = request.form["salesman"]
+            confirm_order_data.cost = int(request.form["cost"])
+            confirm_order_data.Date_Valid = datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d")
+            confirm_order_data.SR = int(request.form["SR"])
+            confirm_order_data.remark = request.form["remark"]
+            confirm_order_data.data_shipping_schedule_id = request.form["data_shipping_schedule_id"]
+            db.session.commit()
+        except ValueError as e:
+            return f"An error occurred: {str(e)}"
+        return redirect(url_for("user.user_dashboard"))
+    return render_template("user_edit_confirm_order_data.html", confirm_order_data=confirm_order_data)
+
+
+@user.route("/delete_confirm_order/<int:id>", methods=["POST"])
+@login_required
+@role_required("user")
+def delete_confirm_order_data(id):
+    confirm_order_data = Data_confirm_order.query.get_or_404(id)
+    if confirm_order_data.user_id != current_user.id:
+        flash("You do not have permission to delete this item.")
+        return redirect(url_for("user.user_dashboard"))
+
+    db.session.delete(confirm_order_data)
+    db.session.commit()
+    flash("Confirm order data has been deleted.", "success")
     return redirect(url_for("user.user_dashboard"))
 
 
@@ -160,43 +278,44 @@ def search():
     if q:
         # print(f"Search query: {q}")  # Debugging line
         results = (
-            Shipping_data.query.filter(
-                (Shipping_data.CS.ilike(f"%{q}%"))
-                | (Shipping_data.week.ilike(f"%{q}%"))
-                | (Shipping_data.carrier.ilike(f"%{q}%"))
-                | (Shipping_data.service.ilike(f"%{q}%"))
-                | (Shipping_data.MV.ilike(f"%{q}%"))
-                | (Shipping_data.SO.ilike(f"%{q}%"))
-                | (Shipping_data.size.ilike(f"%{q}%"))
-                | (Shipping_data.POL.ilike(f"%{q}%"))
-                | (Shipping_data.POD.ilike(f"%{q}%"))
-                | (Shipping_data.Final_Destination.ilike(f"%{q}%"))
-                | (Shipping_data.routing.ilike(f"%{q}%"))
-                | (Shipping_data.CY_Open.ilike(f"%{q}%"))
-                | (Shipping_data.SI_Cut_Off.ilike(f"%{q}%"))
-                | (Shipping_data.CY_CY_CLS.ilike(f"%{q}%"))
-                | (Shipping_data.ETD.ilike(f"%{q}%"))
-                | (Shipping_data.ETA.ilike(f"%{q}%"))
-                | (Shipping_data.Contract_or_Coloader.ilike(f"%{q}%"))
-                | (Shipping_data.shipper.ilike(f"%{q}%"))
-                | (Shipping_data.consignee.ilike(f"%{q}%"))
-                | (Shipping_data.salesman.ilike(f"%{q}%"))
-                | (Shipping_data.cost.ilike(f"%{q}%"))
-                | (Shipping_data.Date_Valid.ilike(f"%{q}%"))
-                | (Shipping_data.SR.ilike(f"%{q}%"))
+            Data_shipping_schedule.query.filter(
+                (Data_shipping_schedule.CS.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.week.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.carrier.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.service.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.MV.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.SO.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.size.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.POL.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.POD.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.Final_Destination.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.routing.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.CY_Open.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.SI_Cut_Off.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.CY_CY_CLS.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.ETD.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.ETA.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.Contract_or_Coloader.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.shipper.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.consignee.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.salesman.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.cost.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.Date_Valid.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.SR.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.status.ilike(f"%{q}%"))  # Added status field
             )
-            .order_by(Shipping_data.carrier.asc(), Shipping_data.service.desc())
+            .order_by(Data_shipping_schedule.carrier.asc(), Data_shipping_schedule.service.desc())
             .limit(100)
             .all()
         )
         # print(f"Results count: {len(results)}")  # Debugging line
     else:
-        results = Shipping_data.query.all()
+        results = Data_shipping_schedule.query.all()
 
     if show_all is None:
         results = [data for data in results if data.user_id == current_user.id]
 
-    print(current_user.id == results[0].user_id)
+    # print(current_user.id == results[0].user_id) # Debugging line
     return render_template(
         "user_search_results.html", results=results, current_user_id=current_user.id
     )

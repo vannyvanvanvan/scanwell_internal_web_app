@@ -14,7 +14,7 @@ with app.app_context():
     user3 = User_data(id=3, username='user2@mail.com',
                       password=hash_string("test3"), rank='user')
     
-    schedule_1 = Data_shipping_schedule(id = 1, carrier = "X Company", service = "X Service", routing = "Hong Kong", MV = "X Ship", POL = "Ching", POD = "Ching", CY_Open = datetime.utcnow(), SI_Cut_Off = datetime.utcnow(), CY_CY_CLS = datetime.utcnow(), ETD = datetime.utcnow(), ETA = datetime.utcnow(), status = "stage_1",  user_id =  "1")
+    schedule_1 = Data_shipping_schedule(id = 1, carrier = "X Company", service = "X Service", routing = "Hong Kong", MV = "X Ship", POL = "Ching", POD = "Ching", CY_Open = datetime.utcnow(), SI_Cut_Off = datetime.utcnow(), CY_CY_CLS = datetime.utcnow(), ETD = datetime.utcnow(), ETA = datetime.utcnow(), status = "s1",  user_id =  "1")
     booking_1 = Data_booking(id = 1, CS = "Vanny", week = "22", size = "10", Final_Destination = "Japan", Contract_or_Coloader = "X", cost = "100", Date_Valid = datetime.utcnow(), data_shipping_schedule_id = 1, user_id = "1")
     booking_2 = Data_booking(id = 2, CS = "Timmy", week = "50", size = "20", Final_Destination = "Japan", Contract_or_Coloader = "X", cost = "200", Date_Valid = datetime.utcnow(), data_shipping_schedule_id = 1, user_id = "1")
     confirm_order_1 = Data_confirm_order(id = 1,shipper = "X Shipper", consignee = "X consignee", term = "XXX", salesman = "X Salesman", cost = "20", Date_Valid = datetime.utcnow(), SR = "20", remark = "Nil", data_shipping_schedule_id = 1, user_id = "1")
