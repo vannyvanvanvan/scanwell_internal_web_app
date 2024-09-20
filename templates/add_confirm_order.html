@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+
+{% include 'header.html' %}
+<section class="container p-2 pt-4">
+  <h3>Add Confirm Order</h3>
+  <form method="POST">
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="shipper">Shipper</label>
+      <input class="form-control" type="text" name="shipper" id="shipper" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="consignee">Consignee</label>
+      <input class="form-control" type="text" name="consignee" id="consignee" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="term">Term</label>
+      <input class="form-control" type="text" name="term" id="term" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="salesman">Salesman</label>
+      <input class="form-control" type="text" name="salesman" id="salesman" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="SR">SR</label>
+      <input class="form-control" type="text" name="SR" id="SR" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="remark">remark</label>
+      <input class="form-control" type="text" name="remark" id="remark" />
+    </div>
+
+    {% if current_user.rank=='admin' %}
+    <div class="mb-3">
+      <a class="btn btn-danger" href="{{ url_for('admin.admin_dashboard') }}">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Submit" />
+    </div>
+    {% else %}
+    <div class="mb-3">
+      <a class="btn btn-danger" href="{{ url_for('user.user_dashboard') }}">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Submit" />
+    </div>
+    {% endif %}
+  </form>
+</section>
+
+{% endblock %}

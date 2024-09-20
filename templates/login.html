@@ -8,23 +8,32 @@
 {% block body %}
 
 <header>
-  <div id="menu-bar" class="wrap">
+  <div id="menu-bar" class="container p-4">
     <h1>User Login</h1>
   </div>
 </header>
 
-<section class="wrap">
+<section class="container p-2 pt-4">
+  {% with messages=get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flashes wrap">
+    {% for category, message in messages %}
+    <div class="alert alert-primary {{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
   <form method="POST" action="{{ url_for('b_login.login') }}">
     {{ login_detail.csrf_token }}
 
     {{ render_field(login_detail.request_username) }}
-    
+
     {{ render_field(login_detail.request_password) }}
-    
-    {{ login_detail.remember_me(class_="table-cell") }} {{ login_detail.remember_me.label }}
+
+    {{ login_detail.remember_me(class_="form-check-input") }} {{ login_detail.remember_me.label }}
 
     <div class="form-buttons">
-      <input class="button button-block" type="submit" value="Submit" />
+      <input class="btn btn-primary" type="submit" value="Submit" />
     </div>
   </form>
 </section>

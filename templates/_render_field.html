@@ -1,6 +1,8 @@
 {% macro render_field(field) %}
-{{ field.label(class_="table-cell") }}
-{{ field(class_="table-cell",**kwargs)|safe }}
+<div class="input-group">
+{{ field.label(class_="input-group-text") }}
+{{ field(class_="form-control",**kwargs)|safe }}
+</div>
 <ul>
 {% for error in field.errors %}
     <li style="color:red;">{{ error }}</li>

@@ -9,11 +9,12 @@ document.addEventListener('DOMContentLoaded', function () {
             currentFocus = -1;
             a = document.createElement("DIV");
             a.setAttribute("id", this.id + "autocomplete-list");
-            a.setAttribute("class", "autocomplete-items");
+            a.setAttribute("class", "autocomplete-items form-control");
             this.parentNode.appendChild(a);
             for (i = 0; i < arr.length; i++) {
                 if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
                     b = document.createElement("DIV");
+                    b.setAttribute("role", "button")
                     b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
                     b.innerHTML += arr[i].substr(val.length);
                     b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
