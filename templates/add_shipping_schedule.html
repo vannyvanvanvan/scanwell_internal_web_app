@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+
+{% include 'header.html' %}
+<section class="container p-2 pt-4">
+  <h3>Add Shipping Schedule</h3>
+  <form method="POST" class="mt-4">
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="carrier">Carrier</label>
+      <input class="form-control" type="text" name="carrier" id="carrier" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="service">Service</label>
+      <input class="form-control" type="text" name="service" id="service" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="routing">Routing</label>
+      <input class="form-control" type="text" name="routing" id="routing" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="MV">MV</label>
+      <input class="form-control" type="text" name="MV" id="MV" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="POL">POL</label>
+      <input class="form-control" type="text" name="POL" id="POL" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="POD">POD</label>
+      <input class="form-control" type="text" name="POD" id="POD" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="CY_Open">CY Open</label>
+      <input class="form-control" type="date" name="CY_Open" id="CY_Open" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="SI_Cut_Off">SI Cut Off</label>
+      <input class="form-control" type="date" name="SI_Cut_Off" id="SI_Cut_Off" required />
+      <input class="form-control" type="time" name="SI_Cut_Off_Time" id="SI_Cut_Off_Time" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="CY_CY_CLS">CY CY CLS</label>
+      <input class="form-control" type="date" name="CY_CY_CLS" id="CY_CY_CLS" required />
+      <input class="form-control" type="time" name="CY_CY_CLS_Time" id="CY_CY_CLS_Time" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="ETD">ETD</label>
+      <input class="form-control" type="date" name="ETD" id="ETD" required />
+    </div>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="ETA">ETA</label>
+      <input class="form-control" type="date" name="ETA" id="ETA" required />
+    </div>
+
+    {% if current_user.rank=='admin' %}
+    <div class="mb-3">
+      <a class="btn btn-danger" href="{{ url_for('admin.admin_dashboard') }}">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Submit" />
+    </div>
+    {% else %}
+    <div class="mb-3">
+      <a class="btn btn-danger" href="{{ url_for('user.user_dashboard') }}">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Submit" />
+    </div>
+    {% endif %}
+  </form>
+</section>
+
+{% endblock %}

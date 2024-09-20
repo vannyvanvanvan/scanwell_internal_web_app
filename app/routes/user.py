@@ -8,17 +8,20 @@ user = Blueprint(
     "user", __name__, template_folder="../templates", static_folder="../static"
 )
 
+
 @user.route("/")
 @login_required
 @role_required("user")
 def user_dashboard():
     all_data = Data_shipping_schedule.query.all()
-    user_data = [data for data in all_data if data.user_id == current_user.id]
+    results = [data for data in all_data if data.user_id == current_user.id]
     return render_template(
-        "user.html", results=user_data, current_user_id=current_user.id
+        "dashboard.html", results=results, current_user_id=current_user.id
     )
 
+
 # Routes for Data_shipping_schedule
+
 
 @user.route("/add_shipping_schedule", methods=["GET", "POST"])
 @login_required
@@ -50,7 +53,7 @@ def add_shipping_data():
                 ),
                 ETD=datetime.strptime(request.form["ETD"], "%Y-%m-%d"),
                 ETA=datetime.strptime(request.form["ETA"], "%Y-%m-%d"),
-                status = 's1',
+                status="s1",
                 user_id=current_user.id,
             )
             db.session.add(new_data)
@@ -59,7 +62,7 @@ def add_shipping_data():
             # Handle the error and provide feedback to the user
             return f"An error occurred: {str(e)}"
         return redirect(url_for("user.user_dashboard"))
-    return render_template("user_add_shipping_data.html")
+    return render_template("add_shipping_schedule.html")
 
 
 @user.route("/edit_shipping_schedule/<int:id>", methods=["GET", "POST"])
@@ -78,7 +81,9 @@ def edit_shipping_data(id):
             shipping_data.MV = request.form["MV"]
             shipping_data.POL = request.form["POL"]
             shipping_data.POD = request.form["POD"]
-            shipping_data.CY_Open = datetime.strptime(request.form["CY_Open"], "%Y-%m-%d")
+            shipping_data.CY_Open = datetime.strptime(
+                request.form["CY_Open"], "%Y-%m-%d"
+            )
             shipping_data.SI_Cut_Off = datetime.strptime(
                 "{year} {time}".format(
                     year=request.form["SI_Cut_Off"],
@@ -120,6 +125,7 @@ def delete_shipping_data(id):
 
 # Routes for Data_booking
 
+
 @user.route("/add_booking/<int:schedule_id>", methods=["GET", "POST"])
 @login_required
 @role_required("user")
@@ -141,9 +147,9 @@ def add_booking_data(schedule_id):
                 Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
                 data_shipping_schedule_id=schedule_id,
                 user_id=current_user.id,
-                status = "s2",
+                status="s2",
             )
-            
+
             db.session.add(new_data)
             db.session.commit()
         except ValueError as e:
@@ -168,8 +174,12 @@ def edit_booking_data(id):
             booking_data.Final_Destination = request.form["Final_Destination"]
             booking_data.Contract_or_Coloader = request.form["Contract_or_Coloader"]
             booking_data.cost = int(request.form["cost"])
-            booking_data.Date_Valid = datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d")
-            booking_data.data_shipping_schedule_id = request.form["data_shipping_schedule_id"]
+            booking_data.Date_Valid = datetime.strptime(
+                request.form["Date_Valid"], "%Y-%m-%d"
+            )
+            booking_data.data_shipping_schedule_id = request.form[
+                "data_shipping_schedule_id"
+            ]
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
@@ -194,6 +204,7 @@ def delete_booking_data(id):
 
 # Routes for Data_confirm_order
 
+
 @user.route("/add_confirm_order/<int:schedule_id>", methods=["GET", "POST"])
 @login_required
 @role_required("user")
@@ -216,7 +227,7 @@ def add_confirm_order_data(schedule_id):
                 remark=request.form["remark"],
                 data_shipping_schedule_id=schedule_id,
                 user_id=current_user.id,
-                status = "s3"
+                status="s3",
             )
             db.session.add(new_data)
             db.session.commit()
@@ -241,15 +252,21 @@ def edit_confirm_order_data(id):
             confirm_order_data.term = request.form["term"]
             confirm_order_data.salesman = request.form["salesman"]
             confirm_order_data.cost = int(request.form["cost"])
-            confirm_order_data.Date_Valid = datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d")
+            confirm_order_data.Date_Valid = datetime.strptime(
+                request.form["Date_Valid"], "%Y-%m-%d"
+            )
             confirm_order_data.SR = int(request.form["SR"])
             confirm_order_data.remark = request.form["remark"]
-            confirm_order_data.data_shipping_schedule_id = request.form["data_shipping_schedule_id"]
+            confirm_order_data.data_shipping_schedule_id = request.form[
+                "data_shipping_schedule_id"
+            ]
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("user.user_dashboard"))
-    return render_template("user_edit_confirm_order_data.html", confirm_order_data=confirm_order_data)
+    return render_template(
+        "user_edit_confirm_order_data.html", confirm_order_data=confirm_order_data
+    )
 
 
 @user.route("/delete_confirm_order/<int:id>", methods=["POST"])
@@ -304,7 +321,10 @@ def search():
                 | (Data_shipping_schedule.SR.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.status.ilike(f"%{q}%"))  # Added status field
             )
-            .order_by(Data_shipping_schedule.carrier.asc(), Data_shipping_schedule.service.desc())
+            .order_by(
+                Data_shipping_schedule.carrier.asc(),
+                Data_shipping_schedule.service.desc(),
+            )
             .limit(100)
             .all()
         )
@@ -317,5 +337,5 @@ def search():
 
     # print(current_user.id == results[0].user_id) # Debugging line
     return render_template(
-        "user_search_results.html", results=results, current_user_id=current_user.id
+        "shipping_table_results.html", results=results, current_user=current_user
     )
