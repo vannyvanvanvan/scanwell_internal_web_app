@@ -1,8 +1,10 @@
 from datetime import datetime
 from flask import Blueprint, flash, render_template, request, redirect, url_for
 from flask_login import current_user, login_required
+from sqlalchemy import and_
 from app.restriction import role_required
 from app.model import db, Data_shipping_schedule, Data_booking, Data_confirm_order
+from sqlalchemy.orm import joinedload
 
 user = Blueprint(
     "user", __name__, template_folder="../templates", static_folder="../static"
@@ -116,8 +118,10 @@ def edit_shipping_data(id):
                 ),
                 "%Y-%m-%d %H:%M",
             )
-            shipping_data.ETD = datetime.strptime(request.form["ETD"], "%Y-%m-%d")
-            shipping_data.ETA = datetime.strptime(request.form["ETA"], "%Y-%m-%d")
+            shipping_data.ETD = datetime.strptime(
+                request.form["ETD"], "%Y-%m-%d")
+            shipping_data.ETA = datetime.strptime(
+                request.form["ETA"], "%Y-%m-%d")
             db.session.commit()
         except ValueError as e:
             # Handle the error and provide feedback to the user
@@ -162,7 +166,8 @@ def add_booking_data(schedule_id):
                 Final_Destination=request.form["Final_Destination"],
                 Contract_or_Coloader=request.form["Contract_or_Coloader"],
                 cost=int(request.form["cost"]),
-                Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
+                Date_Valid=datetime.strptime(
+                    request.form["Date_Valid"], "%Y-%m-%d"),
                 data_shipping_schedule_id=schedule_id,
                 user_id=current_user.id,
                 status="s2",
@@ -240,7 +245,8 @@ def add_confirm_order_data(schedule_id):
                 term=request.form["term"],
                 salesman=request.form["salesman"],
                 cost=int(request.form["cost"]),
-                Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
+                Date_Valid=datetime.strptime(
+                    request.form["Date_Valid"], "%Y-%m-%d"),
                 SR=int(request.form["SR"]),
                 remark=request.form["remark"],
                 data_shipping_schedule_id=schedule_id,
@@ -310,34 +316,35 @@ def search():
     q = request.args.get("q")
     show_all = request.args.get("show-all")
 
+    query = db.session.query(Data_shipping_schedule).join(
+        Data_booking,
+        and_(Data_shipping_schedule.id == Data_booking.data_shipping_schedule_id)
+    ).join(
+        Data_confirm_order, and_(
+            Data_shipping_schedule.id == Data_confirm_order.data_shipping_schedule_id)
+    ).options(
+        joinedload(Data_shipping_schedule.bookings),
+        joinedload(Data_shipping_schedule.confirm_orders)
+    )
+
     if q:
         # print(f"Search query: {q}")  # Debugging line
         results = (
-            Data_shipping_schedule.query.filter(
-                (Data_shipping_schedule.CS.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.week.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.carrier.ilike(f"%{q}%"))
+
+            query.filter(
+                (Data_shipping_schedule.carrier.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.service.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.routing.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.MV.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.SO.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.size.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.POL.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.POD.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.Final_Destination.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.routing.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.CY_Open.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.SI_Cut_Off.ilike(f"%{q}%"))
+                | (Data_shipping_schedule.POD.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.CY_CY_CLS.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.ETD.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.ETA.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.Contract_or_Coloader.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.shipper.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.consignee.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.salesman.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.cost.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.Date_Valid.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.SR.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.status.ilike(f"%{q}%"))  # Added status field
+                | (Data_booking.CS.ilike(f"%{q}%"))  # Added status field
             )
             .order_by(
                 Data_shipping_schedule.carrier.asc(),
@@ -346,7 +353,7 @@ def search():
             .limit(100)
             .all()
         )
-        # print(f"Results count: {len(results)}")  # Debugging line
+        print(f"Results count: {len(results)}")  # Debugging line
     else:
         results = Data_shipping_schedule.query.all()
 

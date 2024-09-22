@@ -8,6 +8,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 
 db.init_app(app)
 
+
 @app.route('/data')
 def get_data():
     with app.app_context():
@@ -19,14 +20,14 @@ def get_data():
                 joinedload(Data_shipping_schedule.confirm_orders)
             )
         )
-        
+
         sql_query = str(query.statement.compile(db.engine))
         print("Generated SQL Query:")
         print(sql_query)
-        
+
         # execute the query and fetch results
         user_data = query.all()
-        
+
         # convert results to a list of dictionaries
         results = []
         for data in user_data:
@@ -57,24 +58,23 @@ def get_data():
                     }
                     for booking in data.bookings
                 ],
-                'confirm_orders': [
+                'confirm_orders':
                     {
-                        'id': confirm_order.id,
-                        'shipper': confirm_order.shipper,
-                        'consignee': confirm_order.consignee,
-                        'term': confirm_order.term,
-                        'salesman': confirm_order.salesman,
-                        'cost': confirm_order.cost,
-                        'Date_Valid': confirm_order.Date_Valid.strftime('%Y-%m-%d %H:%M:%S'),
-                        'SR': confirm_order.SR,
-                        'remark': confirm_order.remark
-                    }
-                    for confirm_order in data.confirm_orders
-                ]
+                        'id': '' if data.confirm_orders is None else data.confirm_orders.id,
+                        'shipper': '' if data.confirm_orders is None else data.confirm_orders.shipper,
+                        'consignee': '' if data.confirm_orders is None else data.confirm_orders.consignee,
+                        'term': '' if data.confirm_orders is None else data.confirm_orders.term,
+                        'salesman': '' if data.confirm_orders is None else data.confirm_orders.salesman,
+                        'cost': '' if data.confirm_orders is None else data.confirm_orders.cost,
+                        'Date_Valid': '' if data.confirm_orders is None else data.confirm_orders.Date_Valid.strftime('%Y-%m-%d %H:%M:%S'),
+                        'SR': '' if data.confirm_orders is None else data.confirm_orders.SR,
+                        'remark': '' if data.confirm_orders is None else data.confirm_orders.remark
+                }
             })
-        
+
         # return the results as JSON
         return jsonify(results)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

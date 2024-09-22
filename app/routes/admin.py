@@ -3,7 +3,6 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import current_user, login_required
 from ..restriction import role_required
 from app.model import db, Data_shipping_schedule, Data_booking, Data_confirm_order
-from sqlalchemy.orm import joinedload
 
 admin = Blueprint(
     "admin", __name__, template_folder="../../templates", static_folder="../../static"
@@ -14,10 +13,7 @@ admin = Blueprint(
 @login_required
 @role_required("admin")
 def admin_dashboard():
-    results = Data_shipping_schedule.query.options(
-        joinedload(Data_shipping_schedule.bookings),
-        joinedload(Data_shipping_schedule.confirm_orders),
-    ).all()  # Admin can see all shipping data
+    results = Data_shipping_schedule.query.all()  # Admin can see all shipping data
     return render_template("dashboard.html", results=results, current_user=current_user)
 
 
