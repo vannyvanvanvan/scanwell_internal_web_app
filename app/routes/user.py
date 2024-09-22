@@ -62,7 +62,25 @@ def add_shipping_data():
             # Handle the error and provide feedback to the user
             return f"An error occurred: {str(e)}"
         return redirect(url_for("user.user_dashboard"))
-    return render_template("add_shipping_schedule.html")
+    return render_template(
+        "shipping_schedule.html",
+        mode="Add",
+        data=Data_shipping_schedule(
+            carrier="",
+            service="",
+            routing="",
+            MV="",
+            POL="",
+            POD="",
+            CY_Open=datetime.now(),
+            SI_Cut_Off=datetime.now(),
+            CY_CY_CLS=datetime.now(),
+            ETD=datetime.now(),
+            ETA=datetime.now(),
+            status="s1",
+            user_id=current_user.id,
+        ),
+    )
 
 
 @user.route("/edit_shipping_schedule/<int:id>", methods=["GET", "POST"])
@@ -105,7 +123,7 @@ def edit_shipping_data(id):
             # Handle the error and provide feedback to the user
             return f"An error occurred: {str(e)}"
         return redirect(url_for("user.user_dashboard"))
-    return render_template("user_edit_shipping_data.html", shipping_data=shipping_data)
+    return render_template("shipping_schedule.html", mode="Edit", data=shipping_data)
 
 
 @user.route("/delete_shipping_schedule/<int:id>", methods=["POST"])

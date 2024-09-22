@@ -1,0 +1,31 @@
+{% macro render_input_text(name='', id='', value='', required=False) %}
+
+<div class="input-group mb-3">
+  <label class="input-group-text" for="{{ id }}">{{ name }}</label>
+  <input class="form-control" type="text" name="{{ id }}" id="{{ id }}" value="{{ value }}" {% if required %} required
+    {% endif %} />
+</div>
+
+{% endmacro %}
+
+{% macro render_input_date(name='', id='', value='', required=False) %}
+
+<div class="input-group mb-3">
+  <label class="input-group-text" for="{{ id }}">{{ name }}</label>
+  <input class="form-control" type="date" name="{{ id }}" id="{{ id }}" value="{{ value.date() }}" {% if required %} required
+    {% endif %} />
+</div>
+
+{% endmacro %}
+
+{% macro render_input_datetime(name='', id='', value='', required=False) %}
+
+<div class="input-group mb-3">
+  <label class="input-group-text" for="{{ id }}">{{ name }}</label>
+  <input class="form-control" type="date" name="{{ id }}" id="{{ id }}" value="{{ value.date() }}" {% if required %} required
+    {% endif %} />
+  <input class="form-control" type="time" name="{{ id }}_Time" id="{{ id }}_Time" value="{{ value.strftime('%H:%M') }}"
+    {% if required %} required {% endif %} />
+</div>
+
+{% endmacro %}

@@ -60,7 +60,25 @@ def add_shipping_data():
             # Handle the error and provide feedback to the user
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
-    return render_template("add_shipping_schedule.html")
+    return render_template(
+        "shipping_schedule.html",
+        mode="Add",
+        data=Data_shipping_schedule(
+            carrier="",
+            service="",
+            routing="",
+            MV="",
+            POL="",
+            POD="",
+            CY_Open=datetime.now(),
+            SI_Cut_Off=datetime.now(),
+            CY_CY_CLS=datetime.now(),
+            ETD=datetime.now(),
+            ETA=datetime.now(),
+            status="s1",
+            user_id=current_user.id,
+        ),
+    )
 
 
 @admin.route("/edit_shipping_schedule/<int:id>", methods=["GET", "POST"])
@@ -100,7 +118,7 @@ def edit_shipping_data(id):
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
-    return render_template("admin_edit_shipping_data.html", shipping_data=shipping_data)
+    return render_template("shipping_schedule.html", mode="Edit", data=shipping_data)
 
 
 @admin.route("/delete_shipping_schedule/<int:id>", methods=["POST"])
@@ -299,4 +317,6 @@ def search():
     else:
         results = Data_shipping_schedule.query.all()
 
-    return render_template("shipping_table_results.html", results=results, current_user=current_user)
+    return render_template(
+        "shipping_table_results.html", results=results, current_user=current_user
+    )
