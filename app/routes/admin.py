@@ -50,7 +50,7 @@ def add_shipping_data():
                 ),
                 ETD=datetime.strptime(request.form["ETD"], "%Y-%m-%d"),
                 ETA=datetime.strptime(request.form["ETA"], "%Y-%m-%d"),
-                status="s1",
+                status=request.form["status"],
                 user_id=current_user.id,
             )
             db.session.add(new_data)
@@ -113,6 +113,7 @@ def edit_shipping_data(id):
             )
             shipping_data.ETD = datetime.strptime(request.form["ETD"], "%Y-%m-%d")
             shipping_data.ETA = datetime.strptime(request.form["ETA"], "%Y-%m-%d")
+            shipping_data.status = request.form["status"]
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
@@ -281,21 +282,28 @@ def search():
     q = request.args.get("q")
     show_all = request.args.get("show-all")
 
-    query = db.session.query(Data_shipping_schedule).join(
-        Data_booking,
-        and_(Data_shipping_schedule.id == Data_booking.data_shipping_schedule_id)
-    ).join(
-        Data_confirm_order, and_(
-            Data_shipping_schedule.id == Data_confirm_order.data_shipping_schedule_id)
-    ).options(
-        joinedload(Data_shipping_schedule.bookings),
-        joinedload(Data_shipping_schedule.confirm_orders)
+    query = (
+        db.session.query(Data_shipping_schedule)
+        .join(
+            Data_booking,
+            and_(Data_shipping_schedule.id == Data_booking.data_shipping_schedule_id),
+        )
+        .join(
+            Data_confirm_order,
+            and_(
+                Data_shipping_schedule.id
+                == Data_confirm_order.data_shipping_schedule_id
+            ),
+        )
+        .options(
+            joinedload(Data_shipping_schedule.bookings),
+            joinedload(Data_shipping_schedule.confirm_orders),
+        )
     )
 
     if q:
         # print(f"Search query: {q}")  # Debugging line
         results = (
-
             query.filter(
                 (Data_shipping_schedule.carrier.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.service.ilike(f"%{q}%"))

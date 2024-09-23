@@ -26,6 +26,7 @@
     {{ render_input_date(name='ETA', id='ETA', required=True, value=data.ETA) }}
 
     {% if current_user.rank=='admin' %}
+    {{ render_input_text(name='status', id='status', required=True, value=data.status) }}
     <div class="d-inline-flex gap-2">
       <a class="btn btn-danger" href="{{ url_for('admin.admin_dashboard') }}">Cancel</a>
       <input class="btn btn-primary" type="submit" value="Submit" />
