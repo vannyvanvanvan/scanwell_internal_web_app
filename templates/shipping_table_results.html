@@ -55,88 +55,100 @@
   </td>
 </tr>
 <tr>
-  <td colspan="14">
+  <td colspan="15" class="bg-body-tertiary ps-4 pe-4 pt-0 pb-0">
     <div class="collapse" id="collapse{{ result.id }}">
-      <div class="d-flex justify-content-between align-items-baseline gap-2">
+      <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
         <h5>Bookings</h5>
         <a class="btn btn-outline-primary">Add Booking</a>
       </div>
-      <table class="table table-striped align-middle">
-        <thead>
-          <th>CS</th>
-          <th>Week</th>
-          <th>SO</th>
-          <th>Size</th>
-          <th>Final Destination</th>
-          <th>Contract/Coloader</th>
-          <th>Cost</th>
-          <th>Date Valid</th>
-          <th>Booking Actions</th>
-        </thead>
-        <tbody>
-          {% if result.bookings %}
-          {% for booking in result.bookings %}
-          <tr>
-            <td>{{ booking.CS }}</td>
-            <td>{{ booking.week }}</td>
-            <td>{{ booking.SO }}</td>
-            <td>{{ booking.size }}</td>
-            <td>{{ booking.Final_Destination }}</td>
-            <td>{{ booking.Contract_or_Coloader }}</td>
-            <td>{{ booking.cost }}</td>
-            <td>{{ booking.Date_Valid.strftime('%Y-%m-%d') }}</td>{% if current_user.rank == 'admin' %}
-            <a class="btn btn-warning" href="{{ url_for('admin.edit_shipping_data', id=result.id) }}"><i
-                class="bi bi-pencil-square"></i></a>
-            <form action="{{ url_for('admin.delete_shipping_data', id=result.id) }}" method="POST">
-              <button class="btn btn-danger is-danger" type="submit"
-                onclick="return confirm('Are you sure you want to delete this item?');"><i
-                  class="bi bi-trash3-fill"></i></button>
-            </form>
-            {% elif current_user.id == result.user_id %}
-            <a class="btn btn-warning" href="{{ url_for('user.edit_shipping_data', id=result.id) }}"><i
-                class="bi bi-pencil-square"></i></a>
-            <form action="{{ url_for('user.delete_shipping_data', id=result.id) }}" method="POST">
-              <button class="btn btn-danger is-danger" type="submit"
-                onclick="return confirm('Are you sure you want to delete this item?');"><i
-                  class="bi bi-trash3-fill"></i></button>
-            </form>
+      <div class="rounded overflow-hidden mt-2 mb-2">
+        <table class="table align-middle m-0">
+          <thead>
+            <th>CS</th>
+            <th>Week</th>
+            <th>SO</th>
+            <th>Size</th>
+            <th>Final Destination</th>
+            <th>Contract/Coloader</th>
+            <th>Cost</th>
+            <th>Date Valid</th>
+            <th>Booking Actions</th>
+          </thead>
+          <tbody>
+            {% if result.bookings %}
+            {% for booking in result.bookings %}
+            <tr>
+              <td>{{ booking.CS }}</td>
+              <td>{{ booking.week }}</td>
+              <td>{{ booking.SO }}</td>
+              <td>{{ booking.size }}</td>
+              <td>{{ booking.Final_Destination }}</td>
+              <td>{{ booking.Contract_or_Coloader }}</td>
+              <td>{{ booking.cost }}</td>
+              <td>{{ booking.Date_Valid.strftime('%Y-%m-%d') }}</td>
+              <td>
+                <div class="d-inline-flex gap-2">
+                  {% if current_user.rank == 'admin' %}
+                  <a class="btn btn-warning" href="{{ url_for('admin.edit_shipping_data', id=result.id) }}"><i
+                      class="bi bi-pencil-square"></i></a>
+                  <form action="{{ url_for('admin.delete_shipping_data', id=result.id) }}" method="POST">
+                    <button class="btn btn-danger is-danger" type="submit"
+                      onclick="return confirm('Are you sure you want to delete this item?');"><i
+                        class="bi bi-trash3-fill"></i></button>
+                  </form>
+                  {% elif current_user.id == result.user_id %}
+                  <a class="btn btn-warning" href="{{ url_for('user.edit_shipping_data', id=result.id) }}"><i
+                      class="bi bi-pencil-square"></i></a>
+                  <form action="{{ url_for('user.delete_shipping_data', id=result.id) }}" method="POST">
+                    <button class="btn btn-danger is-danger" type="submit"
+                      onclick="return confirm('Are you sure you want to delete this item?');"><i
+                        class="bi bi-trash3-fill"></i></button>
+                  </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+              <td colspan="14">No bookings found.</td>
+            </tr>
             {% endif %}
-          </tr>
-          {% endfor %}
-          {% else %}
-          <tr>
-            <td colspan="14">No bookings found.</td>
-          </tr>
-          {% endif %}
-        </tbody>
-      </table>
-      <h5>Confirmation</h5>
-      <table class="table table-striped align-middle">
-        <thead>
-          <th>Shipper</th>
-          <th>Consignee</th>
-          <th>Term</th>
-          <th>Salesman</th>
-          <th>SR</th>
-          <th>remark</th>
-        </thead>
-        <tbody>
-          {% if result.confirm_orders %}
-          <tr>
-            <td>{{ result.confirm_orders.shipper }}</td>
-            <td>{{ result.confirm_orders.consignee }}</td>
-            <td>{{ result.confirm_orders.term }}</td>
-            <td>{{ result.confirm_orders.salesman }}</td>
-            <td>{{ result.confirm_orders.SR }}</td>
-            <td>{{ result.confirm_orders.remark }}</td>
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="14">Order not confirmed.</td>
-          </tr>
-          {% endif %}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
+        <h5>Confirmation</h5>
+      </div>
+      <div class="rounded overflow-hidden mt-2 mb-4">
+        <table class="table align-middle m-0">
+          <thead>
+            <th>Shipper</th>
+            <th>Consignee</th>
+            <th>Term</th>
+            <th>Salesman</th>
+            <th>SR</th>
+            <th>remark</th>
+          </thead>
+          <tbody>
+            {% if result.confirm_orders %}
+            <tr>
+              <td>{{ result.confirm_orders.shipper }}</td>
+              <td>{{ result.confirm_orders.consignee }}</td>
+              <td>{{ result.confirm_orders.term }}</td>
+              <td>{{ result.confirm_orders.salesman }}</td>
+              <td>{{ result.confirm_orders.SR }}</td>
+              <td>{{ result.confirm_orders.remark }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="14">Order not confirmed.</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </td>
 </tr>
