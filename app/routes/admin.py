@@ -140,8 +140,8 @@ def delete_shipping_data(id):
 @role_required("admin")
 def add_booking_data(schedule_id):
     shipping_data = Data_shipping_schedule.query.get_or_404(schedule_id)
-    if shipping_data.user_id != current_user.id or shipping_data.status != "s2":
-        flash("You are not allowed to add booking data for this schedule.")
+    if shipping_data.status == "s3":
+        flash("Schedule already confirmed. Unable to add booking.")
         return redirect(url_for("admin.admin_dashboard"))
 
     if request.method == "POST":
@@ -156,14 +156,27 @@ def add_booking_data(schedule_id):
                 Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
                 data_shipping_schedule_id=schedule_id,
                 user_id=current_user.id,
-                status="s2",
             )
             db.session.add(new_data)
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
-    return render_template("admin_add_booking_data.html", schedule_id=schedule_id)
+    return render_template(
+        "edit_booking.html",
+        schedule_id=schedule_id,
+        data=Data_booking(
+            CS="",
+            week=datetime.now().isocalendar().week,
+            size="",
+            Final_Destination="",
+            Contract_or_Coloader="",
+            cost=0,
+            Date_Valid=datetime.now(),
+            data_shipping_schedule_id=schedule_id,
+            user_id=current_user.id,
+        ),
+    )
 
 
 @admin.route("/edit_booking/<int:id>", methods=["GET", "POST"])
@@ -187,7 +200,7 @@ def edit_booking_data(id):
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
-    return render_template("admin_edit_booking_data.html", booking_data=booking_data)
+    return render_template("edit_booking.html", data=booking_data)
 
 
 @admin.route("/delete_booking/<int:id>", methods=["POST"])

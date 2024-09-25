@@ -8,6 +8,16 @@
 
 {% endmacro %}
 
+{% macro render_input_number(name='', id='', value='', required=False) %}
+
+<div class="input-group mb-3">
+  <label class="input-group-text" for="{{ id }}">{{ name }}</label>
+  <input class="form-control" type="number" name="{{ id }}" id="{{ id }}" value="{{ value }}" {% if required %} required
+    {% endif %} />
+</div>
+
+{% endmacro %}
+
 {% macro render_input_date(name='', id='', value='', required=False) %}
 
 <div class="input-group mb-3">
