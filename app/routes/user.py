@@ -118,10 +118,8 @@ def edit_shipping_data(id):
                 ),
                 "%Y-%m-%d %H:%M",
             )
-            shipping_data.ETD = datetime.strptime(
-                request.form["ETD"], "%Y-%m-%d")
-            shipping_data.ETA = datetime.strptime(
-                request.form["ETA"], "%Y-%m-%d")
+            shipping_data.ETD = datetime.strptime(request.form["ETD"], "%Y-%m-%d")
+            shipping_data.ETA = datetime.strptime(request.form["ETA"], "%Y-%m-%d")
             db.session.commit()
         except ValueError as e:
             # Handle the error and provide feedback to the user
@@ -153,8 +151,11 @@ def delete_shipping_data(id):
 @role_required("user")
 def add_booking_data(schedule_id):
     shipping_data = Data_shipping_schedule.query.get_or_404(schedule_id)
-    if shipping_data.user_id != current_user.id or shipping_data.status != "s2":
+    if shipping_data.user_id != current_user.id:
         flash("You are not allowed to add booking data for this schedule.")
+        return redirect(url_for("user.user_dashboard"))
+    if shipping_data.status == "s3":
+        flash("Schedule already confirmed. Unable to add booking.")
         return redirect(url_for("user.user_dashboard"))
 
     if request.method == "POST":
@@ -166,19 +167,34 @@ def add_booking_data(schedule_id):
                 Final_Destination=request.form["Final_Destination"],
                 Contract_or_Coloader=request.form["Contract_or_Coloader"],
                 cost=int(request.form["cost"]),
-                Date_Valid=datetime.strptime(
-                    request.form["Date_Valid"], "%Y-%m-%d"),
+                Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
                 data_shipping_schedule_id=schedule_id,
                 user_id=current_user.id,
-                status="s2",
             )
-
             db.session.add(new_data)
+
+            shipping_data.status = "s2"
             db.session.commit()
+
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("user.user_dashboard"))
-    return render_template("user_add_booking_data.html", schedule_id=schedule_id)
+    return render_template(
+        "edit_booking.html",
+        schedule_id=schedule_id,
+        mode="Add",
+        data=Data_booking(
+            CS="",
+            week=datetime.now().isocalendar().week,
+            size="",
+            Final_Destination="",
+            Contract_or_Coloader="",
+            cost=0,
+            Date_Valid=datetime.now(),
+            data_shipping_schedule_id=schedule_id,
+            user_id=current_user.id,
+        ),
+    )
 
 
 @user.route("/edit_booking/<int:id>", methods=["GET", "POST"])
@@ -187,6 +203,7 @@ def add_booking_data(schedule_id):
 def edit_booking_data(id):
     booking_data = Data_booking.query.get_or_404(id)
     if booking_data.user_id != current_user.id:
+        flash("You are not allowed to edit booking data for this schedule.")
         return redirect(url_for("user.user_dashboard"))
 
     if request.method == "POST":
@@ -200,14 +217,11 @@ def edit_booking_data(id):
             booking_data.Date_Valid = datetime.strptime(
                 request.form["Date_Valid"], "%Y-%m-%d"
             )
-            booking_data.data_shipping_schedule_id = request.form[
-                "data_shipping_schedule_id"
-            ]
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("user.user_dashboard"))
-    return render_template("user_edit_booking_data.html", booking_data=booking_data)
+    return render_template("edit_booking.html", mode="Edit", data=booking_data)
 
 
 @user.route("/delete_booking/<int:id>", methods=["POST"])
@@ -245,8 +259,7 @@ def add_confirm_order_data(schedule_id):
                 term=request.form["term"],
                 salesman=request.form["salesman"],
                 cost=int(request.form["cost"]),
-                Date_Valid=datetime.strptime(
-                    request.form["Date_Valid"], "%Y-%m-%d"),
+                Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
                 SR=int(request.form["SR"]),
                 remark=request.form["remark"],
                 data_shipping_schedule_id=schedule_id,
@@ -316,21 +329,28 @@ def search():
     q = request.args.get("q")
     show_all = request.args.get("show-all")
 
-    query = db.session.query(Data_shipping_schedule).join(
-        Data_booking,
-        and_(Data_shipping_schedule.id == Data_booking.data_shipping_schedule_id)
-    ).join(
-        Data_confirm_order, and_(
-            Data_shipping_schedule.id == Data_confirm_order.data_shipping_schedule_id)
-    ).options(
-        joinedload(Data_shipping_schedule.bookings),
-        joinedload(Data_shipping_schedule.confirm_orders)
+    query = (
+        db.session.query(Data_shipping_schedule)
+        .join(
+            Data_booking,
+            and_(Data_shipping_schedule.id == Data_booking.data_shipping_schedule_id),
+        )
+        .join(
+            Data_confirm_order,
+            and_(
+                Data_shipping_schedule.id
+                == Data_confirm_order.data_shipping_schedule_id
+            ),
+        )
+        .options(
+            joinedload(Data_shipping_schedule.bookings),
+            joinedload(Data_shipping_schedule.confirm_orders),
+        )
     )
 
     if q:
         # print(f"Search query: {q}")  # Debugging line
         results = (
-
             query.filter(
                 (Data_shipping_schedule.carrier.ilike(f"%{q}%"))
                 | (Data_shipping_schedule.service.ilike(f"%{q}%"))

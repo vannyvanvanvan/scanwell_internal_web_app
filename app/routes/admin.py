@@ -158,13 +158,17 @@ def add_booking_data(schedule_id):
                 user_id=current_user.id,
             )
             db.session.add(new_data)
+
+            shipping_data.status = "s2"
             db.session.commit()
+
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
     return render_template(
         "edit_booking.html",
         schedule_id=schedule_id,
+        mode="Add",
         data=Data_booking(
             CS="",
             week=datetime.now().isocalendar().week,
@@ -200,7 +204,7 @@ def edit_booking_data(id):
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
-    return render_template("edit_booking.html", data=booking_data)
+    return render_template("edit_booking.html", mode="Edit", data=booking_data)
 
 
 @admin.route("/delete_booking/<int:id>", methods=["POST"])

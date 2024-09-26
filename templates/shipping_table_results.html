@@ -59,8 +59,15 @@
     <div class="collapse" id="collapse{{ result.id }}">
       <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
         <h5>Bookings</h5>
+
+        {% if current_user.rank == 'admin' %}
         <a class="btn btn-outline-primary" href="{{ url_for('admin.add_booking_data', schedule_id=result.id) }}">Add
           Booking</a>
+        {% elif current_user.id == result.user_id %}
+        <a class="btn btn-outline-primary" href="{{ url_for('user.add_booking_data', schedule_id=result.id) }}">Add
+          Booking</a>
+        {% endif %}
+
       </div>
       <div class="border rounded overflow-hidden mt-2 mb-2">
         <table class="table align-middle m-0">
