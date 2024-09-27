@@ -12,21 +12,18 @@ project/
 │   │   ├── admin.py
 ├── templates/
 │   ├── _render_field.html
-│   ├── admin_add_shipping_data.html
-│   ├── admin_edit_shipping_data.html
-│   ├── admin_header.html
-│   ├── admin_search_results.html
-│   ├── admin_shipping_table.html
-│   ├── admin.html
+│   ├── _render_input.html
+│   ├── add_booking.html
+│   ├── add_confirm_order.html
 │   ├── base.html
+│   ├── dashboard.html
+│   ├── header.html
 │   ├── home.html
+│   ├── search.html
 │   ├── login.html
-│   ├── user_add_shipping_data.html
-│   ├── user_edit_shipping_data.html
-│   ├── user_header.html
-│   ├── user_search_results.html
-│   ├── user_shipping_table.html
-│   ├── user.html
+│   ├── shipping_schedule.html
+│   ├── shipping_table_results.html
+│   ├── shipping_table.html
 ├── static/
 │   ├── auto_comp.js
 │   ├── instances/
@@ -37,6 +34,7 @@ project/
 ├── csv_importer.py
 ├── data.csv
 ├── db_setup.py
+├── Query_terminal.py
 ├── driver.py
 ├── README.md
 ├── requirements.txt
