@@ -14,15 +14,9 @@
 </header>
 
 <section class="container p-2 pt-4">
-  {% with messages=get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-  <div class="flashes wrap">
-    {% for category, message in messages %}
-    <div class="alert alert-primary {{ category }}">{{ message }}</div>
-    {% endfor %}
-  </div>
-  {% endif %}
-  {% endwith %}
+
+  {% include 'flash.html' %}
+  
   <form method="POST" action="{{ url_for('b_login.login') }}">
     {{ login_detail.csrf_token }}
 
