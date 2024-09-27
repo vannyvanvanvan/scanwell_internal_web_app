@@ -37,5 +37,6 @@ project/
 ├── Query_terminal.py
 ├── driver.py
 ├── README.md
+├── Query_terminal.py
 ├── requirements.txt
 ├── structure.txt
