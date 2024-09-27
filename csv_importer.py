@@ -110,8 +110,6 @@ for index, row in df.iterrows():
         consignee=row['consignee'],
         term=row['term'],
         salesman=row['salesman'],
-        cost=row['cost'],
-        Date_Valid=row['Date_Valid'],
         SR=row['SR'],
         remark=row['remark'],
         date_created=datetime.utcnow(),

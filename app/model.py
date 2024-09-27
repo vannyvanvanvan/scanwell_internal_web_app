@@ -77,8 +77,6 @@ class Data_confirm_order(db.Model):
     consignee = db.Column(db.String(100), nullable=False)                                   #   Consignee 
     term = db.Column(db.String(100), nullable=False)                                        #   Shipping term
     salesman = db.Column(db.String(100), nullable=False)                                    #   Salesman
-    cost = db.Column(db.Integer, nullable=False)                                            #   Cost
-    Date_Valid = db.Column(db.DateTime, nullable=False)                                     #   Rate valid (should be in datetime format)
     SR = db.Column(db.Integer, nullable=False)  #Will change later                          #   Selling rate 
     remark = db.Column(db.String(1000), nullable=False)                                     #   Comments
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
