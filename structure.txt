@@ -39,5 +39,6 @@ project/
 ├── db_setup.py
 ├── driver.py
 ├── README.md
+├── Query_terminal.py
 ├── requirements.txt
 ├── structure.txt

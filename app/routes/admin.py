@@ -1,6 +1,8 @@
 from datetime import datetime
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from io import StringIO
+from flask import Blueprint, make_response, render_template, request, redirect, url_for, flash
 from flask_login import current_user, login_required
+import pandas as pd
 from ..restriction import role_required
 from app.model import db, Data_shipping_schedule, Data_booking, Data_confirm_order
 from sqlalchemy.orm import joinedload
@@ -329,3 +331,67 @@ def search():
     return render_template(
         "shipping_table_results.html", results=results, current_user=current_user
     )
+
+@admin.route('/csv/export', methods=["GET", "POST"])
+@login_required
+@role_required("admin")
+def export_csv():
+    
+    # Query the database for all relevant data
+    schedules = Data_shipping_schedule.query.all()
+    bookings = Data_booking.query.all()
+    confirm_orders = Data_confirm_order.query.all()
+
+    # Combine data into a pandas DataFrame
+    data = []
+
+    for schedule in schedules:
+        booking = next((b for b in bookings if b.data_shipping_schedule_id == schedule.id), None)
+        confirm_order = next((c for c in confirm_orders if c.data_shipping_schedule_id == schedule.id), None)
+
+        data.append({
+            'carrier': schedule.carrier,
+            'service': schedule.service,
+            'routing': schedule.routing,
+            'MV': schedule.MV,
+            'POL': schedule.POL,
+            'POD': schedule.POD,
+            'CY_Open': schedule.CY_Open,
+            'SI_Cut_Off': schedule.SI_Cut_Off,
+            'CY_CY_CLS': schedule.CY_CY_CLS,
+            'ETD': schedule.ETD,
+            'ETA': schedule.ETA,
+            #'status': schedule.status,
+            #'user_id': schedule.user_id,
+            'CS': booking.CS if booking else '',
+            'week': booking.week if booking else '',
+            'size': booking.size if booking else '',
+            'Final_Destination': booking.Final_Destination if booking else '',
+            'Contract_or_Coloader': booking.Contract_or_Coloader if booking else '',
+            'cost': booking.cost if booking else '',
+            'Date_Valid': booking.Date_Valid if booking else '',
+            'shipper': confirm_order.shipper if confirm_order else '',
+            'consignee': confirm_order.consignee if confirm_order else '',
+            'term': confirm_order.term if confirm_order else '',
+            'salesman': confirm_order.salesman if confirm_order else '',
+            'SR': confirm_order.SR if confirm_order else '',
+            'remark': confirm_order.remark if confirm_order else ''
+        })
+
+    # Convert the data to a pandas DataFrame
+    df = pd.DataFrame(data)
+
+    # Create a CSV from the DataFrame
+    csv_output = StringIO()
+    df.to_csv(csv_output, index=False)
+    csv_output.seek(0)
+
+    # Send the CSV file as a response
+    response = make_response(csv_output.getvalue())
+    response.headers['Content-Disposition'] = 'attachment; filename=data_export.csv'
+    response.headers['Content-Type'] = 'text/csv'
+    
+    #For frontend members
+    #Put this <a href="{{ url_for('admin.export_csv') }}" class="btn btn-primary">Export Data to CSV</a> to a suitable place
+    #It will directly download the file
+    return response
