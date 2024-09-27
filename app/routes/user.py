@@ -292,6 +292,53 @@ def add_confirm_order_data(schedule_id):
     )
 
 
+@user.route("/edit_confirm_order/<int:id>", methods=["GET", "POST"])
+@login_required
+@role_required("user")
+def edit_confirm_order_data(id):
+    confirm_order_data = Data_confirm_order.query.get_or_404(id)
+    if confirm_order_data.user_id != current_user.id:
+        flash("You are not allowed to add confirm order data for this schedule.")
+        return redirect(url_for("user.user_dashboard"))
+
+    if request.method == "POST":
+        try:
+            confirm_order_data.shipper = request.form["shipper"]
+            confirm_order_data.consignee = request.form["consignee"]
+            confirm_order_data.term = request.form["term"]
+            confirm_order_data.salesman = request.form["salesman"]
+            confirm_order_data.cost = int(request.form["cost"])
+            confirm_order_data.Date_Valid = datetime.strptime(
+                request.form["Date_Valid"], "%Y-%m-%d"
+            )
+            confirm_order_data.SR = int(request.form["SR"])
+            confirm_order_data.remark = request.form["remark"]
+            db.session.commit()
+        except ValueError as e:
+            return f"An error occurred: {str(e)}"
+        return redirect(url_for("user.user_dashboard"))
+    return render_template("confirm_order.html", data=confirm_order_data)
+
+
+@user.route("/delete_confirm_order/<int:id>", methods=["POST"])
+@login_required
+@role_required("user")
+def delete_confirm_order_data(id):
+    confirm_order_data = Data_confirm_order.query.get_or_404(id)
+    if confirm_order_data.user_id != current_user.id:
+        flash("You do not have permission to cancel this order confirmation.")
+        return redirect(url_for("user.user_dashboard"))
+
+    db.session.delete(confirm_order_data)
+    shipping_schedule = Data_shipping_schedule.query.get_or_404(
+        confirm_order_data.data_shipping_schedule_id
+    )
+    shipping_schedule.status = "s2"
+    db.session.commit()
+    flash("Order confirmation has been deleted.", "success")
+    return redirect(url_for("user.user_dashboard"))
+
+
 @user.route("/search", methods=["GET", "POST"])
 @login_required
 @role_required("user")

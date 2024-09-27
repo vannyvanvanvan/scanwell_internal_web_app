@@ -29,7 +29,7 @@
   {% endif %}
 
   <td>
-    <div class="d-inline-flex gap-2">
+    <div class="d-flex justify-content-end gap-2">
       <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse"
         data-bs-target="#collapse{{ result.id }}" aria-expanded="false" aria-controls="collapse{{ result.id }}">
         <i class="bi bi-zoom-in"></i>
@@ -62,11 +62,9 @@
 
         {% if result.status != "s3" %}
         {% if current_user.rank == 'admin' %}
-        <a class="btn btn-outline-primary" href="{{ url_for('admin.add_booking_data', schedule_id=result.id) }}">Add
-          Booking</a>
+        <a class="btn btn-outline-primary" href="{{ url_for('admin.add_booking_data', schedule_id=result.id) }}"><i class="bi bi-plus-lg"></i></a>
         {% elif current_user.id == result.user_id %}
-        <a class="btn btn-outline-primary" href="{{ url_for('user.add_booking_data', schedule_id=result.id) }}">Add
-          Booking</a>
+        <a class="btn btn-outline-primary" href="{{ url_for('user.add_booking_data', schedule_id=result.id) }}"><i class="bi bi-plus-lg"></i></a>
         {% endif %}
         {% endif %}
 
@@ -88,7 +86,7 @@
             <th>Contract/Coloader</th>
             <th>Cost</th>
             <th>Date Valid</th>
-            <th>Booking Actions</th>
+            <th></th>
           </thead>
           <tbody>
             {% if result.bookings %}
@@ -108,7 +106,7 @@
               <td>{{ booking.cost }}</td>
               <td>{{ booking.Date_Valid.strftime('%Y-%m-%d') }}</td>
               <td>
-                <div class="d-inline-flex gap-2">
+                <div class="d-flex justify-content-end gap-2">
                   {% if current_user.rank == 'admin' %}
                   <a class="btn btn-warning" href="{{ url_for('admin.edit_booking_data', id=booking.id) }}"><i
                       class="bi bi-pencil-square"></i></a>
@@ -167,6 +165,7 @@
             <th>Salesman</th>
             <th>SR</th>
             <th>remark</th>
+            <th></th>
           </thead>
           <tbody>
             {% if result.confirm_orders %}
@@ -182,6 +181,27 @@
               <td>{{ result.confirm_orders.salesman }}</td>
               <td>{{ result.confirm_orders.SR }}</td>
               <td>{{ result.confirm_orders.remark }}</td>
+              <td>
+                <div class="d-flex justify-content-end gap-2">
+                  {% if current_user.rank == 'admin' %}
+                  <a class="btn btn-warning" href="{{ url_for('admin.edit_confirm_order_data', id=result.id) }}"><i
+                      class="bi bi-pencil-square"></i></a>
+                  <form action="{{ url_for('admin.delete_confirm_order_data', id=result.id) }}" method="POST">
+                    <button class="btn btn-danger is-danger" type="submit"
+                      onclick="return confirm('Are you sure you want to cancel this order confirmation?');"><i
+                        class="bi bi-x-lg"></i></button>
+                  </form>
+                  {% elif current_user.id == result.user_id %}
+                  <a class="btn btn-warning" href="{{ url_for('user.edit_confirm_order_data', id=result.id) }}"><i
+                      class="bi bi-pencil-square"></i></a>
+                  <form action="{{ url_for('user.delete_confirm_order_data', id=result.id) }}" method="POST">
+                    <button class="btn btn-danger is-danger" type="submit"
+                      onclick="return confirm('Are you sure you want to cancel this order confirmation?');"><i
+                        class="bi bi-x-lg"></i></button>
+                  </form>
+                  {% endif %}
+                </div>
+              </td>
             </tr>
             {% else %}
             <tr>

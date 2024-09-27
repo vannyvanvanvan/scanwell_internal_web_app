@@ -300,8 +300,12 @@ def edit_confirm_order_data(id):
 def delete_confirm_order_data(id):
     confirm_order_data = Data_confirm_order.query.get_or_404(id)
     db.session.delete(confirm_order_data)
+    shipping_schedule = Data_shipping_schedule.query.get_or_404(
+        confirm_order_data.schedule_id
+    )
+    shipping_schedule.status = "s2"
     db.session.commit()
-    flash("Confirm order data has been deleted.", "success")
+    flash("Order confirmation has been deleted.", "success")
     return redirect(url_for("admin.admin_dashboard"))
 
 
