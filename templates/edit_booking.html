@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% from '_render_input.html' import render_input_text, render_input_number, render_input_date %}
+
+{% block head %}
+<title>{{ mode }} Booking</title>
+{% endblock %}
+
+{% block body %}
+
+{% include 'header.html' %}
+<section class="container p-4">
+
+  <h3>{{ mode }} Booking</h3>
+
+  <form method="POST" class="mt-4">
+
+    {{ render_input_text(name='CS', id='CS', required=True, value=data.CS) }}
+    {{ render_input_number(name='Week', id='week', required=True, value=data.week) }}
+    {{ render_input_text(name='Size', id='size', required=True, value=data.size) }}
+    {{ render_input_text(name='Final Destination', id='Final_Destination', required=True, value=data.Final_Destination)
+    }}
+    {{ render_input_text(name='Contract or Coloader', id='Contract_or_Coloader', required=True,
+    value=data.Contract_or_Coloader) }}
+    {{ render_input_number(name='Cost', id='cost', required=True, value=data.cost) }}
+    {{ render_input_date(name='Date Valid', id='Date_Valid', required=True, value=data.Date_Valid) }}
+
+    <div class="d-inline-flex gap-2">
+      <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Submit" />
+    </div>
+  </form>
+</section>
+
+{% endblock %}

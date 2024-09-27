@@ -1,98 +1,222 @@
 {% if results %}
-  {% for result in results %}
-    <tr>
+{% for result in results %}
+<tr>
+  {% if current_user.rank == 'admin' %}
+  <td>{{ result.id }}</td>
+  <td>{{ result.date_created.strftime('%Y-%m-%d %H:%M') }}</td>
+  {% endif %}
+
+  <td>{{ result.carrier }}</td>
+  <td>{{ result.service }}</td>
+  <td>{{ result.routing }}</td>
+  <td>{{ result.MV }}</td>
+  <td>{{ result.POL }}</td>
+  <td>{{ result.POD }}</td>
+  <td>{{ result.CY_Open.strftime('%Y-%m-%d') }}</td>
+  <td>{{ result.SI_Cut_Off.strftime('%Y-%m-%d %H:%M') }}</td>
+  <td>{{ result.CY_CY_CLS.strftime('%Y-%m-%d %H:%M') }}</td>
+  <td>{{ result.ETD.strftime('%Y-%m-%d') }}</td>
+  <td>{{ result.ETA.strftime('%Y-%m-%d') }}</td>
+
+  {% if result.status=="s1" %}
+  <td>No Booking</td>
+  {% elif result.status=="s2" %}
+  <td>Not confirmed</td>
+  {% elif result.status=="s3" %}
+  <td>Confirmed</td>
+  {% else %}
+  <td>Error</td>
+  {% endif %}
+
+  <td>
+    <div class="d-flex justify-content-end gap-2">
+      <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse"
+        data-bs-target="#collapse{{ result.id }}" aria-expanded="false" aria-controls="collapse{{ result.id }}">
+        <i class="bi bi-zoom-in"></i>
+      </button>
       {% if current_user.rank == 'admin' %}
-        <td>{{ result.id }}</td>
-        <td>{{ result.date_created.strftime('%Y-%m-%d %H:%M') }}</td>
+      <a class="btn btn-warning" href="{{ url_for('admin.edit_shipping_data', id=result.id) }}"><i
+          class="bi bi-pencil-square"></i></a>
+      <form action="{{ url_for('admin.delete_shipping_data', id=result.id) }}" method="POST">
+        <button class="btn btn-danger is-danger" type="submit"
+          onclick="return confirm('Are you sure you want to delete this schedule?');"><i
+            class="bi bi-trash3-fill"></i></button>
+      </form>
+      {% elif current_user.id == result.user_id %}
+      <a class="btn btn-warning" href="{{ url_for('user.edit_shipping_data', id=result.id) }}"><i
+          class="bi bi-pencil-square"></i></a>
+      <form action="{{ url_for('user.delete_shipping_data', id=result.id) }}" method="POST">
+        <button class="btn btn-danger is-danger" type="submit"
+          onclick="return confirm('Are you sure you want to delete this schedule?');"><i
+            class="bi bi-trash3-fill"></i></button>
+      </form>
       {% endif %}
+    </div>
+  </td>
+</tr>
+<tr>
+  <td colspan="15" class="bg-body-tertiary ps-4 pe-4 pt-0 pb-0">
+    <div class="collapse" id="collapse{{ result.id }}">
+      <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
+        <h5>Bookings</h5>
 
-      <td>{{ result.carrier }}</td>
-      <td>{{ result.service }}</td>
-      <td>{{ result.routing }}</td>
-      <td>{{ result.MV }}</td>
-      <td>{{ result.POL }}</td>
-      <td>{{ result.POD }}</td>
-      <td>{{ result.CY_Open.strftime('%Y-%m-%d') }}</td>
-      <td>{{ result.SI_Cut_Off.strftime('%Y-%m-%d %H:%M') }}</td>
-      <td>{{ result.CY_CY_CLS.strftime('%Y-%m-%d %H:%M') }}</td>
-      <td>{{ result.ETD.strftime('%Y-%m-%d') }}</td>
-      <td>{{ result.ETA.strftime('%Y-%m-%d') }}</td>
+        {% if result.status != "s3" %}
+        {% if current_user.rank == 'admin' %}
+        <a class="btn btn-outline-primary" href="{{ url_for('admin.add_booking_data', schedule_id=result.id) }}"><i class="bi bi-plus-lg"></i></a>
+        {% elif current_user.id == result.user_id %}
+        <a class="btn btn-outline-primary" href="{{ url_for('user.add_booking_data', schedule_id=result.id) }}"><i class="bi bi-plus-lg"></i></a>
+        {% endif %}
+        {% endif %}
 
-      <td>
-        <div class="d-inline-flex gap-2">
-          <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ result.id }}" aria-expanded="false" aria-controls="collapse{{ result.id }}">
-            Details
-            <i class="bi bi-caret-down-fill"></i>
-          </button>
-          {% if current_user.rank == 'admin' %}
-            <a class="btn btn-warning" href="{{ url_for('admin.edit_shipping_data', id=result.id) }}">Edit</a>
-            <form action="{{ url_for('admin.delete_shipping_data', id=result.id) }}" method="POST">
-              <button class="btn btn-danger is-danger" type="submit" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
-            </form>
-          {% elif current_user.id == result.user_id %}
-            <a class="btn btn-primary" href="{{ url_for('user.edit_shipping_data', id=result.id) }}">Edit</a>
-            <form action="{{ url_for('user.delete_shipping_data', id=result.id) }}" method="POST">
-              <button class="btn btn-danger is-danger" type="submit" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
-            </form>
-          {% endif %}
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td colspan="14">
-        <div class="collapse" id="collapse{{ result.id }}">
-          <table class="table table-striped align-middle">
-            <thead>
-              <th>CS</th>
-              <th>Week</th>
-              <th>SO</th>
-              <th>Size</th>
-              <th>Final Destination</th>
-              <th>Contract/Coloader</th>
-              <th>Cost</th>
-              <th>Date Valid</th>
-            </thead>
-            <tbody>
-              {% for booking in result.bookings %}
-                <tr>
-                  <td>{{ booking.CS }}</td>
-                  <td>{{ booking.week }}</td>
-                  <td>{{ booking.SO }}</td>
-                  <td>{{ booking.size }}</td>
-                  <td>{{ booking.Final_Destination }}</td>
-                  <td>{{ booking.Contract_or_Coloader }}</td>
-                  <td>{{ booking.cost }}</td>
-                  <td>{{ booking.Date_Valid.strftime('%Y-%m-%d') }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-          <table class="table table-striped align-middle">
-            <thead>
-              <th>Shipper</th>
-              <th>Consignee</th>
-              <th>Term</th>
-              <th>Salesman</th>
-              <th>SR</th>
-              <th>remark</th>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{{ result.confirm_orders.shipper }}</td>
-                <td>{{ result.confirm_orders.consignee }}</td>
-                <td>{{ result.confirm_orders.term }}</td>
-                <td>{{ result.confirm_orders.salesman }}</td>
-                <td>{{ result.confirm_orders.SR }}</td>
-                <td>{{ result.confirm_orders.remark }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </td>
-    </tr>
-  {% endfor %}
+      </div>
+      <div class="border rounded overflow-hidden mt-2 mb-2">
+        <table class="table align-middle m-0">
+          <thead>
+
+            {% if current_user.rank == 'admin' %}
+            <th>ID</th>
+            <th>Date/Time Created</th>
+            {% endif %}
+
+            <th>CS</th>
+            <th>Week</th>
+            <th>SO</th>
+            <th>Size</th>
+            <th>Final Destination</th>
+            <th>Contract/Coloader</th>
+            <th>Cost</th>
+            <th>Date Valid</th>
+            <th></th>
+          </thead>
+          <tbody>
+            {% if result.bookings %}
+            {% for booking in result.bookings %}
+            <tr>
+              {% if current_user.rank == 'admin' %}
+              <td>{{ booking.id }}</td>
+              <td>{{ booking.date_created.strftime('%Y-%m-%d %H:%M') }}</td>
+              {% endif %}
+
+              <td>{{ booking.CS }}</td>
+              <td>{{ booking.week }}</td>
+              <td>{{ booking.SO }}</td>
+              <td>{{ booking.size }}</td>
+              <td>{{ booking.Final_Destination }}</td>
+              <td>{{ booking.Contract_or_Coloader }}</td>
+              <td>{{ booking.cost }}</td>
+              <td>{{ booking.Date_Valid.strftime('%Y-%m-%d') }}</td>
+              <td>
+                <div class="d-flex justify-content-end gap-2">
+                  {% if current_user.rank == 'admin' %}
+                  <a class="btn btn-warning" href="{{ url_for('admin.edit_booking_data', id=booking.id) }}"><i
+                      class="bi bi-pencil-square"></i></a>
+                  <form action="{{ url_for('admin.delete_booking_data', id=booking.id) }}" method="POST">
+                    <button class="btn btn-danger is-danger" type="submit"
+                      onclick="return confirm('Are you sure you want to delete this booking?');"><i
+                        class="bi bi-trash3-fill"></i></button>
+                  </form>
+                  {% elif current_user.id == result.user_id %}
+                  <a class="btn btn-warning" href="{{ url_for('user.edit_booking_data', id=booking.id) }}"><i
+                      class="bi bi-pencil-square"></i></a>
+                  <form action="{{ url_for('user.delete_booking_data', id=booking.id) }}" method="POST">
+                    <button class="btn btn-danger is-danger" type="submit"
+                      onclick="return confirm('Are you sure you want to delete this booking?');"><i
+                        class="bi bi-trash3-fill"></i></button>
+                  </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+              <td colspan="14">No bookings found.</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
+        <h5>Confirmation</h5>
+
+        {% if result.status == "s2" %}
+        {% if current_user.rank == 'admin' %}
+        <a class="btn btn-outline-primary"
+          href="{{ url_for('admin.add_confirm_order_data', schedule_id=result.id) }}">Confirm Order</a>
+        {% elif current_user.id == result.user_id %}
+        <a class="btn btn-outline-primary"
+          href="{{ url_for('user.add_confirm_order_data', schedule_id=result.id) }}">Confirm Order</a>
+        {% endif %}
+        {% endif %}
+
+      </div>
+      <div class="border rounded overflow-hidden mt-2 mb-4">
+        <table class="table align-middle m-0">
+          <thead>
+            {% if current_user.rank == 'admin' %}
+            <th>ID</th>
+            <th>Date/Time Created</th>
+            {% endif %}
+
+            <th>Shipper</th>
+            <th>Consignee</th>
+            <th>Term</th>
+            <th>Salesman</th>
+            <th>SR</th>
+            <th>remark</th>
+            <th></th>
+          </thead>
+          <tbody>
+            {% if result.confirm_orders %}
+            <tr>
+              {% if current_user.rank == 'admin' %}
+              <td>{{ result.confirm_orders.id }}</td>
+              <td>{{ result.confirm_orders.date_created.strftime('%Y-%m-%d %H:%M') }}</td>
+              {% endif %}
+
+              <td>{{ result.confirm_orders.shipper }}</td>
+              <td>{{ result.confirm_orders.consignee }}</td>
+              <td>{{ result.confirm_orders.term }}</td>
+              <td>{{ result.confirm_orders.salesman }}</td>
+              <td>{{ result.confirm_orders.SR }}</td>
+              <td>{{ result.confirm_orders.remark }}</td>
+              <td>
+                <div class="d-flex justify-content-end gap-2">
+                  {% if current_user.rank == 'admin' %}
+                  <a class="btn btn-warning" href="{{ url_for('admin.edit_confirm_order_data', id=result.id) }}"><i
+                      class="bi bi-pencil-square"></i></a>
+                  <form action="{{ url_for('admin.delete_confirm_order_data', id=result.id) }}" method="POST">
+                    <button class="btn btn-danger is-danger" type="submit"
+                      onclick="return confirm('Are you sure you want to cancel this order confirmation?');"><i
+                        class="bi bi-x-lg"></i></button>
+                  </form>
+                  {% elif current_user.id == result.user_id %}
+                  <a class="btn btn-warning" href="{{ url_for('user.edit_confirm_order_data', id=result.id) }}"><i
+                      class="bi bi-pencil-square"></i></a>
+                  <form action="{{ url_for('user.delete_confirm_order_data', id=result.id) }}" method="POST">
+                    <button class="btn btn-danger is-danger" type="submit"
+                      onclick="return confirm('Are you sure you want to cancel this order confirmation?');"><i
+                        class="bi bi-x-lg"></i></button>
+                  </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="14">Order not confirmed.</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </td>
+</tr>
+{% endfor %}
 {% else %}
-  <tr>
-    <td colspan="14">No results found.</td>
-  </tr>
+<tr>
+  <td colspan="14">No results found.</td>
+</tr>
 {% endif %}

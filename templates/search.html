@@ -1,5 +1,5 @@
 <!-- Search Form -->
-<section class="container p-2 pt-4">
+<section class="container p-4">
   <h3>Search</h3>
   {% if current_user.rank=='admin' %}
   <input type="text" class="form-control" placeholder="Search" name="q" hx-get="{{ url_for('admin.search') }}"
@@ -7,7 +7,7 @@
   {% else %}
   <form hx-get="{{ url_for('user.search') }}" hx-trigger="input change delay:500ms" hx-target="#results">
     <input type="text" class="form-control" placeholder="Search" name="q" />
-    <input name="show-all" type="checkbox" class="form-check-input" />
+    <input name="show-all" id="show-all" type="checkbox" class="form-check-input" />
     <label for="show-all">Show All</label>
   </form>
   {% endif %}

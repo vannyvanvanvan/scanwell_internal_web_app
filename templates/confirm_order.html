@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% from '_render_input.html' import render_input_text, render_input_number, render_input_date %}
+
+{% block head %}
+<title>Confirm Order</title>
+{% endblock %}
+
+{% block body %}
+
+{% include 'header.html' %}
+<section class="container p-4">
+
+  <h3>Confirm Order</h3>
+
+  <form method="POST" class="mt-4">
+
+    {{ render_input_text(name='Shipper', id='shipper', required=True, value=data.shipper) }}
+    {{ render_input_text(name='Consignee', id='consignee', required=True, value=data.consignee) }}
+    {{ render_input_text(name='Term', id='term', required=True, value=data.term) }}
+    {{ render_input_text(name='Salesman', id='salesman', required=True, value=data.salesman) }}
+    {{ render_input_number(name='Cost', id='cost', required=True, value=data.cost) }}
+    {{ render_input_date(name='Date Valid', id='Date_Valid', required=True, value=data.Date_Valid) }}
+    {{ render_input_number(name='SR', id='SR', required=True, value=data.SR) }}
+    {{ render_input_text(name='Remark', id='remark', value=data.remark) }}
+
+    <div class="d-inline-flex gap-2">
+      <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Submit" />
+    </div>
+  </form>
+</section>
+
+{% endblock %}

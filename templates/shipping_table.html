@@ -1,8 +1,8 @@
-<section class="container p-2">
+<section class="container p-4">
   <h3>Shipping Schedule</h3>
-  <div class="overflow-x-scroll">
-    <table class="table table-striped align-middle">
-      <thead>
+  <div class="border rounded">
+    <table class="table align-middle m-0">
+      <thead class="table-light">
         <tr>
           {% if current_user.rank=='admin' %}
           <th>ID</th>
@@ -20,7 +20,8 @@
           <th>CY CY CLS</th>
           <th>ETD</th>
           <th>ETA</th>
-          <th>Actions</th>
+          <th>Status</th>
+          <th></th>
         </tr>
       </thead>
       <tbody id="results">

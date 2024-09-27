@@ -8,7 +8,7 @@
 {% block body %}
 
 {% include 'header.html' %}
-<section class="container p-2 pt-4">
+<section class="container p-4">
 
   <h3>{{ mode }} Shipping Schedule</h3>
 
@@ -26,16 +26,13 @@
     {{ render_input_date(name='ETA', id='ETA', required=True, value=data.ETA) }}
 
     {% if current_user.rank=='admin' %}
-    <div class="d-inline-flex gap-2">
-      <a class="btn btn-danger" href="{{ url_for('admin.admin_dashboard') }}">Cancel</a>
-      <input class="btn btn-primary" type="submit" value="Submit" />
-    </div>
-    {% else %}
-    <div class="d-inline-flex gap-2">
-      <a class="btn btn-danger" href="{{ url_for('user.user_dashboard') }}">Cancel</a>
-      <input class="btn btn-primary" type="submit" value="Submit" />
-    </div>
+    {{ render_input_text(name='status', id='status', required=True, value=data.status) }}
     {% endif %}
+
+    <div class="d-inline-flex gap-2">
+      <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Submit" />
+    </div>
   </form>
 </section>
 
