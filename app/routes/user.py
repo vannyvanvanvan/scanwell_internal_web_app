@@ -247,8 +247,12 @@ def delete_booking_data(id):
 @role_required("user")
 def add_confirm_order_data(schedule_id):
     shipping_data = Data_shipping_schedule.query.get_or_404(schedule_id)
-    if shipping_data.user_id != current_user.id or shipping_data.status != "s3":
+    if shipping_data.user_id != current_user.id:
         flash("You are not allowed to add confirm order data for this schedule.")
+        return redirect(url_for("user.user_dashboard"))
+
+    if shipping_data.status != "s2":
+        flash("Booking required before confirming order.")
         return redirect(url_for("user.user_dashboard"))
 
     if request.method == "POST":
@@ -264,61 +268,28 @@ def add_confirm_order_data(schedule_id):
                 remark=request.form["remark"],
                 data_shipping_schedule_id=schedule_id,
                 user_id=current_user.id,
-                status="s3",
             )
             db.session.add(new_data)
-            db.session.commit()
-        except ValueError as e:
-            return f"An error occurred: {str(e)}"
-        return redirect(url_for("user.user_dashboard"))
-    return render_template("user_add_confirm_order_data.html", schedule_id=schedule_id)
 
-
-@user.route("/edit_confirm_order/<int:id>", methods=["GET", "POST"])
-@login_required
-@role_required("user")
-def edit_confirm_order_data(id):
-    confirm_order_data = Data_confirm_order.query.get_or_404(id)
-    if confirm_order_data.user_id != current_user.id:
-        return redirect(url_for("user.user_dashboard"))
-
-    if request.method == "POST":
-        try:
-            confirm_order_data.shipper = request.form["shipper"]
-            confirm_order_data.consignee = request.form["consignee"]
-            confirm_order_data.term = request.form["term"]
-            confirm_order_data.salesman = request.form["salesman"]
-            confirm_order_data.cost = int(request.form["cost"])
-            confirm_order_data.Date_Valid = datetime.strptime(
-                request.form["Date_Valid"], "%Y-%m-%d"
-            )
-            confirm_order_data.SR = int(request.form["SR"])
-            confirm_order_data.remark = request.form["remark"]
-            confirm_order_data.data_shipping_schedule_id = request.form[
-                "data_shipping_schedule_id"
-            ]
+            shipping_data.status = "s3"
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("user.user_dashboard"))
     return render_template(
-        "user_edit_confirm_order_data.html", confirm_order_data=confirm_order_data
+        "confirm_order.html",
+        schedule_id=schedule_id,
+        data=Data_confirm_order(
+            shipper="",
+            consignee="",
+            term="",
+            salesman="",
+            cost=0,
+            Date_Valid=datetime.now(),
+            SR=0,
+            remark="",
+        ),
     )
-
-
-@user.route("/delete_confirm_order/<int:id>", methods=["POST"])
-@login_required
-@role_required("user")
-def delete_confirm_order_data(id):
-    confirm_order_data = Data_confirm_order.query.get_or_404(id)
-    if confirm_order_data.user_id != current_user.id:
-        flash("You do not have permission to delete this item.")
-        return redirect(url_for("user.user_dashboard"))
-
-    db.session.delete(confirm_order_data)
-    db.session.commit()
-    flash("Confirm order data has been deleted.", "success")
-    return redirect(url_for("user.user_dashboard"))
 
 
 @user.route("/search", methods=["GET", "POST"])

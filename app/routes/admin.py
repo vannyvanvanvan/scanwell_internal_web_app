@@ -226,8 +226,8 @@ def delete_booking_data(id):
 @role_required("admin")
 def add_confirm_order_data(schedule_id):
     shipping_data = Data_shipping_schedule.query.get_or_404(schedule_id)
-    if shipping_data.user_id != current_user.id or shipping_data.status != "s3":
-        flash("You are not allowed to add confirm order data for this schedule.")
+    if shipping_data.status != "s2":
+        flash("Booking required before confirming order.")
         return redirect(url_for("admin.admin_dashboard"))
 
     if request.method == "POST":
@@ -243,14 +243,28 @@ def add_confirm_order_data(schedule_id):
                 remark=request.form["remark"],
                 data_shipping_schedule_id=schedule_id,
                 user_id=current_user.id,
-                status="s3",
             )
             db.session.add(new_data)
+
+            shipping_data.status = "s3"
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
-    return render_template("admin_add_confirm_order_data.html", schedule_id=schedule_id)
+    return render_template(
+        "confirm_order.html",
+        schedule_id=schedule_id,
+        data=Data_confirm_order(
+            shipper="",
+            consignee="",
+            term="",
+            salesman="",
+            cost=0,
+            Date_Valid=datetime.now(),
+            SR=0,
+            remark="",
+        ),
+    )
 
 
 @admin.route("/edit_confirm_order/<int:id>", methods=["GET", "POST"])
@@ -276,7 +290,7 @@ def edit_confirm_order_data(id):
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
     return render_template(
-        "admin_edit_confirm_order_data.html", confirm_order_data=confirm_order_data
+        "confirm_order.html", data=confirm_order_data
     )
 
 
