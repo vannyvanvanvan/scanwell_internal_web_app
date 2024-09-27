@@ -24,7 +24,6 @@
   {% endif %}
   {% endwith %}
   <form method="POST" action="{{ url_for('b_login.login') }}">
-    
     {{ login_detail.csrf_token }}
 
     {{ render_field(login_detail.request_username) }}

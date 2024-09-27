@@ -27,7 +27,7 @@ project/
 ├── static/
 │   ├── auto_comp.js
 │   ├── instances/
-│      ├── main.css
+        ├── main.css
 ├── instances/
 │   ├── database.db
 ├── .gitignore
