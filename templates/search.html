@@ -1,5 +1,5 @@
 <!-- Search Form -->
-<section class="container p-2 pt-4">
+<section class="container p-4">
   <h3>Search</h3>
   {% if current_user.rank=='admin' %}
   <input type="text" class="form-control" placeholder="Search" name="q" hx-get="{{ url_for('admin.search') }}"

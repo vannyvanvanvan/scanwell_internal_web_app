@@ -1,41 +1,49 @@
 {% macro render_input_text(name='', id='', value='', required=False) %}
 
-<div class="input-group mb-3">
-  <label class="input-group-text" for="{{ id }}">{{ name }}</label>
-  <input class="form-control" type="text" name="{{ id }}" id="{{ id }}" value="{{ value }}" {% if required %} required
-    {% endif %} />
+<div class="mb-3 row align-items-baseline">
+  <label class="col-sm-2" for="{{ id }}">{{ name }}</label>
+  <div class="col-sm-10">
+    <input class="form-control" type="text" name="{{ id }}" id="{{ id }}" value="{{ value }}" {% if required %} required
+      {% endif %} />
+  </div>
 </div>
 
 {% endmacro %}
 
 {% macro render_input_number(name='', id='', value='', required=False) %}
 
-<div class="input-group mb-3">
-  <label class="input-group-text" for="{{ id }}">{{ name }}</label>
-  <input class="form-control" type="number" name="{{ id }}" id="{{ id }}" value="{{ value }}" {% if required %} required
-    {% endif %} />
+<div class="mb-3 row align-items-baseline">
+  <label class="col-sm-2" for="{{ id }}">{{ name }}</label>
+  <div class="col-sm-10">
+    <input class="form-control" type="number" name="{{ id }}" id="{{ id }}" value="{{ value }}" {% if required %}
+      required {% endif %} />
+  </div>
 </div>
 
 {% endmacro %}
 
 {% macro render_input_date(name='', id='', value='', required=False) %}
 
-<div class="input-group mb-3">
-  <label class="input-group-text" for="{{ id }}">{{ name }}</label>
-  <input class="form-control" type="date" name="{{ id }}" id="{{ id }}" value="{{ value.date() }}" {% if required %} required
-    {% endif %} />
+<div class="mb-3 row align-items-baseline">
+  <label class="col-sm-2" for="{{ id }}">{{ name }}</label>
+  <div class="col-sm-10">
+    <input class="form-control" type="date" name="{{ id }}" id="{{ id }}" value="{{ value.date() }}" {% if required %}
+      required {% endif %} />
+  </div>
 </div>
 
 {% endmacro %}
 
 {% macro render_input_datetime(name='', id='', value='', required=False) %}
 
-<div class="input-group mb-3">
-  <label class="input-group-text" for="{{ id }}">{{ name }}</label>
-  <input class="form-control" type="date" name="{{ id }}" id="{{ id }}" value="{{ value.date() }}" {% if required %} required
-    {% endif %} />
-  <input class="form-control" type="time" name="{{ id }}_Time" id="{{ id }}_Time" value="{{ value.strftime('%H:%M') }}"
-    {% if required %} required {% endif %} />
+<div class="mb-3 row align-items-baseline">
+  <label class="col-sm-2" for="{{ id }}">{{ name }}</label>
+  <div class="col-sm-10 d-flex">
+    <input class="form-control" type="date" name="{{ id }}" id="{{ id }}" value="{{ value.date() }}" {% if required %}
+      required {% endif %} />
+    <input class="form-control" type="time" name="{{ id }}_Time" id="{{ id }}_Time"
+      value="{{ value.strftime('%H:%M') }}" {% if required %} required {% endif %} />
+  </div>
 </div>
 
 {% endmacro %}
