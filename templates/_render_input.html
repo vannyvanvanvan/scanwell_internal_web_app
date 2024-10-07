@@ -47,3 +47,14 @@
 </div>
 
 {% endmacro %}
+
+{% macro render_input_file(name='', id='', types='*', required=False) %}
+
+<div class="mb-3 row align-items-baseline">
+  <label class="col-sm-2" for="{{ id }}">{{ name }}</label>
+  <div class="col-sm-10">
+    <input class="form-control" type="file" name="{{ id }}" id="{{ id }}" accept="{{ types }}" {% if required %} required {% endif %} />
+  </div>
+</div>
+
+{% endmacro %}

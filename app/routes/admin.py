@@ -1,6 +1,14 @@
 from datetime import datetime
 from io import StringIO
-from flask import Blueprint, make_response, render_template, request, redirect, url_for, flash
+from flask import (
+    Blueprint,
+    make_response,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+)
 from flask_login import current_user, login_required
 import pandas as pd
 from ..restriction import role_required
@@ -291,9 +299,7 @@ def edit_confirm_order_data(id):
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
-    return render_template(
-        "confirm_order.html", data=confirm_order_data
-    )
+    return render_template("confirm_order.html", data=confirm_order_data)
 
 
 @admin.route("/delete_confirm_order/<int:id>", methods=["POST"])
@@ -375,11 +381,12 @@ def search():
         "shipping_table_results.html", results=results, current_user=current_user
     )
 
-@admin.route('/csv/export', methods=["GET", "POST"])
+
+@admin.route("/csv/export", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
 def export_csv():
-    
+
     # Query the database for all relevant data
     schedules = Data_shipping_schedule.query.all()
     bookings = Data_booking.query.all()
@@ -389,37 +396,44 @@ def export_csv():
     data = []
 
     for schedule in schedules:
-        booking = next((b for b in bookings if b.data_shipping_schedule_id == schedule.id), None)
-        confirm_order = next((c for c in confirm_orders if c.data_shipping_schedule_id == schedule.id), None)
+        booking = next(
+            (b for b in bookings if b.data_shipping_schedule_id == schedule.id), None
+        )
+        confirm_order = next(
+            (c for c in confirm_orders if c.data_shipping_schedule_id == schedule.id),
+            None,
+        )
 
-        data.append({
-            'carrier': schedule.carrier,
-            'service': schedule.service,
-            'routing': schedule.routing,
-            'MV': schedule.MV,
-            'POL': schedule.POL,
-            'POD': schedule.POD,
-            'CY_Open': schedule.CY_Open,
-            'SI_Cut_Off': schedule.SI_Cut_Off,
-            'CY_CY_CLS': schedule.CY_CY_CLS,
-            'ETD': schedule.ETD,
-            'ETA': schedule.ETA,
-            #'status': schedule.status,
-            #'user_id': schedule.user_id,
-            'CS': booking.CS if booking else '',
-            'week': booking.week if booking else '',
-            'size': booking.size if booking else '',
-            'Final_Destination': booking.Final_Destination if booking else '',
-            'Contract_or_Coloader': booking.Contract_or_Coloader if booking else '',
-            'cost': booking.cost if booking else '',
-            'Date_Valid': booking.Date_Valid if booking else '',
-            'shipper': confirm_order.shipper if confirm_order else '',
-            'consignee': confirm_order.consignee if confirm_order else '',
-            'term': confirm_order.term if confirm_order else '',
-            'salesman': confirm_order.salesman if confirm_order else '',
-            'SR': confirm_order.SR if confirm_order else '',
-            'remark': confirm_order.remark if confirm_order else ''
-        })
+        data.append(
+            {
+                "carrier": schedule.carrier,
+                "service": schedule.service,
+                "routing": schedule.routing,
+                "MV": schedule.MV,
+                "POL": schedule.POL,
+                "POD": schedule.POD,
+                "CY_Open": schedule.CY_Open,
+                "SI_Cut_Off": schedule.SI_Cut_Off,
+                "CY_CY_CLS": schedule.CY_CY_CLS,
+                "ETD": schedule.ETD,
+                "ETA": schedule.ETA,
+                #'status': schedule.status,
+                #'user_id': schedule.user_id,
+                "CS": booking.CS if booking else "",
+                "week": booking.week if booking else "",
+                "size": booking.size if booking else "",
+                "Final_Destination": booking.Final_Destination if booking else "",
+                "Contract_or_Coloader": booking.Contract_or_Coloader if booking else "",
+                "cost": booking.cost if booking else "",
+                "Date_Valid": booking.Date_Valid if booking else "",
+                "shipper": confirm_order.shipper if confirm_order else "",
+                "consignee": confirm_order.consignee if confirm_order else "",
+                "term": confirm_order.term if confirm_order else "",
+                "salesman": confirm_order.salesman if confirm_order else "",
+                "SR": confirm_order.SR if confirm_order else "",
+                "remark": confirm_order.remark if confirm_order else "",
+            }
+        )
 
     # Convert the data to a pandas DataFrame
     df = pd.DataFrame(data)
@@ -431,10 +445,28 @@ def export_csv():
 
     # Send the CSV file as a response
     response = make_response(csv_output.getvalue())
-    response.headers['Content-Disposition'] = 'attachment; filename=data_export.csv'
-    response.headers['Content-Type'] = 'text/csv'
-    
-    #For frontend members
-    #Put this <a href="{{ url_for('admin.export_csv') }}" class="btn btn-primary">Export Data to CSV</a> to a suitable place
-    #It will directly download the file
+    response.headers["Content-Disposition"] = "attachment; filename=data_export.csv"
+    response.headers["Content-Type"] = "text/csv"
+
+    # For frontend members
+    # Put this <a href="{{ url_for('admin.export_csv') }}" class="btn btn-primary">Export Data to CSV</a> to a suitable place
+    # It will directly download the file
     return response
+
+
+@admin.route("/csv/import", methods=["GET", "POST"])
+@login_required
+@role_required("admin")
+def import_csv():
+    if request.method == "POST":
+        try:
+            print(request.files)
+            # check if the post request has the file part
+            if 'csv' not in request.files:
+                flash('No file part')
+                return redirect(url_for("admin.import_csv"))
+                
+        except ValueError as e:
+            return f"An error occurred: {str(e)}"
+        return redirect(url_for("admin.import_csv"))
+    return render_template("csv_import.html", current_user=current_user)

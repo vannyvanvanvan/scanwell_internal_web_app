@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% from '_render_input.html' import render_input_file %}
+
+{% block head %}
+<title>CSV Import - Admin</title>
+{% endblock %}
+
+{% block body %}
+
+{% include 'header.html' %}
+<section class="container p-4">
+
+  <h3>CSV Import</h3>
+
+  <form method="POST" class="mt-4" enctype="multipart/form-data">
+
+    {{ render_input_file(name='Upload File', id='csv', types='.csv', required=True) }}
+
+    <div class="mb-3 row align-items-baseline">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10 d-inline-flex gap-2">
+        <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+        <input class="btn btn-primary" type="submit" value="Submit" />
+      </div>
+    </div>
+
+  </form>
+</section>
+
+{% endblock %}
