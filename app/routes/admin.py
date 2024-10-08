@@ -1,5 +1,6 @@
 from datetime import datetime
 from io import StringIO
+import os
 from flask import (
     Blueprint,
     make_response,
@@ -15,7 +16,8 @@ from ..restriction import role_required
 from app.model import db, Data_shipping_schedule, Data_booking, Data_confirm_order
 from sqlalchemy.orm import joinedload
 from sqlalchemy import and_
-
+from werkzeug.utils import secure_filename
+from __main__ import app
 
 admin = Blueprint(
     "admin", __name__, template_folder="../../templates", static_folder="../../static"
@@ -459,14 +461,32 @@ def export_csv():
 @role_required("admin")
 def import_csv():
     if request.method == "POST":
-        try:
-            print(request.files)
-            # check if the post request has the file part
-            if 'csv' not in request.files:
-                flash('No file part')
-                return redirect(url_for("admin.import_csv"))
-                
-        except ValueError as e:
-            return f"An error occurred: {str(e)}"
+        # check if the post request has the file part
+        if "file" not in request.files:
+            flash("File not found. Please try again.")
+            return redirect(request.url)
+
+        file = request.files["file"]
+
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == "":
+            flash("File not selected. Please try again.")
+            return redirect(request.url)
+        if file and is_filetype(file.filename, "csv"):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config["TEMP_FOLDER"], filename))
+
         return redirect(url_for("admin.import_csv"))
     return render_template("csv_import.html", current_user=current_user)
+
+
+def is_filetype(filename, extension):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() == extension
+
+
+@admin.route("/csv/import/preview", methods=["GET", "POST"])
+@login_required
+@role_required("admin")
+def import_preview():
+    return render_template("import_preview.html", current_user=current_user)
