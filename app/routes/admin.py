@@ -394,48 +394,79 @@ def export_csv():
     bookings = Data_booking.query.all()
     confirm_orders = Data_confirm_order.query.all()
 
+    # Create a dictionary to store confirm orders by shipping schedule ID
+    confirm_order_dict = {order.data_shipping_schedule_id: order for order in confirm_orders}
+
     # Combine data into a pandas DataFrame
     data = []
 
     for schedule in schedules:
-        booking = next(
-            (b for b in bookings if b.data_shipping_schedule_id == schedule.id), None
-        )
-        confirm_order = next(
-            (c for c in confirm_orders if c.data_shipping_schedule_id == schedule.id),
-            None,
-        )
+        # Get all bookings associated with this schedule
+        associated_bookings = [b for b in bookings if b.data_shipping_schedule_id == schedule.id]
 
-        data.append(
-            {
-                "carrier": schedule.carrier,
-                "service": schedule.service,
-                "routing": schedule.routing,
-                "MV": schedule.MV,
-                "POL": schedule.POL,
-                "POD": schedule.POD,
-                "CY_Open": schedule.CY_Open,
-                "SI_Cut_Off": schedule.SI_Cut_Off,
-                "CY_CY_CLS": schedule.CY_CY_CLS,
-                "ETD": schedule.ETD,
-                "ETA": schedule.ETA,
-                #'status': schedule.status,
-                #'user_id': schedule.user_id,
-                "CS": booking.CS if booking else "",
-                "week": booking.week if booking else "",
-                "size": booking.size if booking else "",
-                "Final_Destination": booking.Final_Destination if booking else "",
-                "Contract_or_Coloader": booking.Contract_or_Coloader if booking else "",
-                "cost": booking.cost if booking else "",
-                "Date_Valid": booking.Date_Valid if booking else "",
-                "shipper": confirm_order.shipper if confirm_order else "",
-                "consignee": confirm_order.consignee if confirm_order else "",
-                "term": confirm_order.term if confirm_order else "",
-                "salesman": confirm_order.salesman if confirm_order else "",
-                "SR": confirm_order.SR if confirm_order else "",
-                "remark": confirm_order.remark if confirm_order else "",
-            }
-        )
+        if not associated_bookings:
+            # If there are no bookings, still add an entry for the schedule with empty fields
+            data.append(
+                {
+                    "carrier": schedule.carrier,
+                    "service": schedule.service,
+                    "routing": schedule.routing,
+                    "MV": schedule.MV,
+                    "POL": schedule.POL,
+                    "POD": schedule.POD,
+                    "CY_Open": schedule.CY_Open,
+                    "SI_Cut_Off": schedule.SI_Cut_Off,
+                    "CY_CY_CLS": schedule.CY_CY_CLS,
+                    "ETD": schedule.ETD,
+                    "ETA": schedule.ETA,
+                    "CS": "",
+                    "week": "",
+                    "size": "",
+                    "Final_Destination": "",
+                    "Contract_or_Coloader": "",
+                    "cost": 0,
+                    "Date_Valid": None,
+                    "shipper": "",
+                    "consignee": "",
+                    "term": "",
+                    "salesman": "",
+                    "SR": "",
+                    "remark": "",
+                }
+            )
+        else:
+            # If there are bookings, add each booking with the corresponding schedule data
+            for booking in associated_bookings:
+                confirm_order = confirm_order_dict.get(schedule.id, None)
+
+                data.append(
+                    {
+                        "carrier": schedule.carrier,
+                        "service": schedule.service,
+                        "routing": schedule.routing,
+                        "MV": schedule.MV,
+                        "POL": schedule.POL,
+                        "POD": schedule.POD,
+                        "CY_Open": schedule.CY_Open,
+                        "SI_Cut_Off": schedule.SI_Cut_Off,
+                        "CY_CY_CLS": schedule.CY_CY_CLS,
+                        "ETD": schedule.ETD,
+                        "ETA": schedule.ETA,
+                        "CS": booking.CS,
+                        "week": booking.week,
+                        "size": booking.size,
+                        "Final_Destination": booking.Final_Destination,
+                        "Contract_or_Coloader": booking.Contract_or_Coloader,
+                        "cost": booking.cost,
+                        "Date_Valid": booking.Date_Valid,
+                        "shipper": confirm_order.shipper if confirm_order else "",
+                        "consignee": confirm_order.consignee if confirm_order else "",
+                        "term": confirm_order.term if confirm_order else "",
+                        "salesman": confirm_order.salesman if confirm_order else "",
+                        "SR": confirm_order.SR if confirm_order else "",
+                        "remark": confirm_order.remark if confirm_order else "",
+                    }
+                )
 
     # Convert the data to a pandas DataFrame
     df = pd.DataFrame(data)
@@ -449,6 +480,7 @@ def export_csv():
     response = make_response(csv_output.getvalue())
     response.headers["Content-Disposition"] = "attachment; filename=data_export.csv"
     response.headers["Content-Type"] = "text/csv"
+
 
     # For frontend members
     # Put this <a href="{{ url_for('admin.export_csv') }}" class="btn btn-primary">Export Data to CSV</a> to a suitable place
