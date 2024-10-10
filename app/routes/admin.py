@@ -18,6 +18,7 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import and_
 from werkzeug.utils import secure_filename
 from __main__ import app
+import uuid
 
 admin = Blueprint(
     "admin", __name__, template_folder="../../templates", static_folder="../../static"
@@ -474,8 +475,11 @@ def import_csv():
             flash("File not selected. Please try again.")
             return redirect(request.url)
         if file and is_filetype(file.filename, "csv"):
-            filename = secure_filename(file.filename)
+            # Save uploaded csv file temporarily using random uuid
+            fileid = str(uuid.uuid4())
+            filename = "%s.%s" % (fileid, "csv")
             file.save(os.path.join(app.config["TEMP_FOLDER"], filename))
+            return redirect(url_for("admin.import_preview", id=fileid))
 
         return redirect(url_for("admin.import_csv"))
     return render_template("csv_import.html", current_user=current_user)
@@ -485,8 +489,76 @@ def is_filetype(filename, extension):
     return "." in filename and filename.rsplit(".", 1)[1].lower() == extension
 
 
-@admin.route("/csv/import/preview", methods=["GET", "POST"])
+@admin.route("/csv/import/<string:id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
-def import_preview():
-    return render_template("import_preview.html", current_user=current_user)
+def import_preview(id):
+
+    # Build csv path from temp folder and filename using filenameid
+    csv_path = os.path.join(app.config["TEMP_FOLDER"], "%s.%s" % (id, "csv"))
+
+    # If csv doesn't exist in temp folder return user to import csv page
+    if not os.path.isfile(csv_path):
+        flash("File invalid, please try again with another file.")
+        return redirect(url_for("admin.import_csv"))
+
+    # If file exists, try to read as dataframe, if exception return to import page
+    try:
+        df = pd.read_csv(csv_path, keep_default_na=False)
+
+        # Convert date columns
+        date_columns = ["CY_Open", "ETD", "ETA", "Date_Valid"]
+        for col in date_columns:
+            df[col] = pd.to_datetime(df[col], errors="coerce").dt.date
+
+        # Convert datetime columns
+        date_columns = ["SI_Cut_Off", "CY_CY_CLS"]
+        for col in date_columns:
+            df[col] = pd.to_datetime(df[col], errors="coerce").astype("datetime64[s]")
+
+        schedules = []
+
+        for index, row in df.iterrows():
+            print(index)
+            schedule_columns = [
+                "carrier",
+                "service",
+                "routing",
+                "MV",
+                "POL",
+                "POD",
+                "CY_Open",
+                "SI_Cut_Off",
+                "CY_CY_CLS",
+                "ETD",
+                "ETA",
+            ]
+            # Check if all schedule columns exists in current row
+            if all(column in row for column in schedule_columns):
+                print("can create schedule")
+                schedule = {
+                    "date_created": (
+                        row["date_created"] if "date_created" in row else datetime.now()
+                    ),
+                    "carrier": row["carrier"],
+                    "service": row["service"],
+                    "routing": row["routing"],
+                    "MV": row["MV"],
+                    "POL": row["POL"],
+                    "POD": row["POD"],
+                    "CY_Open": row["CY_Open"],
+                    "SI_Cut_Off": row["SI_Cut_Off"],
+                    "CY_CY_CLS": row["CY_CY_CLS"],
+                    "ETD": row["ETD"],
+                    "ETA": row["ETA"],
+                }
+                schedule["id"] = index
+                schedules.append(schedule)
+        print(schedules)
+    except Exception as e:
+        flash("CSV file invalid, please try again.")
+        return redirect(url_for("admin.import_csv"))
+
+    return render_template(
+        "csv_import_preview.html", results=schedules, current_user=current_user
+    )

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>CSV Import Preview - Admin</title>
+{% endblock %}
+
+{% block body %}
+
+{% include 'header.html' %}
+
+{% include 'flash.html' %}
+
+<section class="container p-4">
+
+  <h3>Preview Shipping Schedule</h3>
+  <div class="border rounded">
+    <table class="table align-middle m-0">
+      <thead class="table-light">
+        <tr>
+          <th>Date/Time Created</th>
+          <th>Carrier</th>
+          <th>Service</th>
+          <th>Routing</th>
+          <th>MV</th>
+          <th>POL</th>
+          <th>POD</th>
+          <th>CY Open</th>
+          <th>SI Cut Off</th>
+          <th>CY CY CLS</th>
+          <th>ETD</th>
+          <th>ETA</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="results">
+        {% if results %}
+        {% for result in results %}
+        <tr>
+          <td>{{ result.date_created.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ result.carrier }}</td>
+          <td>{{ result.service }}</td>
+          <td>{{ result.routing }}</td>
+          <td>{{ result.MV }}</td>
+          <td>{{ result.POL }}</td>
+          <td>{{ result.POD }}</td>
+          <td>{{ result.CY_Open.strftime('%Y-%m-%d') }}</td>
+          <td>{{ result.SI_Cut_Off.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ result.CY_CY_CLS.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ result.ETD.strftime('%Y-%m-%d') }}</td>
+          <td>{{ result.ETA.strftime('%Y-%m-%d') }}</td>
+
+          {% if result.status=="s1" %}
+          <td>No Booking</td>
+          {% elif result.status=="s2" %}
+          <td>Not confirmed</td>
+          {% elif result.status=="s3" %}
+          <td>Confirmed</td>
+          {% else %}
+          <td>Error</td>
+          {% endif %}
+
+          <td>
+            <div class="d-flex justify-content-end gap-2">
+              <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse{{ result.id }}" aria-expanded="false" aria-controls="collapse{{ result.id }}">
+                <i class="bi bi-zoom-in"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="15" class="bg-body-tertiary ps-4 pe-4 pt-0 pb-0">
+            <div class="collapse" id="collapse{{ result.id }}">
+              <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
+                <h5>Bookings</h5>
+              </div>
+              <div class="border rounded overflow-hidden mt-2 mb-2">
+                <table class="table align-middle m-0">
+                  <thead>
+                    <th>Date/Time Created</th>
+                    <th>CS</th>
+                    <th>Week</th>
+                    <th>SO</th>
+                    <th>Size</th>
+                    <th>Final Destination</th>
+                    <th>Contract/Coloader</th>
+                    <th>Cost</th>
+                    <th>Date Valid</th>
+                  </thead>
+                  <tbody>
+                    {% if result.bookings %}
+                    {% for booking in result.bookings %}
+                    <tr>
+                      <td>{{ booking.date_created.strftime('%Y-%m-%d %H:%M') }}</td>
+                      <td>{{ booking.CS }}</td>
+                      <td>{{ booking.week }}</td>
+                      <td>{{ booking.SO }}</td>
+                      <td>{{ booking.size }}</td>
+                      <td>{{ booking.Final_Destination }}</td>
+                      <td>{{ booking.Contract_or_Coloader }}</td>
+                      <td>{{ booking.cost }}</td>
+                      <td>{{ booking.Date_Valid.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td colspan="14">No bookings found.</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
+                <h5>Confirmation</h5>
+              </div>
+              <div class="border rounded overflow-hidden mt-2 mb-4">
+                <table class="table align-middle m-0">
+                  <thead>
+                    <th>Shipper</th>
+                    <th>Consignee</th>
+                    <th>Term</th>
+                    <th>Salesman</th>
+                    <th>SR</th>
+                    <th>remark</th>
+                  </thead>
+                  <tbody>
+                    {% if result.confirm_orders %}
+                    <tr>
+                      <td>{{ result.confirm_orders.date_created.strftime('%Y-%m-%d %H:%M') }}</td>
+                      <td>{{ result.confirm_orders.shipper }}</td>
+                      <td>{{ result.confirm_orders.consignee }}</td>
+                      <td>{{ result.confirm_orders.term }}</td>
+                      <td>{{ result.confirm_orders.salesman }}</td>
+                      <td>{{ result.confirm_orders.SR }}</td>
+                      <td>{{ result.confirm_orders.remark }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                      <td colspan="14">Order not confirmed.</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+          <td colspan="14">No results found.</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+
+  <form method="POST" class="mt-4" enctype="multipart/form-data">
+
+    <div class="mb-3 row align-items-baseline">
+      <div class="d-flex gap-2 justify-content-between">
+        <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+        <input class="btn btn-primary" type="submit" value="Confirm Import" />
+      </div>
+    </div>
+
+  </form>
+</section>
+
+{% endblock %}
