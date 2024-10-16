@@ -9,6 +9,7 @@ driver = webdriver.Chrome()
 try:
     #================================================================
     
+    
     driver.get("http://127.0.0.1:5000") 
 
     time.sleep(1)
@@ -90,6 +91,68 @@ try:
     submit_shipping_schedule_button.click()
     
     #================================================================
+    
+        
+    driver.execute_script("document.body.style.zoom='0.5';") 
+    
+    collapse_buttons = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, "//button[contains(@class, 'btn-outline-primary')]"))
+    )
+    
+    # Select the last collapse button
+    latest_collapse_button = collapse_buttons[-1] 
+    
+    # Scroll to the bottom of the page
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+    driver.execute_script("arguments[0].scrollIntoView(true);", latest_collapse_button)
+    time.sleep(1) 
+
+    latest_collapse_button.click()
+    
+    # Clicking the add button
+    add_booking_links = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, "//a[contains(@class, 'btn-outline-primary') and contains(@href, '/admin/add_booking/')]"))
+    )
+    
+    latest_booking_link = add_booking_links[-1]
+
+    add_booking_links = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, "//a[contains(@class, 'btn-outline-primary') and contains(@href, '/admin/add_booking/')]"))
+    )
+
+    latest_booking_link = add_booking_links[-1]
+    driver.execute_script("arguments[0].scrollIntoView(true);", latest_booking_link)
+    time.sleep(1) 
+
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(latest_booking_link))
+    
+    driver.execute_script("arguments[0].click();", latest_booking_link)
+    print("Clicked the latest booking link")
+    
+    #================================================================
+    
+    CS_input = driver.find_element(By.ID, "CS")
+    CS_input.send_keys("test_only_will_delete")
+
+    size_input = driver.find_element(By.ID, "size")
+    size_input.send_keys("test_only_will_delete")
+
+    Final_Destination_input = driver.find_element(By.ID, "Final_Destination")
+    Final_Destination_input.send_keys("test_only_will_delete")
+    
+    Contract_or_Coloader_input = driver.find_element(By.ID, "Contract_or_Coloader")
+    Contract_or_Coloader_input.send_keys("test_only_will_delete")
+    
+    submit_shipping_schedule_button = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//input[@type='submit' and @value='Submit']"))
+    )
+
+
+    driver.execute_script("arguments[0].scrollIntoView();", submit_shipping_schedule_button)
+    time.sleep(1) 
+
+    submit_shipping_schedule_button.click()
     
 except Exception as e:
     print(f"An error occurred: {e}")
