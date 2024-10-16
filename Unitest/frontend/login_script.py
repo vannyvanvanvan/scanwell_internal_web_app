@@ -19,7 +19,7 @@ try:
     password_input = driver.find_element(By.ID, "request_password")
     password_input.send_keys("test1")
 
-    # Find the "Remember me" checkbox and check it (optional)
+    # Find the "Remember me" checkbox and check it 
     remember_me_checkbox = driver.find_element(By.ID, "remember_me")
     remember_me_checkbox.click()
 
@@ -46,7 +46,7 @@ try:
     password_input = driver.find_element(By.ID, "request_password")
     password_input.send_keys("test2")
 
-    # Find the "Remember me" checkbox and check it (optional)
+    # Find the "Remember me" checkbox and check it
     remember_me_checkbox = driver.find_element(By.ID, "remember_me")
     remember_me_checkbox.click()
 
