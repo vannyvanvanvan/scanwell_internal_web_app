@@ -124,8 +124,10 @@ def edit_shipping_data(id):
                 ),
                 "%Y-%m-%d %H:%M",
             )
-            shipping_data.ETD = datetime.strptime(request.form["ETD"], "%Y-%m-%d")
-            shipping_data.ETA = datetime.strptime(request.form["ETA"], "%Y-%m-%d")
+            shipping_data.ETD = datetime.strptime(
+                request.form["ETD"], "%Y-%m-%d")
+            shipping_data.ETA = datetime.strptime(
+                request.form["ETA"], "%Y-%m-%d")
             shipping_data.status = request.form["status"]
             db.session.commit()
         except ValueError as e:
@@ -166,7 +168,8 @@ def add_booking_data(schedule_id):
                 Final_Destination=request.form["Final_Destination"],
                 Contract_or_Coloader=request.form["Contract_or_Coloader"],
                 cost=int(request.form["cost"]),
-                Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
+                Date_Valid=datetime.strptime(
+                    request.form["Date_Valid"], "%Y-%m-%d"),
                 data_shipping_schedule_id=schedule_id,
                 user_id=current_user.id,
             )
@@ -226,6 +229,16 @@ def edit_booking_data(id):
 def delete_booking_data(id):
     booking_data = Data_booking.query.get_or_404(id)
     db.session.delete(booking_data)
+
+    shipping_schedule = Data_shipping_schedule.query.get_or_404(
+        booking_data.data_shipping_schedule_id
+    )
+
+    if len(shipping_schedule.bookings) <= 0:
+        shipping_schedule.status = "s1"
+
+    db.session.delete(booking_data)
+
     db.session.commit()
     flash("Booking data has been deleted.", "success")
     return redirect(url_for("admin.admin_dashboard"))
@@ -251,7 +264,8 @@ def add_confirm_order_data(schedule_id):
                 term=request.form["term"],
                 salesman=request.form["salesman"],
                 cost=int(request.form["cost"]),
-                Date_Valid=datetime.strptime(request.form["Date_Valid"], "%Y-%m-%d"),
+                Date_Valid=datetime.strptime(
+                    request.form["Date_Valid"], "%Y-%m-%d"),
                 SR=int(request.form["SR"]),
                 remark=request.form["remark"],
                 data_shipping_schedule_id=schedule_id,
@@ -310,10 +324,10 @@ def edit_confirm_order_data(id):
 @role_required("admin")
 def delete_confirm_order_data(id):
     confirm_order_data = Data_confirm_order.query.get_or_404(id)
-    db.session.delete(confirm_order_data)
     shipping_schedule = Data_shipping_schedule.query.get_or_404(
-        confirm_order_data.schedule_id
+        confirm_order_data.data_shipping_schedule_id
     )
+    db.session.delete(confirm_order_data)
     shipping_schedule.status = "s2"
     db.session.commit()
     flash("Order confirmation has been deleted.", "success")
@@ -332,7 +346,8 @@ def search():
         db.session.query(Data_shipping_schedule)
         .join(
             Data_booking,
-            and_(Data_shipping_schedule.id == Data_booking.data_shipping_schedule_id),
+            and_(Data_shipping_schedule.id ==
+                 Data_booking.data_shipping_schedule_id),
         )
         .join(
             Data_confirm_order,
@@ -396,14 +411,16 @@ def export_csv():
     confirm_orders = Data_confirm_order.query.all()
 
     # Create a dictionary to store confirm orders by shipping schedule ID
-    confirm_order_dict = {order.data_shipping_schedule_id: order for order in confirm_orders}
+    confirm_order_dict = {
+        order.data_shipping_schedule_id: order for order in confirm_orders}
 
     # Combine data into a pandas DataFrame
     data = []
 
     for schedule in schedules:
         # Get all bookings associated with this schedule
-        associated_bookings = [b for b in bookings if b.data_shipping_schedule_id == schedule.id]
+        associated_bookings = [
+            b for b in bookings if b.data_shipping_schedule_id == schedule.id]
 
         if not associated_bookings:
             # If there are no bookings, still add an entry for the schedule with empty fields
@@ -482,7 +499,6 @@ def export_csv():
     response.headers["Content-Disposition"] = "attachment; filename=data_export.csv"
     response.headers["Content-Type"] = "text/csv"
 
-
     # For frontend members
     # Put this <a href="{{ url_for('admin.export_csv') }}" class="btn btn-primary">Export Data to CSV</a> to a suitable place
     # It will directly download the file
@@ -546,7 +562,8 @@ def import_preview(id):
         # Convert datetime columns
         date_columns = ["SI_Cut_Off", "CY_CY_CLS"]
         for col in date_columns:
-            df[col] = pd.to_datetime(df[col], errors="coerce").astype("datetime64[s]")
+            df[col] = pd.to_datetime(
+                df[col], errors="coerce").astype("datetime64[s]")
 
         schedules = []
 

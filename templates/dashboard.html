@@ -5,14 +5,18 @@
 {% endblock %}
 
 {% block body %}
+  {% include 'header.html' %}
 
-{% include 'header.html' %}
+  {% include 'flash.html' %}
 
-{% include 'flash.html' %}
+  <!-- Search Form -->
+  {% include 'search.html' %}
 
-<!-- Search Form -->
-{% include 'search.html' %}
+  <!-- Display Shipping Data -->
+  {% include 'shipping_table.html' %}
 
-<!-- Display Shipping Data -->
-{% include 'shipping_table.html' %}
+  <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl))
+  </script>
 {% endblock %}
