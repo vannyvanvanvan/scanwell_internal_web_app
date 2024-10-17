@@ -9,6 +9,8 @@ driver = webdriver.Chrome()
 try:
     #================================================================
     
+    ''' Log in to the account first '''
+    
     
     driver.get("http://127.0.0.1:5000") 
 
@@ -33,6 +35,8 @@ try:
     print("Login admin successful!")
     
     #================================================================
+    
+    ''' Click on add shipping schedule link '''
     
     add_shipping_link = driver.find_element(By.XPATH, "//a[@href='/admin/add_shipping_schedule']")
     add_shipping_link.click()
@@ -92,6 +96,8 @@ try:
     
     #================================================================
     
+    ''' Scoll Down and search for the latest shipping schedule that we just added, press the latest collapse id and press add booking order '''
+    
         
     driver.execute_script("document.body.style.zoom='0.5';") 
     
@@ -116,12 +122,7 @@ try:
     )
     
     latest_booking_link = add_booking_links[-1]
-
-    add_booking_links = WebDriverWait(driver, 10).until(
-        EC.presence_of_all_elements_located((By.XPATH, "//a[contains(@class, 'btn-outline-primary') and contains(@href, '/admin/add_booking/')]"))
-    )
-
-    latest_booking_link = add_booking_links[-1]
+    
     driver.execute_script("arguments[0].scrollIntoView(true);", latest_booking_link)
     time.sleep(1) 
 
@@ -153,6 +154,42 @@ try:
     time.sleep(1) 
 
     submit_shipping_schedule_button.click()
+    
+    #================================================================    
+        
+    ''' Same as the above scoll all the way down and press add confirm order button '''
+    
+    
+    driver.execute_script("document.body.style.zoom='0.5';") 
+    
+    collapse_buttons = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, "//button[contains(@class, 'btn-outline-primary')]"))
+    )
+    
+    # Select the last collapse button
+    latest_collapse_button = collapse_buttons[-1] 
+    
+    # Scroll to the bottom of the page
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+    driver.execute_script("arguments[0].scrollIntoView(true);", latest_collapse_button)
+    time.sleep(1) 
+
+    latest_collapse_button.click()
+    
+    # Clicking the add button
+    add_confirm_order = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, "//a[contains(@class, 'btn-outline-primary') and contains(@href, '/admin/add_confirm_order/')]"))
+    )
+    
+    latest_confirm_order_link = add_confirm_order[-1]
+
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(latest_confirm_order_link))
+    
+    driver.execute_script("arguments[0].click();", latest_confirm_order_link)
+    print("Clicked the latest booking link")
+    
+    #================================================================
     
 except Exception as e:
     print(f"An error occurred: {e}")
