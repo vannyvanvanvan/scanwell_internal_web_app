@@ -17,3 +17,4 @@ typing_extensions==4.12.2
 tzdata==2024.2
 Werkzeug==3.0.4
 WTForms==3.1.2
+selenium == 4.23.1

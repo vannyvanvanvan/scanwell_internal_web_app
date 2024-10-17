@@ -145,15 +145,15 @@ try:
     Contract_or_Coloader_input = driver.find_element(By.ID, "Contract_or_Coloader")
     Contract_or_Coloader_input.send_keys("test_only_will_delete")
     
-    submit_shipping_schedule_button = WebDriverWait(driver, 10).until(
+    
+    submit_button = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, "//input[@type='submit' and @value='Submit']"))
     )
-
-
-    driver.execute_script("arguments[0].scrollIntoView();", submit_shipping_schedule_button)
+    
+    driver.execute_script("arguments[0].scrollIntoView();", submit_button)
     time.sleep(1) 
 
-    submit_shipping_schedule_button.click()
+    submit_button.click()
     
     #================================================================    
         
@@ -190,6 +190,35 @@ try:
     print("Clicked the latest booking link")
     
     #================================================================
+    
+    shipper_input = driver.find_element(By.ID, "shipper")
+    shipper_input.send_keys("test_shipper")
+    
+    consignee_input = driver.find_element(By.ID, "consignee")
+    consignee_input.send_keys("test_only_will_delete")
+
+    term_input = driver.find_element(By.ID, "term")
+    term_input.send_keys("test_only_will_delete")
+    
+    salesman_input = driver.find_element(By.ID, "salesman")
+    salesman_input.send_keys("test_only_will_delete")
+    
+    driver.find_element(By.ID, "SR").clear()
+
+    SR_input = driver.find_element(By.ID, "SR")
+    SR_input.send_keys("10")
+    
+    remark_input = driver.find_element(By.ID, "remark")
+    remark_input.send_keys("test_only_will_delete")
+    
+    submit_button = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//input[@type='submit' and @value='Submit']"))
+    )
+    
+    driver.execute_script("arguments[0].scrollIntoView();", submit_button)
+    time.sleep(1) 
+
+    submit_button.click()
     
 except Exception as e:
     print(f"An error occurred: {e}")
