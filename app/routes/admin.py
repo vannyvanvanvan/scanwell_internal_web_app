@@ -263,9 +263,6 @@ def add_confirm_order_data(schedule_id):
                 consignee=request.form["consignee"],
                 term=request.form["term"],
                 salesman=request.form["salesman"],
-                cost=int(request.form["cost"]),
-                Date_Valid=datetime.strptime(
-                    request.form["Date_Valid"], "%Y-%m-%d"),
                 SR=int(request.form["SR"]),
                 remark=request.form["remark"],
                 data_shipping_schedule_id=schedule_id,
@@ -286,8 +283,6 @@ def add_confirm_order_data(schedule_id):
             consignee="",
             term="",
             salesman="",
-            cost=0,
-            Date_Valid=datetime.now(),
             SR=0,
             remark="",
         ),
