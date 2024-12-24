@@ -9,7 +9,7 @@ class User_data(db.Model, UserMixin):
 
     __tablename__ = 'user_data'
 
-    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(200), nullable=False)
     rank = db.Column(db.String(50), nullable=False)
@@ -17,72 +17,88 @@ class User_data(db.Model, UserMixin):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return '<User_data %r>' % self.id
+        return '<User_data %r>' % self.user_id
 
+class Schedule_data(db.Model):
 
-class Data_shipping_schedule(db.Model):
+    __tablename__ = 'schedule_data'
 
-    __tablename__ = 'data_shipping_schedule'
+    sch_id = db.Column(db.Integer, primary_key=True)
+    cs = db.Column(db.String(100), nullable=False)
+    week = db.Column(db.Integer, nullable=False)
+    carrier = db.Column(db.String(100), nullable=False)
+    service = db.Column(db.String(100), nullable=False)
+    mv = db.Column(db.String(150), nullable=False)
+    pol = db.Column(db.String(100), nullable=False)
+    pod = db.Column(db.String(100), nullable=False)
+    routing = db.Column(db.String(100), nullable=False)
+    cyopen = db.Column(db.DateTime, default=datetime.utcnow)
+    sicutoff = db.Column(db.DateTime, default=datetime.utcnow)
+    cycvcls = db.Column(db.DateTime, default=datetime.utcnow)
+    etd = db.Column(db.DateTime, default=datetime.utcnow)
+    eta = db.Column(db.DateTime, default=datetime.utcnow)
 
-    id = db.Column(db.Integer, primary_key=True)
-    carrier = db.Column(db.String(100), nullable= False)                                    #   Shipping company
-    service = db.Column(db.String(100), nullable=False)                                     #   Shipping service
-    routing = db.Column(db.String(100), nullable=False)                                     #   Routing 
-    MV = db.Column(db.String(100), nullable=False)                                          #   Master vessel (ship name)
-    POL = db.Column(db.String(100), nullable=False)                                         #   Port of loading 
-    POD = db.Column(db.String(100), nullable=False)                                         #   Port of discharge 
-    CY_Open = db.Column(db.DateTime, nullable=False)                                        #   Container yard open (should be in datetime format)
-    SI_Cut_Off = db.Column(db.DateTime, nullable=False)                                     #   Shipping information off (should be in datetime format)
-    CY_CY_CLS = db.Column(db.DateTime, nullable=False)                                      #   Closing date (should be in datetime format)
-    ETD =  db.Column(db.DateTime, nullable=False)                                           #   Estimated Time of Departure (should be in datetime format)
-    ETA =  db.Column(db.DateTime, nullable=False)                                           #   Estimated Time of Arrival (should be in datetime format)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.String(20), nullable=False)                                       # Status s1 -> s2 -> s3
-
-    # One-to-many relationship with Data_booking
-    bookings = db.relationship('Data_booking', backref='data_shipping_schedule', lazy=True)
-    # One-to-one relationship with Data_confirm_order
-    confirm_orders = db.relationship('Data_confirm_order', backref='data_shipping_schedule', uselist=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user_data.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_data.user_id'), nullable=False)
 
     def __repr__(self):
-        return '<Data_shipping_schedule %r>' % self.id
+        return '<schedule_data %r>' % self.spc_id
 
 
-class Data_booking(db.Model):
-    __tablename__ = 'data_booking'
+class Space_data(db.Model):
+    __tablename__ = 'space_data'
 
-    id = db.Column(db.Integer, primary_key=True)
-    CS = db.Column(db.String(50), nullable=False)                                           #   Customer service 
-    week = db.Column(db.Integer, nullable=False)                                            #
-    size = db.Column(db.String(100), nullable=False) #Will change later                     #   Container size
-    Final_Destination = db.Column(db.String(100), nullable= False)                          #   Final destination
-    Contract_or_Coloader = db.Column(db.String(100), nullable=False) #Will change later     #   Contract/Co-loader
-    cost = db.Column(db.Integer, nullable=False)                                            #   Cost
-    Date_Valid = db.Column(db.DateTime, nullable=False)                                     #   Rate valid (should be in datetime format)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    spc_id = db.Column(db.Integer, primary_key=True)
+    spc_id = db.Column(db.Integer, db.ForeignKey('data_booking.spc_id'), nullable=False)
+    size = db.Column(db.String(100), nullable=False)
+    avgrate= db.Column(db.Integer, nullable=False)
+    sugrate = db.Column(db.Integer, nullable=False)
+    ratevalid = db.Column(db.DateTime, default=datetime.utcnow)
+    proport = db.Column(db.String(50), nullable=False)
+    spcstatus = db.Column(db.String(100), nullable=False)
 
-    data_shipping_schedule_id = db.Column(db.Integer, db.ForeignKey('data_shipping_schedule.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user_data.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_data.user_id'), nullable=False)
 
     def __repr__(self):
-        return '<Data_booking %r>' % self.id
+        return '<space_data %r>' % self.spc_id
 
 
-class Data_confirm_order(db.Model):
-    __tablename__ = 'data_confirm_order'
+class Reserve_data(db.Model):
+    __tablename__ = 'reserve_data'
 
-    id = db.Column(db.Integer, primary_key=True)
-    shipper = db.Column(db.String(100), nullable=False)                                     #   Shipper 
-    consignee = db.Column(db.String(100), nullable=False)                                   #   Consignee 
-    term = db.Column(db.String(100), nullable=False)                                        #   Shipping term
-    salesman = db.Column(db.String(100), nullable=False)                                    #   Salesman
-    SR = db.Column(db.Integer, nullable=False)  #Will change later                          #   Selling rate 
-    remark = db.Column(db.String(1000), nullable=False)                                     #   Comments
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    rsv_id = db.Column(db.Integer, primary_key=True)
+    spc_id = db.Column(db.Integer, db.ForeignKey('data_booking.spc_id'), nullable=False)
+    sales = db.Column(db.String(100), nullable=False)
+    saleprice = db.Column(db.Integer, nullable=False)
+    rsv_date = db.Column(db.DateTime, default=datetime.utcnow)
+    cfm_date = db.Column(db.DateTime, nullable=True)
+    cfm_cs = db.Column(db.String(100), nullable=True)
+    void = db.Column(db.String(1), default='F')
+    remark = db.Column(db.String(300), nullable=True)
 
-    data_shipping_schedule_id = db.Column(db.Integer, db.ForeignKey('data_shipping_schedule.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user_data.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_data.user_id'), nullable=False)
 
     def __repr__(self):
-        return '<Data_confirm_order %r>' % self.id
+        return '<reserve_data %r>' % self.rsv_id
+    
+    
+class Booking_data(db.Model):
+    __tablename__ = 'booking_data'
+
+    bk_id = db.Column(db.Integer, primary_key=True)
+    spc_id = db.Column(db.Integer, db.ForeignKey('data_booking.spc_id'), nullable=False)
+    so = db.Column(db.String(100), nullable=False)
+    findest = db.Column(db.String(100), nullable=False)
+    ct_cl = db.Column(db.String(100), nullable=False)
+    shipper = db.Column(db.String(100), nullable=False)
+    consignee = db.Column(db.String(200), nullable=False)
+    term = db.Column(db.String(100), nullable=False)
+    sales = db.Column(db.String(100), nullable=False)
+    saleprice = db.Column(db.Integer, nullable=False)
+    void = db.Column(db.String(1), default='F')
+    remark = db.Column(db.String(300), nullable=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user_data.user_id'), nullable=False)
+
+    def __repr__(self):
+        return '<booking_data %r>' % self.bk_id
+
