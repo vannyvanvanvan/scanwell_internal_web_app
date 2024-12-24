@@ -5,9 +5,9 @@ from flask_login import UserMixin
 db = SQLAlchemy()
 
 
-class User_data(db.Model, UserMixin):
+class User(db.Model, UserMixin):
 
-    __tablename__ = 'user_data'
+    __tablename__ = 'user'
 
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(200), nullable=False)
@@ -17,11 +17,11 @@ class User_data(db.Model, UserMixin):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return '<User_data %r>' % self.user_id
+        return '<User %r>' % self.user_id
 
-class Schedule_data(db.Model):
+class Schedule(db.Model):
 
-    __tablename__ = 'schedule_data'
+    __tablename__ = 'schedule'
 
     sch_id = db.Column(db.Integer, primary_key=True)
     cs = db.Column(db.String(100), nullable=False)
@@ -38,35 +38,44 @@ class Schedule_data(db.Model):
     etd = db.Column(db.DateTime, default=datetime.utcnow)
     eta = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user_data.user_id'), nullable=False)
+    owner = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
 
     def __repr__(self):
-        return '<schedule_data %r>' % self.spc_id
+        return '<schedule %r>' % self.spc_id
 
 
-class Space_data(db.Model):
-    __tablename__ = 'space_data'
+class Space(db.Model):
+    __tablename__ = 'space'
 
     spc_id = db.Column(db.Integer, primary_key=True)
-    spc_id = db.Column(db.Integer, db.ForeignKey('data_booking.spc_id'), nullable=False)
+    sch_id = db.Column(db.Integer, db.ForeignKey('schedule.sch_id'), nullable=False)
     size = db.Column(db.String(100), nullable=False)
     avgrate= db.Column(db.Integer, nullable=False)
     sugrate = db.Column(db.Integer, nullable=False)
     ratevalid = db.Column(db.DateTime, default=datetime.utcnow)
     proport = db.Column(db.String(50), nullable=False)
-    spcstatus = db.Column(db.String(100), nullable=False)
-
-    user_id = db.Column(db.Integer, db.ForeignKey('user_data.user_id'), nullable=False)
+    spcstatus = db.Column(db.String(20), nullable=False, default="USABLE")
+    void = db.Column(db.String(1), default='F')
+    last_modified_by = db.Column(db.String(100), nullable=True)
+    last_modified_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    owner = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
 
     def __repr__(self):
-        return '<space_data %r>' % self.spc_id
+        return '<space %r>' % self.spc_id
+    
+    def update_status(self, new_status, user_id):
+        # Updates the SPCSTATUS and logs the user making the change.
+        self.spcstatus = new_status
+        self.last_modified_by = user_id
+        self.last_modified_at = datetime.utcnow()
 
 
-class Reserve_data(db.Model):
-    __tablename__ = 'reserve_data'
+class Reserve(db.Model):
+    __tablename__ = 'reserve'
 
     rsv_id = db.Column(db.Integer, primary_key=True)
-    spc_id = db.Column(db.Integer, db.ForeignKey('data_booking.spc_id'), nullable=False)
+    spc_id = db.Column(db.Integer, db.ForeignKey('space.spc_id'), nullable=False)
     sales = db.Column(db.String(100), nullable=False)
     saleprice = db.Column(db.Integer, nullable=False)
     rsv_date = db.Column(db.DateTime, default=datetime.utcnow)
@@ -75,17 +84,17 @@ class Reserve_data(db.Model):
     void = db.Column(db.String(1), default='F')
     remark = db.Column(db.String(300), nullable=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user_data.user_id'), nullable=False)
+    owner = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
 
     def __repr__(self):
-        return '<reserve_data %r>' % self.rsv_id
+        return '<reserve %r>' % self.rsv_id
     
     
-class Booking_data(db.Model):
-    __tablename__ = 'booking_data'
+class Booking(db.Model):
+    __tablename__ = 'booking'
 
     bk_id = db.Column(db.Integer, primary_key=True)
-    spc_id = db.Column(db.Integer, db.ForeignKey('data_booking.spc_id'), nullable=False)
+    spc_id = db.Column(db.Integer, db.ForeignKey('space.spc_id'), nullable=False)
     so = db.Column(db.String(100), nullable=False)
     findest = db.Column(db.String(100), nullable=False)
     ct_cl = db.Column(db.String(100), nullable=False)
@@ -97,8 +106,8 @@ class Booking_data(db.Model):
     void = db.Column(db.String(1), default='F')
     remark = db.Column(db.String(300), nullable=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user_data.user_id'), nullable=False)
+    owner = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
 
     def __repr__(self):
-        return '<booking_data %r>' % self.bk_id
+        return '<booking %r>' % self.bk_id
 
