@@ -396,14 +396,18 @@ def export_csv():
     confirm_orders = Data_confirm_order.query.all()
 
     # Create a dictionary to store confirm orders by shipping schedule ID
-    confirm_order_dict = {order.data_shipping_schedule_id: order for order in confirm_orders}
+    confirm_order_dict = {
+        order.data_shipping_schedule_id: order for order in confirm_orders
+    }
 
     # Combine data into a pandas DataFrame
     data = []
 
     for schedule in schedules:
         # Get all bookings associated with this schedule
-        associated_bookings = [b for b in bookings if b.data_shipping_schedule_id == schedule.id]
+        associated_bookings = [
+            b for b in bookings if b.data_shipping_schedule_id == schedule.id
+        ]
 
         if not associated_bookings:
             # If there are no bookings, still add an entry for the schedule with empty fields
@@ -482,7 +486,6 @@ def export_csv():
     response.headers["Content-Disposition"] = "attachment; filename=data_export.csv"
     response.headers["Content-Type"] = "text/csv"
 
-
     # For frontend members
     # Put this <a href="{{ url_for('admin.export_csv') }}" class="btn btn-primary">Export Data to CSV</a> to a suitable place
     # It will directly download the file
@@ -506,91 +509,158 @@ def import_csv():
         if file.filename == "":
             flash("File not selected. Please try again.")
             return redirect(request.url)
-        if file and is_filetype(file.filename, "csv"):
-            # Save uploaded csv file temporarily using random uuid
-            fileid = str(uuid.uuid4())
-            filename = "%s.%s" % (fileid, "csv")
+        if file and is_filetype(file.filename, ["csv", "xlsx"]):
+            # Save uploaded file temporarily using random uuid with original extension
+            filename = "%s.%s" % (str(uuid.uuid4()), file.filename.rsplit(".", 1)[1])
             file.save(os.path.join(app.config["TEMP_FOLDER"], filename))
-            return redirect(url_for("admin.import_preview", id=fileid))
+            return redirect(url_for("admin.import_preview", filename=filename))
 
         return redirect(url_for("admin.import_csv"))
     return render_template("csv_import.html", current_user=current_user)
 
 
-def is_filetype(filename, extension):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() == extension
+def is_filetype(filename, extensions):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in extensions
 
 
-@admin.route("/csv/import/<string:id>", methods=["GET", "POST"])
+def get_extension(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower()
+
+
+def is_csv_valid(file, extension="csv"):
+    try:
+        # file not valid if extension incorrect
+        if extension not in ["csv", "xlsx"]:
+            raise ValueError("File format not recognised")
+
+        # read dataframe from file name based on extension
+        df = (
+            pd.read_csv(file, keep_default_na=False)
+            if extension == "csv"
+            else pd.read_excel(file, keep_default_na=False)
+        )
+
+        # columns required
+        target_columns = {
+            "CS": str,
+            "WEEK": int,
+            "CARRIER": str,
+            "SERVICE": str,
+            "M/V": str,
+            "S/O": str,
+            "SIZE": str,
+            "POL": str,
+            "POD": str,
+            "FINAL DEST": str,
+            "ROUTING": str,
+            "CY OPEN": datetime,
+            "SI CUT OFF": datetime,
+            "CY/CV CLS": datetime,
+            "ETD": datetime,
+            "ETA": datetime,
+            "Contract/Co-loader": str,
+            "S/": str,
+            "C/": str,
+            "TERM": str,
+            "Saleman": str,
+            "Cost": float,
+            "RATE VALID": datetime,
+            "S/R": float,
+            "Remark": str,
+        }
+
+        # throw error with missing columns
+        columns_missing = []
+        for target in target_columns.keys():
+            if target not in df.columns:
+                columns_missing.append(target)
+        if len(columns_missing) > 0:
+            raise ValueError("Missing columns %s", ", ".join(columns_missing))
+
+        # loop all column data to check data type
+        for column in df.columns:
+            column_type = target_columns[column]
+            column_values = df[column].tolist()
+
+            # check all values of current column
+            for value in column_values:
+                # if value is not blank and type mismatch, try parsing (i.e. datetime from int)
+                if not value == "" and not column_type == type(value):
+                    column_type(value)
+
+    except Exception as e:
+        print(e)
+        return False
+    return True
+
+
+@admin.route("/csv/import/<string:filename>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
-def import_preview(id):
+def import_preview(filename):
 
     # Build csv path from temp folder and filename using filenameid
-    csv_path = os.path.join(app.config["TEMP_FOLDER"], "%s.%s" % (id, "csv"))
+    file_path = os.path.join(app.config["TEMP_FOLDER"], "%s" % filename)
 
     # If csv doesn't exist in temp folder return user to import csv page
-    if not os.path.isfile(csv_path):
+    if not os.path.isfile(file_path):
         flash("File invalid, please try again with another file.")
         return redirect(url_for("admin.import_csv"))
 
     # If file exists, try to read as dataframe, if exception return to import page
     try:
-        df = pd.read_csv(csv_path, keep_default_na=False)
+        file_ext = get_extension(filename)
+
+        if not is_csv_valid(file_path, file_ext):
+            raise Exception("csv invalid")
+
+        df = (
+            pd.read_csv(file_path, keep_default_na=False)
+            if file_ext == "csv"
+            else pd.read_excel(file_path, keep_default_na=False)
+        )
 
         # Convert date columns
-        date_columns = ["CY_Open", "ETD", "ETA", "Date_Valid"]
+        date_columns = ["CY OPEN", "ETD", "ETA", "RATE VALID"]
         for col in date_columns:
             df[col] = pd.to_datetime(df[col], errors="coerce").dt.date
 
         # Convert datetime columns
-        date_columns = ["SI_Cut_Off", "CY_CY_CLS"]
+        date_columns = ["SI CUT OFF", "CY/CV CLS"]
         for col in date_columns:
             df[col] = pd.to_datetime(df[col], errors="coerce").astype("datetime64[s]")
 
+        # Build shipping schedule data
         schedules = []
 
         for index, row in df.iterrows():
-            print(index)
-            schedule_columns = [
-                "carrier",
-                "service",
-                "routing",
-                "MV",
-                "POL",
-                "POD",
-                "CY_Open",
-                "SI_Cut_Off",
-                "CY_CY_CLS",
-                "ETD",
-                "ETA",
-            ]
-            # Check if all schedule columns exists in current row
-            if all(column in row for column in schedule_columns):
-                print("can create schedule")
-                schedule = {
-                    "date_created": (
-                        row["date_created"] if "date_created" in row else datetime.now()
-                    ),
-                    "carrier": row["carrier"],
-                    "service": row["service"],
-                    "routing": row["routing"],
-                    "MV": row["MV"],
-                    "POL": row["POL"],
-                    "POD": row["POD"],
-                    "CY_Open": row["CY_Open"],
-                    "SI_Cut_Off": row["SI_Cut_Off"],
-                    "CY_CY_CLS": row["CY_CY_CLS"],
-                    "ETD": row["ETD"],
-                    "ETA": row["ETA"],
-                }
-                schedule["id"] = index
-                schedules.append(schedule)
-        print(schedules)
+            schedule = {
+                "id": index,
+                "date_created": (
+                    row["date_created"] if "date_created" in row else datetime.now()
+                ),
+                "carrier": row["CARRIER"],
+                "service": row["SERVICE"],
+                "routing": row["ROUTING"],
+                "MV": row["M/V"],
+                "POL": row["POL"],
+                "POD": row["POD"],
+                "CY_Open": "" if pd.isna(row["CY OPEN"]) else row["CY OPEN"],
+                "SI_Cut_Off": "" if pd.isna(row["SI CUT OFF"]) else row["SI CUT OFF"],
+                "CY_CY_CLS": "" if pd.isna(row["CY/CV CLS"]) else row["CY/CV CLS"],
+                "ETD": "" if pd.isna(row["ETD"]) else row["ETD"],
+                "ETA": "" if pd.isna(row["ETA"]) else row["ETA"],
+            }
+            schedules.append(schedule)
+            # break
+
+        # print(schedules)
     except Exception as e:
         flash("CSV file invalid, please try again.")
         return redirect(url_for("admin.import_csv"))
 
     return render_template(
-        "csv_import_preview.html", results=schedules, current_user=current_user
+        "csv_import_preview.html",
+        results=schedules,
+        current_user=current_user,
     )

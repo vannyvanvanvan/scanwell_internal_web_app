@@ -44,11 +44,12 @@
           <td>{{ result.MV }}</td>
           <td>{{ result.POL }}</td>
           <td>{{ result.POD }}</td>
-          <td>{{ result.CY_Open.strftime('%Y-%m-%d') }}</td>
-          <td>{{ result.SI_Cut_Off.strftime('%Y-%m-%d %H:%M') }}</td>
-          <td>{{ result.CY_CY_CLS.strftime('%Y-%m-%d %H:%M') }}</td>
-          <td>{{ result.ETD.strftime('%Y-%m-%d') }}</td>
-          <td>{{ result.ETA.strftime('%Y-%m-%d') }}</td>
+
+          <td>{% if not result.CY_Open == "" %}{{ result.CY_Open.strftime('%Y-%m-%d') }}{% endif %}</td>
+          <td>{% if not result.SI_Cut_Off == "" %}{{ result.SI_Cut_Off.strftime('%Y-%m-%d %H:%M') }}{% endif %}</td>
+          <td>{% if not result.CY_CY_CLS == "" %}{{ result.CY_CY_CLS.strftime('%Y-%m-%d %H:%M') }}{% endif %}</td>
+          <td>{% if not result.ETD == "" %}{{ result.ETD.strftime('%Y-%m-%d') }}{% endif %}</td>
+          <td>{% if not result.ETA == "" %}{{ result.ETA.strftime('%Y-%m-%d') }}{% endif %}</td>
 
           {% if result.status=="s1" %}
           <td>No Booking</td>
