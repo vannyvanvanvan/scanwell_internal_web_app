@@ -1,5 +1,5 @@
 from flask import Flask
-from app.model import User_data, db
+from app.model import User, db
 from flask_login import LoginManager
 import os
 
@@ -30,7 +30,7 @@ with app.app_context():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User_data.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
 
 # Eegistering blueprint

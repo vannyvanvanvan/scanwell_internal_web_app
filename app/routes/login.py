@@ -6,7 +6,7 @@ from flask_login import login_required, login_user, logout_user
 from wtforms.validators import InputRequired, Length
 
 from app.hashing import hash_string
-from app.model import User_data, db
+from app.model import User, db
 
 b_login = Blueprint(
     "b_login", __name__, template_folder="../templates", static_folder="../static"
@@ -50,7 +50,7 @@ def login():
         _request_username = login_detail.request_username.data
         _request_password = login_detail.request_password.data
         user = db.session.execute(
-            db.select(User_data).filter_by(username=_request_username)
+            db.select(User).filter_by(username=_request_username)
         ).scalars().first()
         if user is None:
             # Added for debugging
