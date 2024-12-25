@@ -1,80 +1,90 @@
 from flask import Flask, jsonify
-from app.model import Data_shipping_schedule, db
+from driver import *
 from sqlalchemy.orm import joinedload
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Thisisasecret!'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'instance', 'database.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
+
+# Ensure the instance folder exists
+os.makedirs(os.path.dirname(db_path), exist_ok=True)
 
 db.init_app(app)
-
 
 @app.route('/data')
 def get_data():
     with app.app_context():
-        # query with joinedload
+        # Query schedules with joined data
         query = (
-            db.session.query(Data_shipping_schedule)
+            db.session.query(Schedule)
             .options(
-                joinedload(Data_shipping_schedule.bookings),
-                joinedload(Data_shipping_schedule.confirm_orders)
+                joinedload(Schedule.spaces).joinedload(Space.reserves),
+                joinedload(Schedule.spaces).joinedload(Space.bookings)
             )
         )
 
         sql_query = str(query.statement.compile(db.engine))
         print("Generated SQL Query:")
         print(sql_query)
+        schedule_data = query.all()
 
-        # execute the query and fetch results
-        user_data = query.all()
-
-        # convert results to a list of dictionaries
+        # Convert results to a list of dictionaries
         results = []
-        for data in user_data:
+        for schedule in schedule_data:
             results.append({
-                'id': data.id,
-                'carrier': data.carrier,
-                'service': data.service,
-                'routing': data.routing,
-                'MV': data.MV,
-                'POL': data.POL,
-                'POD': data.POD,
-                'CY_Open': data.CY_Open.strftime('%Y-%m-%d %H:%M:%S'),
-                'SI_Cut_Off': data.SI_Cut_Off.strftime('%Y-%m-%d %H:%M:%S'),
-                'CY_CY_CLS': data.CY_CY_CLS.strftime('%Y-%m-%d %H:%M:%S'),
-                'ETD': data.ETD.strftime('%Y-%m-%d %H:%M:%S'),
-                'ETA': data.ETA.strftime('%Y-%m-%d %H:%M:%S'),
-                'status': data.status,
-                'bookings': [
+                'schedule_id': schedule.sch_id,
+                'carrier': schedule.carrier,
+                'service': schedule.service,
+                'routing': schedule.routing,
+                'MV': schedule.mv,
+                'POL': schedule.pol,
+                'POD': schedule.pod,
+                'CY_Open': schedule.cyopen.strftime('%Y-%m-%d %H:%M:%S'),
+                'SI_Cut_Off': schedule.sicutoff.strftime('%Y-%m-%d %H:%M:%S'),
+                'CY_CY_CLS': schedule.cycvcls.strftime('%Y-%m-%d %H:%M:%S'),
+                'ETD': schedule.etd.strftime('%Y-%m-%d %H:%M:%S'),
+                'ETA': schedule.eta.strftime('%Y-%m-%d %H:%M:%S'),
+                'spaces': [
                     {
-                        'id': booking.id,
-                        'CS': booking.CS,
-                        'week': booking.week,
-                        'size': booking.size,
-                        'Final_Destination': booking.Final_Destination,
-                        'Contract_or_Coloader': booking.Contract_or_Coloader,
-                        'cost': booking.cost,
-                        'Date_Valid': booking.Date_Valid.strftime('%Y-%m-%d %H:%M:%S')
+                        'space_id': space.spc_id,
+                        'size': space.size,
+                        'average_rate': space.avgrate,
+                        'suggested_rate': space.sugrate,
+                        'status': space.spcstatus,
+                        'last_modified_by': space.last_modified_by,
+                        'last_modified_at': space.last_modified_at.strftime('%Y-%m-%d %H:%M:%S'),
+                        'reservations': [
+                            {
+                                'reservation_id': reserve.rsv_id,
+                                'sales': reserve.sales,
+                                'sale_price': reserve.saleprice,
+                                'reservation_date': reserve.rsv_date.strftime('%Y-%m-%d %H:%M:%S'),
+                                'confirmation_date': reserve.cfm_date.strftime('%Y-%m-%d %H:%M:%S') if reserve.cfm_date else None,
+                                'confirmation_cs': reserve.cfm_cs,
+                                'remark': reserve.remark
+                            }
+                            for reserve in space.reserves
+                        ],
+                        'bookings': [
+                            {
+                                'booking_id': booking.bk_id,
+                                'SO': booking.so,
+                                'shipper': booking.shipper,
+                                'consignee': booking.consignee,
+                                'term': booking.term,
+                                'sale_price': booking.saleprice,
+                                'remark': booking.remark
+                            }
+                            for booking in space.bookings
+                        ]
                     }
-                    for booking in data.bookings
-                ],
-                'confirm_orders':
-                    {
-                        'id': '' if data.confirm_orders is None else data.confirm_orders.id,
-                        'shipper': '' if data.confirm_orders is None else data.confirm_orders.shipper,
-                        'consignee': '' if data.confirm_orders is None else data.confirm_orders.consignee,
-                        'term': '' if data.confirm_orders is None else data.confirm_orders.term,
-                        'salesman': '' if data.confirm_orders is None else data.confirm_orders.salesman,
-                        'cost': '' if data.confirm_orders is None else data.confirm_orders.cost,
-                        'Date_Valid': '' if data.confirm_orders is None else data.confirm_orders.Date_Valid.strftime('%Y-%m-%d %H:%M:%S'),
-                        'SR': '' if data.confirm_orders is None else data.confirm_orders.SR,
-                        'remark': '' if data.confirm_orders is None else data.confirm_orders.remark
-                }
+                    for space in schedule.spaces
+                ]
             })
 
-        # return the results as JSON
+        # Return the results as JSON
         return jsonify(results)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

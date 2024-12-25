@@ -3,8 +3,8 @@ from datetime import datetime
 from flask_login import UserMixin
 
 db = SQLAlchemy()
-
-
+# UTC time for every section
+# Each Schedule has multiple Spaces, Each Space has multiple Reserves and Bookings
 class User(db.Model, UserMixin):
 
     __tablename__ = 'user'
@@ -13,7 +13,6 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(200), nullable=False)
     rank = db.Column(db.String(50), nullable=False)
-    # UTC time
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
@@ -39,6 +38,8 @@ class Schedule(db.Model):
     eta = db.Column(db.DateTime, default=datetime.utcnow)
 
     owner = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    
+    spaces = db.relationship('Space', backref='schedule', lazy='joined')
 
     def __repr__(self):
         return '<schedule %r>' % self.spc_id
@@ -60,6 +61,9 @@ class Space(db.Model):
     last_modified_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     owner = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    
+    reserves = db.relationship('Reserve', backref='space', lazy='joined')
+    bookings = db.relationship('Booking', backref='space', lazy='joined')
 
     def __repr__(self):
         return '<space %r>' % self.spc_id

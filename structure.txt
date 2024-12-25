@@ -1,41 +1,50 @@
-project/
+.
 ├── .gitignore
-├── Query_terminal.py
 ├── README.md
-├── app
+├── Unitest/
+│   └── frontend/
+│       ├── add_shipping.py
+│       └── login_script.py
+├── app/
 │   ├── __init__.py
 │   ├── hashing.py
 │   ├── model.py
 │   ├── restriction.py
-│   └── routes
+│   └── routes/
 │       ├── __init__.py
 │       ├── admin.py
 │       ├── login.py
 │       └── user.py
-├── csv_importer.py
-├── data.csv
-├── db_setup.py
-├── driver.py
-├── instance
-│   └── database.db
-├── requirements.txt
-├── static
+├── instance/
+│   ├── temp/
+│   ├── database.py
+├── setup/
+│   ├── csv_importer.py
+│   ├── query_terminal.py
+│   ├── dummy_shipping_db_setup.py
+│   ├── shipping_db_setup.py
+│   └── user_db_setup.py
+├── static/
 │   ├── auto_comp.js
-│   └── css
+│   └── css/
 │       └── main.css
 ├── structure.txt
-└── templates
-    ├── _render_field.html
-    ├── _render_input.html
-    ├── base.html
-    ├── confirm_order.html
-    ├── dashboard.html
-    ├── edit_booking.html
-    ├── flash.html
-    ├── header.html
-    ├── home.html
-    ├── login.html
-    ├── search.html
-    ├── shipping_schedule.html
-    ├── shipping_table.html
-    └── shipping_table_results.html
+├── templates/
+│   ├── _render_field.html
+│   ├── _render_input.html
+│   ├── base.html
+│   ├── confirm_order.html
+│   ├── csv_import.html
+│   ├── csv_import_preview.html
+│   ├── dashboard.html
+│   ├── edit_booking.html
+│   ├── flash.html
+│   ├── header.html
+│   ├── home.html
+│   ├── login.html
+│   ├── search.html
+│   ├── shipping_schedule.html
+│   ├── shipping_table.html
+│   └── shipping_table_results.html
+├── driver.py
+├── requirements.txt

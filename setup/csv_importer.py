@@ -2,9 +2,8 @@ import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
-from app.model import Data_booking, Data_shipping_schedule, Data_confirm_order
+from app.model import Schedule, Space, Reserve, Booking, db
 
-# Database setup
 DATABASE_URL = 'sqlite:///instance/database.db'
 engine = create_engine(DATABASE_URL, echo=True)
 Session = sessionmaker(bind=engine)
@@ -14,121 +13,125 @@ session = Session()
 csv_file_path = 'data.csv'
 df = pd.read_csv(csv_file_path)
 
-# Ensure that 'user_id' and 'status' column exists and default it to 1 or 's1' if missing
-if 'user_id' not in df.columns or 'status' not in df.columns:
-    df['user_id'] = 1                                                                # Default to admin user ID
-    df['status'] = 's1'                                                              # Default to status
+# Ensure required columns exist
+required_columns = [
+    'cs', 'week', 'carrier', 'service', 'mv', 'pol', 'pod', 'routing', 'cyopen', 'sicutoff', 'cycvcls', 'etd', 'eta',
+    'size', 'avgrate', 'sugrate', 'ratevalid', 'proport', 'spcstatus', 'sales', 'saleprice', 'so', 'findest', 'ct_cl', 'shipper', 'consignee', 'term', 'remark'
+]
+
+for column in required_columns:
+    if column not in df.columns:
+        raise ValueError(f"Missing required column: {column}")
 
 # Convert date columns and handle errors
-date_columns = ['CY_Open', 'SI_Cut_Off', 'CY_CY_CLS', 'ETD', 'ETA', 'Date_Valid']
+date_columns = ['cyopen', 'sicutoff', 'cycvcls', 'etd', 'eta', 'ratevalid']
 for col in date_columns:
-    df[col] = pd.to_datetime(df[col], errors='coerce')                               # Handle invalid date formats
+    df[col] = pd.to_datetime(df[col], errors='coerce')
 
-# Fill NaN values with appropriate default values
-df.fillna({
-    'CS': '',
+# Fill missing values with defaults
+default_values = {
+    'cs': '',
     'week': 0,
     'carrier': '',
     'service': '',
-    'MV': '',
-    'SO': '',
-    'size': '',
-    'POL': '',
-    'POD': '',
-    'Final_Destination': '',
+    'mv': '',
+    'pol': '',
+    'pod': '',
     'routing': '',
-    'CY_Open': pd.Timestamp('1970-01-01'),
-    'SI_Cut_Off': pd.Timestamp('1970-01-01'),
-    'CY_CY_CLS': pd.Timestamp('1970-01-01'),
-    'ETD': pd.Timestamp('1970-01-01'),
-    'ETA': pd.Timestamp('1970-01-01'),
-    'Contract_or_Coloader': '',
+    'size': '',
+    'avgrate': 0,
+    'sugrate': 0,
+    'ratevalid': pd.Timestamp('1970-01-01'),
+    'proport': 'N',
+    'spcstatus': 'USABLE',
+    'sales': '',
+    'saleprice': 0,
+    'so': '',
+    'findest': '',
+    'ct_cl': '',
     'shipper': '',
     'consignee': '',
     'term': '',
-    'salesman': '',
-    'cost': 0,
-    'Date_Valid': pd.Timestamp('1970-01-01'),
-    'SR': 0,
-    'remark': '',
-    'status': 's1',                                                                 # Default status
-    'user_id': 1                                                                    # Default to admin user ID
-}, inplace=True)
+    'remark': ''
+}
+df.fillna(default_values, inplace=True)
 
-# Insert data into the three tables
+# Insert data into the database
 for index, row in df.iterrows():
-    # Insert into Data_shipping_schedule
-    new_schedule = Data_shipping_schedule(
-        carrier=row['carrier'],
-        service=row['service'],
-        routing=row['routing'],
-        MV=row['MV'],
-        POL=row['POL'],
-        POD=row['POD'],
-        CY_Open=row['CY_Open'],
-        SI_Cut_Off=row['SI_Cut_Off'],
-        CY_CY_CLS=row['CY_CY_CLS'],
-        ETD=row['ETD'],
-        ETA=row['ETA'],
-        date_created=datetime.utcnow(),
-        status=row['status'],
-        user_id=row['user_id']
-    )
-    
     try:
-        session.add(new_schedule)
-        session.flush()  # Ensure new_schedule gets an ID before proceeding
+        # Create a schedule
+        schedule = Schedule(
+            cs=row['cs'],
+            week=row['week'],
+            carrier=row['carrier'],
+            service=row['service'],
+            mv=row['mv'],
+            pol=row['pol'],
+            pod=row['pod'],
+            routing=row['routing'],
+            cyopen=row['cyopen'],
+            sicutoff=row['sicutoff'],
+            cycvcls=row['cycvcls'],
+            etd=row['etd'],
+            eta=row['eta'],
+            owner=1
+        )
+        session.add(schedule)
+        session.flush()
+
+        # Create a space
+        space = Space(
+            sch_id=schedule.sch_id,
+            size=row['size'],
+            avgrate=row['avgrate'],
+            sugrate=row['sugrate'],
+            ratevalid=row['ratevalid'],
+            proport=row['proport'],
+            spcstatus=row['spcstatus'],
+            owner=1
+        )
+        session.add(space)
+        session.flush()
+
+        # Create a reservation
+        reserve = Reserve(
+            spc_id=space.spc_id,
+            sales=row['sales'],
+            saleprice=row['saleprice'],
+            rsv_date=datetime.utcnow(),
+            remark=row['remark'],
+            owner=1
+        )
+        session.add(reserve)
+
+        # Create a booking
+        booking = Booking(
+            spc_id=space.spc_id,
+            so=row['so'],
+            findest=row['findest'],
+            ct_cl=row['ct_cl'],
+            shipper=row['shipper'],
+            consignee=row['consignee'],
+            term=row['term'],
+            sales=row['sales'],
+            saleprice=row['saleprice'],
+            remark=row['remark'],
+            owner=1
+        )
+        session.add(booking)
+
     except Exception as e:
-        print(f"Error inserting into Data_shipping_schedule at row {index}: {e}")
+        print(f"Error processing row {index}: {e}")
         session.rollback()
         continue
 
-    # Insert into Data_booking 
-    new_booking = Data_booking(
-        CS=row['CS'],
-        week=row['week'],
-        size=row['size'],
-        Final_Destination=row['Final_Destination'],
-        Contract_or_Coloader=row['Contract_or_Coloader'],
-        cost=row['cost'],
-        Date_Valid=row['Date_Valid'],
-        date_created=datetime.utcnow(),
-        data_shipping_schedule_id=new_schedule.id,  # Foreign key to shipping schedule
-        user_id=row['user_id']
-    )
-    
-    try:
-        session.add(new_booking)
-    except Exception as e:
-        print(f"Error inserting into Data_booking at row {index}: {e}")
-        session.rollback()
-        continue
-
-    # Insert into Data_confirm_order
-    new_order = Data_confirm_order(
-        shipper=row['shipper'],
-        consignee=row['consignee'],
-        term=row['term'],
-        salesman=row['salesman'],
-        SR=row['SR'],
-        remark=row['remark'],
-        date_created=datetime.utcnow(),
-        data_shipping_schedule_id=new_schedule.id,  # Foreign key to shipping schedule
-        user_id=row['user_id']
-    )
-    
-    try:
-        session.add(new_order)
-    except Exception as e:
-        print(f"Error inserting into Data_confirm_order at row {index}: {e}")
-        session.rollback()
-
-# Commit the session and handle errors
+# Commit the session
 try:
     session.commit()
+    print("Data imported successfully.")
 except Exception as e:
     session.rollback()
-    print(f"An error occurred during commit: {e}")
+    print(f"Error during commit: {e}")
 
 # Close the session
 session.close()
