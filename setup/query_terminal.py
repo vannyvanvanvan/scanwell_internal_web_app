@@ -4,13 +4,15 @@ from sqlalchemy.orm import joinedload
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Thisisasecret!'
-db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'instance', 'database.db')
+db_path = os.path.join(os.path.abspath(
+    os.path.dirname(__file__)), '..', 'instance', 'database.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 
 # Ensure the instance folder exists
 os.makedirs(os.path.dirname(db_path), exist_ok=True)
 
 db.init_app(app)
+
 
 @app.route('/data')
 def get_data():
@@ -21,6 +23,12 @@ def get_data():
             .options(
                 joinedload(Schedule.spaces).joinedload(Space.reserves),
                 joinedload(Schedule.spaces).joinedload(Space.bookings)
+            )
+            .order_by(
+                Schedule.sch_id.asc(),
+                # Space.spc_id.asc(),
+                # Reserve.rsv_id.asc(),
+                # Booking.bk_id.asc()
             )
         )
 
@@ -54,9 +62,9 @@ def get_data():
                         'status': space.spcstatus,
                         'last_modified_by': space.last_modified_by,
                         'last_modified_at': space.last_modified_at.strftime('%Y-%m-%d %H:%M:%S'),
-                        'reservations': [
+                        'reserve': [
                             {
-                                'reservation_id': reserve.rsv_id,
+                                'reserve_id': reserve.rsv_id,
                                 'sales': reserve.sales,
                                 'sale_price': reserve.saleprice,
                                 'reservation_date': reserve.rsv_date.strftime('%Y-%m-%d %H:%M:%S'),
@@ -85,6 +93,7 @@ def get_data():
 
         # Return the results as JSON
         return jsonify(results)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

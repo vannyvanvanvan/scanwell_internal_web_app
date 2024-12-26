@@ -13,7 +13,7 @@ from flask import (
 from flask_login import current_user, login_required
 import pandas as pd
 from ..restriction import role_required
-from app.model import db, Data_shipping_schedule, Data_booking, Data_confirm_order
+from app.model import db, User, Schedule, Space, Reserve, Booking
 from sqlalchemy.orm import joinedload
 from sqlalchemy import and_
 from werkzeug.utils import secure_filename
@@ -29,42 +29,45 @@ admin = Blueprint(
 @login_required
 @role_required("admin")
 def admin_dashboard():
-    results = Data_shipping_schedule.query.all()  # Admin can see all shipping data
+    results = Schedule.query.all()
+    # Admin can see all shipping data
     return render_template("dashboard.html", results=results, current_user=current_user)
 
-
-@admin.route("/add_shipping_schedule", methods=["GET", "POST"])
+# Routes for Schedule
+#----------------------------------------------------------------------------------------
+@admin.route("/add_Schedule", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
-def add_shipping_data():
+def add_Schedule_data():
     if request.method == "POST":
         try:
-            new_data = Data_shipping_schedule(
+            new_data = Schedule(
+                cs=request.form["cs"],
+                week=int(request.form["week"]),
                 carrier=request.form["carrier"],
                 service=request.form["service"],
+                mv=request.form["mv"],
+                pol=request.form["pol"],
+                pod=request.form["pod"],
                 routing=request.form["routing"],
-                MV=request.form["MV"],
-                POL=request.form["POL"],
-                POD=request.form["POD"],
-                CY_Open=datetime.strptime(request.form["CY_Open"], "%Y-%m-%d"),
-                SI_Cut_Off=datetime.strptime(
+                cyopen=datetime.strptime(request.form["cyopen"], "%Y-%m-%d"),
+                sicutoff=datetime.strptime(
                     "{year} {time}".format(
-                        year=request.form["SI_Cut_Off"],
-                        time=request.form["SI_Cut_Off_Time"],
+                        year=request.form["sicutoff"],
+                        time=request.form["sicutoff_time"],
                     ),
                     "%Y-%m-%d %H:%M",
                 ),
-                CY_CY_CLS=datetime.strptime(
+                cycvcls=datetime.strptime(
                     "{year} {time}".format(
-                        year=request.form["CY_CY_CLS"],
-                        time=request.form["CY_CY_CLS_Time"],
+                        year=request.form["cycvcls"],
+                        time=request.form["cycvcls_time"],
                     ),
                     "%Y-%m-%d %H:%M",
                 ),
-                ETD=datetime.strptime(request.form["ETD"], "%Y-%m-%d"),
-                ETA=datetime.strptime(request.form["ETA"], "%Y-%m-%d"),
-                status=request.form["status"],
-                user_id=current_user.id,
+                etd=datetime.strptime(request.form["etd"], "%Y-%m-%d"),
+                eta=datetime.strptime(request.form["eta"], "%Y-%m-%d"),
+                owner=current_user.id,
             )
             db.session.add(new_data)
             db.session.commit()
@@ -73,262 +76,365 @@ def add_shipping_data():
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
     return render_template(
-        "shipping_schedule.html",
+        "edit_Schedule.html",
         mode="Add",
-        data=Data_shipping_schedule(
+        data=Schedule(
+            cs="",
+            week=datetime.now().isocalendar().week,
             carrier="",
             service="",
+            mv="",
+            pol="",
+            pod="",
             routing="",
-            MV="",
-            POL="",
-            POD="",
-            CY_Open=datetime.now(),
-            SI_Cut_Off=datetime.now(),
-            CY_CY_CLS=datetime.now(),
-            ETD=datetime.now(),
-            ETA=datetime.now(),
-            status="s1",
-            user_id=current_user.id,
+            cyopen=datetime.now(),
+            sicutoff=datetime.now(),
+            cycvcls=datetime.now(),
+            etd=datetime.now(),
+            eta=datetime.now(),
+            owner=current_user.id
         ),
     )
 
 
-@admin.route("/edit_shipping_schedule/<int:id>", methods=["GET", "POST"])
+@admin.route("/edit_Schedule/<int:id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
-def edit_shipping_data(id):
-    shipping_data = Data_shipping_schedule.query.get_or_404(id)
-
+def edit_Schedule_data(sch_id):
+    Schedule_data = Schedule.query.get_or_404(sch_id)
     if request.method == "POST":
         try:
-            shipping_data.carrier = request.form["carrier"]
-            shipping_data.service = request.form["service"]
-            shipping_data.routing = request.form["routing"]
-            shipping_data.MV = request.form["MV"]
-            shipping_data.POL = request.form["POL"]
-            shipping_data.POD = request.form["POD"]
-            shipping_data.CY_Open = datetime.strptime(
-                request.form["CY_Open"], "%Y-%m-%d"
+            Schedule_data.cs = request.form["cs"]
+            Schedule_data.week = int(request.form["week"])
+            Schedule_data.carrier = request.form["carrier"]
+            Schedule_data.service = request.form["service"]
+            Schedule_data.mv = request.form["mv"]
+            Schedule_data.pol = request.form["pol"]
+            Schedule_data.pod = request.form["pod"]
+            Schedule_data.routing = request.form["routing"]
+            Schedule_data.cyopen = datetime.strptime(
+                request.form["cyopen"], "%Y-%m-%d"
             )
-            shipping_data.SI_Cut_Off = datetime.strptime(
+            Schedule_data.sicutoff = datetime.strptime(
                 "{year} {time}".format(
-                    year=request.form["SI_Cut_Off"],
-                    time=request.form["SI_Cut_Off_Time"],
+                    year=request.form["sicutoff"],
+                    time=request.form["sicutoff_time"],
                 ),
                 "%Y-%m-%d %H:%M",
             )
-            shipping_data.CY_CY_CLS = datetime.strptime(
+            Schedule_data.cycvcls = datetime.strptime(
                 "{year} {time}".format(
-                    year=request.form["CY_CY_CLS"],
-                    time=request.form["CY_CY_CLS_Time"],
+                    year=request.form["cycvcls"],
+                    time=request.form["cycvcls_time"],
                 ),
                 "%Y-%m-%d %H:%M",
             )
-            shipping_data.ETD = datetime.strptime(
-                request.form["ETD"], "%Y-%m-%d")
-            shipping_data.ETA = datetime.strptime(
-                request.form["ETA"], "%Y-%m-%d")
-            shipping_data.status = request.form["status"]
+            Schedule_data.etd = datetime.strptime(
+                request.form["etd"], "%Y-%m-%d")
+            Schedule_data.eta = datetime.strptime(
+                request.form["eta"], "%Y-%m-%d")
+            Schedule_data.owner = current_user.id
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
-    return render_template("shipping_schedule.html", mode="Edit", data=shipping_data)
+    return render_template("edit_Schedule.html", mode="Edit", data=Schedule_data)
 
 
-@admin.route("/delete_shipping_schedule/<int:id>", methods=["POST"])
+@admin.route("/delete_Schedule/<int:id>", methods=["POST"])
 @login_required
 @role_required("admin")
-def delete_shipping_data(id):
-    shipping_data = Data_shipping_schedule.query.get_or_404(id)
-    db.session.delete(shipping_data)
+def delete_shipping_data(sch_id):
+    Schedule_data = Schedule.query.get_or_404(sch_id)
+    db.session.delete(Schedule_data)
     db.session.commit()
     flash("Shipping data has been deleted.", "success")
     return redirect(url_for("admin.admin_dashboard"))
 
 
-# Routes for Data_booking
-
-
-@admin.route("/add_booking/<int:schedule_id>", methods=["GET", "POST"])
+# Routes for Space
+#----------------------------------------------------------------------------------------
+@admin.route("/add_Space/<int:spc_id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
-def add_booking_data(schedule_id):
-    shipping_data = Data_shipping_schedule.query.get_or_404(schedule_id)
-    if shipping_data.status == "s3":
-        flash("Schedule already confirmed. Unable to add booking.")
-        return redirect(url_for("admin.admin_dashboard"))
+def add_Space_data(sch_id):
+    # shipping_data = Schedule.query.get_or_404(Schedule_id)
+    # if shipping_data.status == "s3":
+    #     flash("Schedule already confirmed. Unable to add Booking.")
+    #     return redirect(url_for("admin.admin_dashboard"))
 
     if request.method == "POST":
         try:
-            new_data = Data_booking(
-                CS=request.form["CS"],
-                week=int(request.form["week"]),
+            new_data = Space(
+                sch_id = sch_id,
                 size=request.form["size"],
-                Final_Destination=request.form["Final_Destination"],
-                Contract_or_Coloader=request.form["Contract_or_Coloader"],
-                cost=int(request.form["cost"]),
-                Date_Valid=datetime.strptime(
-                    request.form["Date_Valid"], "%Y-%m-%d"),
-                data_shipping_schedule_id=schedule_id,
-                user_id=current_user.id,
+                avgrate=int(request.form["avgrate"]),
+                sugrate=int(request.form["sugrate"]),
+                ratevalid=datetime.strptime(request.form["ratevalid"], "%Y-%m-%d"),
+                proport=request.form["proport"],
+                spcstatus=request.form["spcstatus"],
+                void=request.form["void"],
+                last_modified_by=current_user.id,
+                last_modified_at=datetime.utcnow(),
+                owner=current_user.id,
             )
             db.session.add(new_data)
-
-            shipping_data.status = "s2"
             db.session.commit()
-
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
     return render_template(
-        "edit_booking.html",
-        schedule_id=schedule_id,
+        "edit_Space.html",
+        sch_id=sch_id,
         mode="Add",
-        data=Data_booking(
-            CS="",
-            week=datetime.now().isocalendar().week,
+        data=Space(
             size="",
-            Final_Destination="",
-            Contract_or_Coloader="",
-            cost=0,
-            Date_Valid=datetime.now(),
-            data_shipping_schedule_id=schedule_id,
-            user_id=current_user.id,
+            avgrate=0,
+            sugrate=0,
+            size="",
+            ratevalid=datetime.now(),
+            proport="",
+            spcstatus="USABLE",
+            void="",
+            last_modified_by=current_user.id,
+            last_modified_at=datetime.utcnow(),
+            owner=current_user.id
         ),
     )
 
 
-@admin.route("/edit_booking/<int:id>", methods=["GET", "POST"])
+@admin.route("/edit_Space/<int:spc_id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
-def edit_booking_data(id):
-    booking_data = Data_booking.query.get_or_404(id)
+def edit_Space_data(spc_id):
+    Space_data = Space.query.get_or_404(spc_id)
 
     if request.method == "POST":
         try:
-            booking_data.CS = request.form["CS"]
-            booking_data.week = int(request.form["week"])
-            booking_data.size = request.form["size"]
-            booking_data.Final_Destination = request.form["Final_Destination"]
-            booking_data.Contract_or_Coloader = request.form["Contract_or_Coloader"]
-            booking_data.cost = int(request.form["cost"])
-            booking_data.Date_Valid = datetime.strptime(
-                request.form["Date_Valid"], "%Y-%m-%d"
-            )
+            
+            Space_data.size = request.form["size"]
+            Space_data.avgrate = int(request.form["avgrate"])
+            Space_data.sugrate = int(request.form["sugrate"])
+            Space_data.ratevalid = datetime.strptime(request.form["ratevalid"], "%Y-%m-%d")
+            Space_data.proport = int(request.form["proport"])
+            Space_data.spcstatus = request.form["spcstatus"]
+            Space_data.void = request.form["void"]
+            Space_data.last_modified_by = current_user.id
+            Space_data.last_modified_at = datetime.utcnow()
+            Space_data.owner = current_user.id
+            
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
-    return render_template("edit_booking.html", mode="Edit", data=booking_data)
+    return render_template("edit_Space.html", mode="Edit", data=Space_data)
 
 
-@admin.route("/delete_booking/<int:id>", methods=["POST"])
+@admin.route("/delete_Space/<int:spc_id>", methods=["POST"])
 @login_required
 @role_required("admin")
-def delete_booking_data(id):
-    booking_data = Data_booking.query.get_or_404(id)
-    db.session.delete(booking_data)
+def delete_Space_data(spc_id):
+    Space_data = Schedule.query.get_or_404(spc_id)
 
-    shipping_schedule = Data_shipping_schedule.query.get_or_404(
-        booking_data.data_shipping_schedule_id
-    )
+    # shipping_Schedule = Schedule.query.get_or_404(
+    #     Booking_data.data_shipping_Schedule_id
+    # )
 
-    if len(shipping_schedule.bookings) <= 0:
-        shipping_schedule.status = "s1"
+    # if len(shipping_Schedule.Bookings) <= 0:
+    #     shipping_Schedule.status = "s1"
 
-    db.session.delete(booking_data)
+    db.session.delete(Space_data)
 
     db.session.commit()
     flash("Booking data has been deleted.", "success")
     return redirect(url_for("admin.admin_dashboard"))
 
-
-# Routes for Data_confirm_order
-
-
-@admin.route("/add_confirm_order/<int:schedule_id>", methods=["GET", "POST"])
+# Routes for Reserve
+#----------------------------------------------------------------------------------------
+@admin.route("/add_Reserve/<int:Schedule_id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
-def add_confirm_order_data(schedule_id):
-    shipping_data = Data_shipping_schedule.query.get_or_404(schedule_id)
-    if shipping_data.status != "s2":
-        flash("Booking required before confirming order.")
-        return redirect(url_for("admin.admin_dashboard"))
+def add_Reserve_data(spc_id):
+    # shipping_data = Data_shipping_Schedule.query.get_or_404(Schedule_id)
+    # if shipping_data.status != "s2":
+    #     flash("Booking required before confirming order.")
+    #     return redirect(url_for("admin.admin_dashboard"))
 
     if request.method == "POST":
         try:
-            new_data = Data_confirm_order(
-                shipper=request.form["shipper"],
-                consignee=request.form["consignee"],
-                term=request.form["term"],
-                salesman=request.form["salesman"],
-                SR=int(request.form["SR"]),
+            new_data = Reserve(
+                spc_id = spc_id,
+                sales=request.form["sales"],
+                saleprice=int(request.form["saleprice"]),
+                rsv_date=datetime.strptime(request.form["rsv_date"], "%Y-%m-%d"),
+                cfm_date=datetime.strptime(request.form["cfm_date"], "%Y-%m-%d"),
+                cfm_cs=request.form["cfm_cs"],
+                void=request.form["void"],
                 remark=request.form["remark"],
-                data_shipping_schedule_id=schedule_id,
-                user_id=current_user.id,
+                owner=current_user.id,
             )
             db.session.add(new_data)
-
-            shipping_data.status = "s3"
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
     return render_template(
-        "confirm_order.html",
-        schedule_id=schedule_id,
-        data=Data_confirm_order(
-            shipper="",
-            consignee="",
-            term="",
-            salesman="",
-            SR=0,
+        "edit_Reserve.html",
+        spc_id=spc_id,
+        data=Reserve(
+            sales="",
+            salesprice=0,
+            rsv_date=datetime.now(),
+            cfm_date=datetime.now(),
+            cfm_cs="",
+            void="",
             remark="",
+            owner=current_user.id
         ),
     )
 
 
-@admin.route("/edit_confirm_order/<int:id>", methods=["GET", "POST"])
+@admin.route("/edit_Reserve/<int:rsv_id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
-def edit_confirm_order_data(id):
-    confirm_order_data = Data_confirm_order.query.get_or_404(id)
+def edit_Reserve_data(rsv_id):
+    Reserve_data = Reserve.query.get_or_404(rsv_id)
 
     if request.method == "POST":
         try:
-            confirm_order_data.shipper = request.form["shipper"]
-            confirm_order_data.consignee = request.form["consignee"]
-            confirm_order_data.term = request.form["term"]
-            confirm_order_data.salesman = request.form["salesman"]
-            confirm_order_data.cost = int(request.form["cost"])
-            confirm_order_data.Date_Valid = datetime.strptime(
-                request.form["Date_Valid"], "%Y-%m-%d"
-            )
-            confirm_order_data.SR = int(request.form["SR"])
-            confirm_order_data.remark = request.form["remark"]
+            
+            Reserve_data.sales = request.form["sales"]
+            Reserve_data.saleprice = int(request.form["saleprice"])
+            Reserve_data.rsv_date = datetime.strptime(request.form["rsv_date"], "%Y-%m-%d")
+            Reserve_data.cfm_date = datetime.strptime(request.form["cfm_date"], "%Y-%m-%d")
+            Reserve_data.cfm_cs = int(request.form["cfm_cs"])
+            Reserve_data.void = int(request.form["void"])
+            Reserve_data.remark = request.form["remark"]
+            Reserve_data.owner = current_user.id
+            
             db.session.commit()
         except ValueError as e:
             return f"An error occurred: {str(e)}"
         return redirect(url_for("admin.admin_dashboard"))
-    return render_template("confirm_order.html", data=confirm_order_data)
+    return render_template("edit_Reserve.html", data=Reserve_data)
 
 
-@admin.route("/delete_confirm_order/<int:id>", methods=["POST"])
+@admin.route("/delete_Reserve/<int:rsv_id>", methods=["POST"])
 @login_required
 @role_required("admin")
-def delete_confirm_order_data(id):
-    confirm_order_data = Data_confirm_order.query.get_or_404(id)
-    shipping_schedule = Data_shipping_schedule.query.get_or_404(
-        confirm_order_data.data_shipping_schedule_id
-    )
-    db.session.delete(confirm_order_data)
-    shipping_schedule.status = "s2"
+def delete_Reserve_data(rsv_id):
+    Reserve_data = Reserve.query.get_or_404(rsv_id)
+    # shipping_Schedule = Data_shipping_Schedule.query.get_or_404(
+    #     confirm_order_data.data_shipping_Schedule_id
+    # )
+    db.session.delete(Reserve_data)
+    # shipping_Schedule.status = "s2"
     db.session.commit()
     flash("Order confirmation has been deleted.", "success")
     return redirect(url_for("admin.admin_dashboard"))
 
 
+# Routes for Booking
+#----------------------------------------------------------------------------------------
+@admin.route("/add_Booking/<int:bk_id>", methods=["GET", "POST"])
+@login_required
+@role_required("admin")
+def add_Booking_data(spc_id):
+    # shipping_data = Data_shipping_Schedule.query.get_or_404(Schedule_id)
+    # if shipping_data.status != "s2":
+    #     flash("Booking required before confirming order.")
+    #     return redirect(url_for("admin.admin_dashboard"))
+
+    if request.method == "POST":
+        try:
+            new_data = Booking(
+                sch_id = spc_id,
+                so=request.form["so"],
+                findest=request.form["findest"],
+                ct_cl=request.form["ct_cl"],
+                shipper=request.form["ct_cl"],
+                consignee=request.form["ct_cl"],
+                term=request.form["ct_cl"],
+                sales=request.form["ct_cl"],
+                saleprice=int(request.form["ct_cl"]),
+                void=request.form["void"],
+                remark=request.form["remark"],
+                owner=current_user.id,
+            )
+            db.session.add(new_data)
+            db.session.commit()
+        except ValueError as e:
+            return f"An error occurred: {str(e)}"
+        return redirect(url_for("admin.admin_dashboard"))
+    return render_template(
+        "edit_Reserve.html",
+        spc_id=spc_id,
+        data=Reserve(
+            so="",
+            findest="",
+            ct_cl="",
+            shipper="",
+            consignee="",
+            term="",
+            sales="",
+            saleprice=0,
+            void="",
+            remark="",     
+            owner=current_user.id
+        ),
+    )
+
+
+@admin.route("/edit_Booking/<int:bk_id>", methods=["GET", "POST"])
+@login_required
+@role_required("admin")
+def edit_Booking_data(rsv_id):
+    Booking_data = Booking.query.get_or_404(rsv_id)
+
+    if request.method == "POST":
+        try:
+            
+            Booking_data.so = request.form["so"]
+            Booking_data.findest = request.form["findest"]
+            Booking_data.ct_cl = request.form["ct_cl"]
+            Booking_data.shipper = request.form["shipper"]
+            Booking_data.consignee = request.form["consignee"]
+            Booking_data.term = request.form["term"]
+            Booking_data.sales = request.form["sales"]
+            Booking_data.saleprice = request.form["saleprice"]
+            Booking_data.void = request.form["void"]
+            Booking_data.remark = request.form["remark"]
+            Booking_data.owner = current_user.id
+            
+            db.session.commit()
+        except ValueError as e:
+            return f"An error occurred: {str(e)}"
+        return redirect(url_for("admin.admin_dashboard"))
+    return render_template("edit_Booking.html", data=Booking_data)
+
+
+@admin.route("/delete_Booking/<int:bk_id>", methods=["POST"])
+@login_required
+@role_required("admin")
+def delete_Booking_data(bk_id):
+    Booking_data = Booking.query.get_or_404(bk_id)
+    # shipping_Schedule = Data_shipping_Schedule.query.get_or_404(
+    #     confirm_order_data.data_shipping_Schedule_id
+    # )
+    db.session.delete(Booking_data)
+    # shipping_Schedule.status = "s2"
+    db.session.commit()
+    flash("Order confirmation has been deleted.", "success")
+    return redirect(url_for("admin.admin_dashboard"))
+
+
+
+
+
+
+
+# Routes for search method
+#----------------------------------------------------------------------------------------
 @admin.route("/search", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
@@ -338,53 +444,43 @@ def search():
     show_all = request.args.get("show-all")
 
     query = (
-        db.session.query(Data_shipping_schedule)
-        .join(
-            Data_booking,
-            and_(Data_shipping_schedule.id ==
-                 Data_booking.data_shipping_schedule_id),
-        )
-        .join(
-            Data_confirm_order,
-            and_(
-                Data_shipping_schedule.id
-                == Data_confirm_order.data_shipping_schedule_id
-            ),
-        )
+        db.session.query(Schedule)
         .options(
-            joinedload(Data_shipping_schedule.bookings),
-            joinedload(Data_shipping_schedule.confirm_orders),
+                joinedload(Schedule.spaces).joinedload(Space.reserves),
+                joinedload(Schedule.spaces).joinedload(Space.bookings)
+            )
         )
-    )
 
     if q:
         # print(f"Search query: {q}")  # Debugging line
         results = (
             query.filter(
-                (Data_shipping_schedule.carrier.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.service.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.routing.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.MV.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.POL.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.POD.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.CY_Open.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.SI_Cut_Off.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.POD.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.CY_CY_CLS.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.ETD.ilike(f"%{q}%"))
-                | (Data_shipping_schedule.ETA.ilike(f"%{q}%"))
-                | (Data_booking.CS.ilike(f"%{q}%"))  # Added status field
+                (Schedule.cs.ilike(f"%{q}%"))
+                | (Schedule.week.ilike(f"%{q}%"))
+                | (Schedule.carrier.ilike(f"%{q}%"))
+                | (Schedule.service.ilike(f"%{q}%"))
+                | (Schedule.mv.ilike(f"%{q}%"))
+                | (Schedule.pol.ilike(f"%{q}%"))
+                | (Schedule.pod.ilike(f"%{q}%"))
+                | (Schedule.routing.ilike(f"%{q}%"))
+                | (Schedule.cyopen.ilike(f"%{q}%"))
+                | (Schedule.sicutoff.ilike(f"%{q}%"))
+                | (Schedule.cycvcls.ilike(f"%{q}%"))
+                | (Schedule.etd.ilike(f"%{q}%"))
+                | (Schedule.eta.ilike(f"%{q}%"))
             )
             .order_by(
-                Data_shipping_schedule.carrier.asc(),
-                Data_shipping_schedule.service.desc(),
+                Schedule.sch_id.asc(),
+                Space.spc_id.asc(),
+                Reserve.rsv_id.asc(),
+                Booking.bk_id.asc(),
             )
             .limit(100)
             .all()
         )
         print(f"Results count: {len(results)}")  # Debugging line
     else:
-        results = Data_shipping_schedule.query.all()
+        results = Schedule.query.all()
 
     if show_all is None:
         results = [data for data in results if data.user_id == current_user.id]
@@ -395,214 +491,214 @@ def search():
     )
 
 
-@admin.route("/csv/export", methods=["GET", "POST"])
-@login_required
-@role_required("admin")
-def export_csv():
+# @admin.route("/csv/export", methods=["GET", "POST"])
+# @login_required
+# @role_required("admin")
+# def export_csv():
 
-    # Query the database for all relevant data
-    schedules = Data_shipping_schedule.query.all()
-    bookings = Data_booking.query.all()
-    confirm_orders = Data_confirm_order.query.all()
+#     # Query the database for all relevant data
+#     Schedules = Schedule.query.all()
+#     Bookings = Data_Booking.query.all()
+#     confirm_orders = Data_confirm_order.query.all()
 
-    # Create a dictionary to store confirm orders by shipping schedule ID
-    confirm_order_dict = {
-        order.data_shipping_schedule_id: order for order in confirm_orders}
+#     # Create a dictionary to store confirm orders by shipping Schedule ID
+#     confirm_order_dict = {
+#         order.Schedule_id: order for order in confirm_orders}
 
-    # Combine data into a pandas DataFrame
-    data = []
+#     # Combine data into a pandas DataFrame
+#     data = []
 
-    for schedule in schedules:
-        # Get all bookings associated with this schedule
-        associated_bookings = [
-            b for b in bookings if b.data_shipping_schedule_id == schedule.id]
+#     for Schedule in Schedules:
+#         # Get all Bookings associated with this Schedule
+#         associated_Bookings = [
+#             b for b in Bookings if b.Schedule_id == Schedule.id]
 
-        if not associated_bookings:
-            # If there are no bookings, still add an entry for the schedule with empty fields
-            data.append(
-                {
-                    "carrier": schedule.carrier,
-                    "service": schedule.service,
-                    "routing": schedule.routing,
-                    "MV": schedule.MV,
-                    "POL": schedule.POL,
-                    "POD": schedule.POD,
-                    "CY_Open": schedule.CY_Open,
-                    "SI_Cut_Off": schedule.SI_Cut_Off,
-                    "CY_CY_CLS": schedule.CY_CY_CLS,
-                    "ETD": schedule.ETD,
-                    "ETA": schedule.ETA,
-                    "CS": "",
-                    "week": "",
-                    "size": "",
-                    "Final_Destination": "",
-                    "Contract_or_Coloader": "",
-                    "cost": 0,
-                    "Date_Valid": None,
-                    "shipper": "",
-                    "consignee": "",
-                    "term": "",
-                    "salesman": "",
-                    "SR": "",
-                    "remark": "",
-                }
-            )
-        else:
-            # If there are bookings, add each booking with the corresponding schedule data
-            for booking in associated_bookings:
-                confirm_order = confirm_order_dict.get(schedule.id, None)
+#         if not associated_Bookings:
+#             # If there are no Bookings, still add an entry for the Schedule with empty fields
+#             data.append(
+#                 {
+#                     "carrier": Schedule.carrier,
+#                     "service": Schedule.service,
+#                     "routing": Schedule.routing,
+#                     "MV": Schedule.MV,
+#                     "POL": Schedule.POL,
+#                     "POD": Schedule.POD,
+#                     "CY_Open": Schedule.CY_Open,
+#                     "SI_Cut_Off": Schedule.SI_Cut_Off,
+#                     "CY_CY_CLS": Schedule.CY_CY_CLS,
+#                     "ETD": Schedule.ETD,
+#                     "ETA": Schedule.ETA,
+#                     "CS": "",
+#                     "week": "",
+#                     "size": "",
+#                     "Final_Destination": "",
+#                     "Contract_or_Coloader": "",
+#                     "cost": 0,
+#                     "Date_Valid": None,
+#                     "shipper": "",
+#                     "consignee": "",
+#                     "term": "",
+#                     "salesman": "",
+#                     "SR": "",
+#                     "remark": "",
+#                 }
+#             )
+#         else:
+#             # If there are Bookings, add each Booking with the corresponding Schedule data
+#             for Booking in associated_Bookings:
+#                 confirm_order = confirm_order_dict.get(Schedule.id, None)
 
-                data.append(
-                    {
-                        "carrier": schedule.carrier,
-                        "service": schedule.service,
-                        "routing": schedule.routing,
-                        "MV": schedule.MV,
-                        "POL": schedule.POL,
-                        "POD": schedule.POD,
-                        "CY_Open": schedule.CY_Open,
-                        "SI_Cut_Off": schedule.SI_Cut_Off,
-                        "CY_CY_CLS": schedule.CY_CY_CLS,
-                        "ETD": schedule.ETD,
-                        "ETA": schedule.ETA,
-                        "CS": booking.CS,
-                        "week": booking.week,
-                        "size": booking.size,
-                        "Final_Destination": booking.Final_Destination,
-                        "Contract_or_Coloader": booking.Contract_or_Coloader,
-                        "cost": booking.cost,
-                        "Date_Valid": booking.Date_Valid,
-                        "shipper": confirm_order.shipper if confirm_order else "",
-                        "consignee": confirm_order.consignee if confirm_order else "",
-                        "term": confirm_order.term if confirm_order else "",
-                        "salesman": confirm_order.salesman if confirm_order else "",
-                        "SR": confirm_order.SR if confirm_order else "",
-                        "remark": confirm_order.remark if confirm_order else "",
-                    }
-                )
+#                 data.append(
+#                     {
+#                         "carrier": Schedule.carrier,
+#                         "service": Schedule.service,
+#                         "routing": Schedule.routing,
+#                         "MV": Schedule.MV,
+#                         "POL": Schedule.POL,
+#                         "POD": Schedule.POD,
+#                         "CY_Open": Schedule.CY_Open,
+#                         "SI_Cut_Off": Schedule.SI_Cut_Off,
+#                         "CY_CY_CLS": Schedule.CY_CY_CLS,
+#                         "ETD": Schedule.ETD,
+#                         "ETA": Schedule.ETA,
+#                         "CS": Booking.CS,
+#                         "week": Booking.week,
+#                         "size": Booking.size,
+#                         "Final_Destination": Booking.Final_Destination,
+#                         "Contract_or_Coloader": Booking.Contract_or_Coloader,
+#                         "cost": Booking.cost,
+#                         "Date_Valid": Booking.Date_Valid,
+#                         "shipper": confirm_order.shipper if confirm_order else "",
+#                         "consignee": confirm_order.consignee if confirm_order else "",
+#                         "term": confirm_order.term if confirm_order else "",
+#                         "salesman": confirm_order.salesman if confirm_order else "",
+#                         "SR": confirm_order.SR if confirm_order else "",
+#                         "remark": confirm_order.remark if confirm_order else "",
+#                     }
+#                 )
 
-    # Convert the data to a pandas DataFrame
-    df = pd.DataFrame(data)
+#     # Convert the data to a pandas DataFrame
+#     df = pd.DataFrame(data)
 
-    # Create a CSV from the DataFrame
-    csv_output = StringIO()
-    df.to_csv(csv_output, index=False)
-    csv_output.seek(0)
+#     # Create a CSV from the DataFrame
+#     csv_output = StringIO()
+#     df.to_csv(csv_output, index=False)
+#     csv_output.seek(0)
 
-    # Send the CSV file as a response
-    response = make_response(csv_output.getvalue())
-    response.headers["Content-Disposition"] = "attachment; filename=data_export.csv"
-    response.headers["Content-Type"] = "text/csv"
+#     # Send the CSV file as a response
+#     response = make_response(csv_output.getvalue())
+#     response.headers["Content-Disposition"] = "attachment; filename=data_export.csv"
+#     response.headers["Content-Type"] = "text/csv"
 
-    # For frontend members
-    # Put this <a href="{{ url_for('admin.export_csv') }}" class="btn btn-primary">Export Data to CSV</a> to a suitable place
-    # It will directly download the file
-    return response
-
-
-@admin.route("/csv/import", methods=["GET", "POST"])
-@login_required
-@role_required("admin")
-def import_csv():
-    if request.method == "POST":
-        # check if the post request has the file part
-        if "file" not in request.files:
-            flash("File not found. Please try again.")
-            return redirect(request.url)
-
-        file = request.files["file"]
-
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        if file.filename == "":
-            flash("File not selected. Please try again.")
-            return redirect(request.url)
-        if file and is_filetype(file.filename, "csv"):
-            # Save uploaded csv file temporarily using random uuid
-            fileid = str(uuid.uuid4())
-            filename = "%s.%s" % (fileid, "csv")
-            file.save(os.path.join(app.config["TEMP_FOLDER"], filename))
-            return redirect(url_for("admin.import_preview", id=fileid))
-
-        return redirect(url_for("admin.import_csv"))
-    return render_template("csv_import.html", current_user=current_user)
+#     # For frontend members
+#     # Put this <a href="{{ url_for('admin.export_csv') }}" class="btn btn-primary">Export Data to CSV</a> to a suitable place
+#     # It will directly download the file
+#     return response
 
 
-def is_filetype(filename, extension):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() == extension
+# @admin.route("/csv/import", methods=["GET", "POST"])
+# @login_required
+# @role_required("admin")
+# def import_csv():
+#     if request.method == "POST":
+#         # check if the post request has the file part
+#         if "file" not in request.files:
+#             flash("File not found. Please try again.")
+#             return redirect(request.url)
+
+#         file = request.files["file"]
+
+#         # If the user does not select a file, the browser submits an
+#         # empty file without a filename.
+#         if file.filename == "":
+#             flash("File not selected. Please try again.")
+#             return redirect(request.url)
+#         if file and is_filetype(file.filename, "csv"):
+#             # Save uploaded csv file temporarily using random uuid
+#             fileid = str(uuid.uuid4())
+#             filename = "%s.%s" % (fileid, "csv")
+#             file.save(os.path.join(app.config["TEMP_FOLDER"], filename))
+#             return redirect(url_for("admin.import_preview", id=fileid))
+
+#         return redirect(url_for("admin.import_csv"))
+#     return render_template("csv_import.html", current_user=current_user)
 
 
-@admin.route("/csv/import/<string:id>", methods=["GET", "POST"])
-@login_required
-@role_required("admin")
-def import_preview(id):
+# def is_filetype(filename, extension):
+#     return "." in filename and filename.rsplit(".", 1)[1].lower() == extension
 
-    # Build csv path from temp folder and filename using filenameid
-    csv_path = os.path.join(app.config["TEMP_FOLDER"], "%s.%s" % (id, "csv"))
 
-    # If csv doesn't exist in temp folder return user to import csv page
-    if not os.path.isfile(csv_path):
-        flash("File invalid, please try again with another file.")
-        return redirect(url_for("admin.import_csv"))
+# @admin.route("/csv/import/<string:id>", methods=["GET", "POST"])
+# @login_required
+# @role_required("admin")
+# def import_preview(id):
 
-    # If file exists, try to read as dataframe, if exception return to import page
-    try:
-        df = pd.read_csv(csv_path, keep_default_na=False)
+#     # Build csv path from temp folder and filename using filenameid
+#     csv_path = os.path.join(app.config["TEMP_FOLDER"], "%s.%s" % (id, "csv"))
 
-        # Convert date columns
-        date_columns = ["CY_Open", "ETD", "ETA", "Date_Valid"]
-        for col in date_columns:
-            df[col] = pd.to_datetime(df[col], errors="coerce").dt.date
+#     # If csv doesn't exist in temp folder return user to import csv page
+#     if not os.path.isfile(csv_path):
+#         flash("File invalid, please try again with another file.")
+#         return redirect(url_for("admin.import_csv"))
 
-        # Convert datetime columns
-        date_columns = ["SI_Cut_Off", "CY_CY_CLS"]
-        for col in date_columns:
-            df[col] = pd.to_datetime(
-                df[col], errors="coerce").astype("datetime64[s]")
+#     # If file exists, try to read as dataframe, if exception return to import page
+#     try:
+#         df = pd.read_csv(csv_path, keep_default_na=False)
 
-        schedules = []
+#         # Convert date columns
+#         date_columns = ["CY_Open", "ETD", "ETA", "Date_Valid"]
+#         for col in date_columns:
+#             df[col] = pd.to_datetime(df[col], errors="coerce").dt.date
 
-        for index, row in df.iterrows():
-            print(index)
-            schedule_columns = [
-                "carrier",
-                "service",
-                "routing",
-                "MV",
-                "POL",
-                "POD",
-                "CY_Open",
-                "SI_Cut_Off",
-                "CY_CY_CLS",
-                "ETD",
-                "ETA",
-            ]
-            # Check if all schedule columns exists in current row
-            if all(column in row for column in schedule_columns):
-                print("can create schedule")
-                schedule = {
-                    "date_created": (
-                        row["date_created"] if "date_created" in row else datetime.now()
-                    ),
-                    "carrier": row["carrier"],
-                    "service": row["service"],
-                    "routing": row["routing"],
-                    "MV": row["MV"],
-                    "POL": row["POL"],
-                    "POD": row["POD"],
-                    "CY_Open": row["CY_Open"],
-                    "SI_Cut_Off": row["SI_Cut_Off"],
-                    "CY_CY_CLS": row["CY_CY_CLS"],
-                    "ETD": row["ETD"],
-                    "ETA": row["ETA"],
-                }
-                schedule["id"] = index
-                schedules.append(schedule)
-        print(schedules)
-    except Exception as e:
-        flash("CSV file invalid, please try again.")
-        return redirect(url_for("admin.import_csv"))
+#         # Convert datetime columns
+#         date_columns = ["SI_Cut_Off", "CY_CY_CLS"]
+#         for col in date_columns:
+#             df[col] = pd.to_datetime(
+#                 df[col], errors="coerce").astype("datetime64[s]")
 
-    return render_template(
-        "csv_import_preview.html", results=schedules, current_user=current_user
-    )
+#         Schedules = []
+
+#         for index, row in df.iterrows():
+#             print(index)
+#             Schedule_columns = [
+#                 "carrier",
+#                 "service",
+#                 "routing",
+#                 "MV",
+#                 "POL",
+#                 "POD",
+#                 "CY_Open",
+#                 "SI_Cut_Off",
+#                 "CY_CY_CLS",
+#                 "ETD",
+#                 "ETA",
+#             ]
+#             # Check if all Schedule columns exists in current row
+#             if all(column in row for column in Schedule_columns):
+#                 print("can create Schedule")
+#                 Schedule = {
+#                     "date_created": (
+#                         row["date_created"] if "date_created" in row else datetime.now()
+#                     ),
+#                     "carrier": row["carrier"],
+#                     "service": row["service"],
+#                     "routing": row["routing"],
+#                     "MV": row["MV"],
+#                     "POL": row["POL"],
+#                     "POD": row["POD"],
+#                     "CY_Open": row["CY_Open"],
+#                     "SI_Cut_Off": row["SI_Cut_Off"],
+#                     "CY_CY_CLS": row["CY_CY_CLS"],
+#                     "ETD": row["ETD"],
+#                     "ETA": row["ETA"],
+#                 }
+#                 Schedule["id"] = index
+#                 Schedules.append(Schedule)
+#         print(Schedules)
+#     except Exception as e:
+#         flash("CSV file invalid, please try again.")
+#         return redirect(url_for("admin.import_csv"))
+
+#     return render_template(
+#         "csv_import_preview.html", results=Schedules, current_user=current_user
+#     )

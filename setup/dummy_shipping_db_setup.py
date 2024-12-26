@@ -61,12 +61,12 @@ def create_spaces(n=20):
     db.session.commit()
     print(f"Created {n} spaces.")
 
-def create_reservations(n=15):
+def create_reserve(n=15):
     spaces = Space.query.filter_by(spcstatus="USABLE").all()
     users = User.query.all()
     for _ in range(min(n, len(spaces))):
         space = choice(spaces)
-        reservation = Reserve(
+        reserve = Reserve(
             spc_id=space.spc_id,
             sales=fake.name(),
             saleprice=randint(1500, 6000),
@@ -75,9 +75,9 @@ def create_reservations(n=15):
             void="F",
             owner=choice(users).user_id,
         )
-        db.session.add(reservation)
+        db.session.add(reserve)
     db.session.commit()
-    print(f"Created {n} reservations.")
+    print(f"Created {n} reserve.")
 
 def create_bookings(n=10):
     spaces = Space.query.filter_by(spcstatus="USABLE").all()
@@ -107,6 +107,6 @@ if __name__ == "__main__":
         create_users()
         create_schedules()
         create_spaces()
-        create_reservations()
+        create_reserve()
         create_bookings()
     print("Database population complete.")
