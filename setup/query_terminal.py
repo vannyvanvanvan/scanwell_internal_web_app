@@ -39,7 +39,13 @@ def get_data():
 
         # Convert results to a list of dictionaries
         results = []
+        schedule_data.sort()
         for schedule in schedule_data:
+            schedule.spaces.sort()
+            for space in schedule.spaces:
+                space.reserves.sort()
+                space.bookings.sort()
+            
             results.append({
                 'schedule_id': schedule.sch_id,
                 'carrier': schedule.carrier,
