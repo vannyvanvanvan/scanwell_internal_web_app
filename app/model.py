@@ -17,6 +17,9 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return '<User %r>' % self.user_id
+    
+    def __lt__(self, other):
+         return self.user_id < other.user_id
 
 class Schedule(db.Model):
 
@@ -42,7 +45,10 @@ class Schedule(db.Model):
     spaces = db.relationship('Space', backref='schedule', lazy='joined')
 
     def __repr__(self):
-        return '<schedule %r>' % self.spc_id
+        return '<schedule %r>' % self.sch_id
+    
+    def __lt__(self, other):
+         return self.sch_id < other.sch_id
 
 
 class Space(db.Model):
@@ -67,6 +73,9 @@ class Space(db.Model):
 
     def __repr__(self):
         return '<space %r>' % self.spc_id
+    
+    def __lt__(self, other):
+         return self.spc_id < other.spc_id
     
     def update_status(self, new_status, user_id):
         # Updates the SPCSTATUS and logs the user making the change.
@@ -93,6 +102,9 @@ class Reserve(db.Model):
     def __repr__(self):
         return '<reserve %r>' % self.rsv_id
     
+    def __lt__(self, other):
+         return self.rsv_id < other.rsv_id
+    
     
 class Booking(db.Model):
     __tablename__ = 'booking'
@@ -114,4 +126,7 @@ class Booking(db.Model):
 
     def __repr__(self):
         return '<booking %r>' % self.bk_id
+    
+    def __lt__(self, other):
+         return self.bk_id < other.bk_id
 
