@@ -1,0 +1,32 @@
+├── routes/
+│   ├── __init__.py
+│   ├── user.py
+│   ├── schedule.py
+│   ├── space.py
+│   ├── reserve.py
+│   ├── booking.py
+├── functions/
+│   ├── user/
+│   │   ├── __init__.py
+│   │   ├── login.py
+│   │   ├── logout.py
+│   ├── schedule/
+│   │   ├── __init__.py
+│   │   ├── new.py
+│   │   ├── edit.py
+│   │   ├── delete.py
+│   ├── space/
+│   │   ├── __init__.py
+│   │   ├── new.py
+│   │   ├── edit.py
+│   │   ├── delete.py
+│   ├── reserve/
+│   │   ├── __init__.py
+│   │   ├── new.py
+│   │   ├── edit.py
+│   │   ├── delete.py
+│   ├── booking/
+│   │   ├── __init__.py
+│   │   ├── new.py
+│   │   ├── edit.py
+│   │   ├── delete.py
