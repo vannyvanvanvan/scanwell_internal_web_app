@@ -1,0 +1,25 @@
+├── user/
+│   ├── login/ (everyone)
+│   ├── logout/ (everyone)
+│   ├── home/ (everyone)
+├── schedule/
+│   ├── new/ (admin)
+│   ├── edit/:sch_id (admin)
+│   ├── delete/:sch_id (admin)
+├── space/
+│   ├── new/ (admin)
+│   ├── edit/:spc_id (admin)
+│   ├── delete/:spc_id (admin)
+│   ├── update-status/:spc_id (admin, cs)
+│   ├── search/:query (everyone)
+├── reserve/
+│   ├── new/ (admin, sales)
+│   ├── edit/:spc_id (admin, cs)
+│   ├── delete/:rsv_id (admin)
+│   ├── confirm/:rsv_id (cs)
+│   ├── decline/:rsv_id (cs)
+│   ├── unconfirm/:rsv_id (cs)
+├── booking/
+│   ├── new/ (admin)
+│   ├── edit/:bk_id (admin, cs)
+│   ├── delete/:bk_id (admin)

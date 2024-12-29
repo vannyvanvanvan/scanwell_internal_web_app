@@ -37,7 +37,7 @@
 - Default status `USABLE`
 - Usable space auto set to `INVALID` when <24hr until `SICUTOFF` GMT+8 18:00
 - In space table, display only one space in each row
-- Not allow sales to change `SPCSTATUS`, sales or admin only
+- Not allow sales to change `SPCSTATUS`, cs or admin only–
 
 ## Reserve
 - Update `SPCSTATUS` to `RV_` prefix status
