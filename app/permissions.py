@@ -13,6 +13,7 @@ def rank_required(ranks:List[str]):
             if current_user.rank in ranks:
               func(*args, **kwargs)
             else:
-              return abort(403)  # Forbidden
+               # Forbidden 
+              return abort(403)
         return decorated_view
     return decorator
