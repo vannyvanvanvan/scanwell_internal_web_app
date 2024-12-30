@@ -7,21 +7,27 @@
 │       └── login_script.py
 ├── app/
 │   ├── __init__.py
+│   ├── functions/
+│   │   └── user/
+│   │       ├── __init__.py
+│   │       ├── login.py
+│   │       └── logout.py
 │   ├── hashing.py
 │   ├── model.py
-│   ├── restriction.py
+│   ├── permissions.py
 │   └── routes/
 │       ├── __init__.py
-│       ├── admin.py
-│       ├── login.py
+│       ├── booking.py
+│       ├── reserve.py
+│       ├── schedule.py
+│       ├── space.py
 │       └── user.py
-├── instance/
-│   ├── temp/
-│   ├── database.py
+├── driver.py
+├── requirements.txt
 ├── setup/
 │   ├── csv_importer.py
-│   ├── query_terminal.py
 │   ├── dummy_shipping_db_setup.py
+│   ├── query_terminal.py
 │   ├── shipping_db_setup.py
 │   └── user_db_setup.py
 ├── static/
@@ -46,5 +52,3 @@
 │   ├── shipping_schedule.html
 │   ├── shipping_table.html
 │   └── shipping_table_results.html
-├── driver.py
-├── requirements.txt
