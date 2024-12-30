@@ -24,12 +24,6 @@ def get_data():
                 joinedload(Schedule.spaces).joinedload(Space.reserves),
                 joinedload(Schedule.spaces).joinedload(Space.bookings)
             )
-            .order_by(
-                Schedule.sch_id.asc(),
-                # Space.spc_id.asc(),
-                # Reserve.rsv_id.asc(),
-                # Booking.bk_id.asc()
-            )
         )
 
         sql_query = str(query.statement.compile(db.engine))

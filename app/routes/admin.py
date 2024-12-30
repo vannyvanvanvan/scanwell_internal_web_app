@@ -97,7 +97,7 @@ def add_Schedule_data():
     )
 
 
-@admin.route("/edit_Schedule/<int:id>", methods=["GET", "POST"])
+@admin.route("/edit_Schedule/<int:sch_id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
 def edit_Schedule_data(sch_id):
@@ -154,7 +154,7 @@ def delete_shipping_data(sch_id):
 
 # Routes for Space
 #----------------------------------------------------------------------------------------
-@admin.route("/add_Space/<int:spc_id>", methods=["GET", "POST"])
+@admin.route("/add_Space/<int:sch_id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
 def add_Space_data(sch_id):
@@ -251,7 +251,7 @@ def delete_Space_data(spc_id):
 
 # Routes for Reserve
 #----------------------------------------------------------------------------------------
-@admin.route("/add_Reserve/<int:Schedule_id>", methods=["GET", "POST"])
+@admin.route("/add_Reserve/<int:spc_id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
 def add_Reserve_data(spc_id):
@@ -336,7 +336,7 @@ def delete_Reserve_data(rsv_id):
 
 # Routes for Booking
 #----------------------------------------------------------------------------------------
-@admin.route("/add_Booking/<int:bk_id>", methods=["GET", "POST"])
+@admin.route("/add_Booking/<int:spc_id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
 def add_Booking_data(spc_id):
@@ -388,8 +388,8 @@ def add_Booking_data(spc_id):
 @admin.route("/edit_Booking/<int:bk_id>", methods=["GET", "POST"])
 @login_required
 @role_required("admin")
-def edit_Booking_data(rsv_id):
-    Booking_data = Booking.query.get_or_404(rsv_id)
+def edit_Booking_data(bk_id):
+    Booking_data = Booking.query.get_or_404(bk_id) 
 
     if request.method == "POST":
         try:
@@ -478,7 +478,8 @@ def search():
             .limit(100)
             .all()
         )
-        print(f"Results count: {len(results)}")  # Debugging line
+        # Debugging line
+        print(f"Results count: {len(results)}")
     else:
         results = Schedule.query.all()
 

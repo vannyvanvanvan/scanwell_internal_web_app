@@ -70,27 +70,17 @@ def login():
 
         remember = login_detail.remember_me.data
 
-        if (
-            user.password == hashed_request_password
-            and user.username == _request_username
-            and user.rank == "admin"
-        ):
+        if user.password == hashed_request_password and user.username == _request_username:
             login_user(user, remember=remember)
-            return redirect(url_for("admin.admin_dashboard"))
 
-        elif (
-            user.password == hashed_request_password
-            and user.username == _request_username
-            and user.rank == "user"
-        ):
-            login_user(user, remember=remember)
-            return redirect(url_for("user.user_dashboard"))
+            if user.rank == "admin":
+                return redirect(url_for("admin.admin_dashboard"))
+            elif user.rank == "customer_service":
+                return redirect(url_for("customer_service.customer_service_dashboard"))
+            elif user.rank == "salesperson":
+                return redirect(url_for("sales.sales_dashboard"))
 
-        else:
-            flash("Invalid username or password, error message: 101")
-            return render_template("login.html", login_detail=login_detail)
-
-    else:
+        flash("Invalid username or password, error code: 101")
         return render_template("login.html", login_detail=login_detail)
 
 
