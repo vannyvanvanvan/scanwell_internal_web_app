@@ -7,14 +7,34 @@
 │       └── login_script.py
 ├── app/
 │   ├── __init__.py
+│   ├── hashing.py
+│   ├── model.py
+│   ├── permissions.py
 │   ├── functions/
+│   │   ├── booking/
+│   │   │   ├── __init__.py
+│   │   │   ├── delete.py
+│   │   │   ├── edit.py
+│   │   │   └── new.py
+│   │   ├── reserve/
+│   │   │   ├── __init__.py
+│   │   │   ├── delete.py
+│   │   │   ├── edit.py
+│   │   │   └── new.py
+│   │   ├── schedule/
+│   │   │   ├── __init__.py
+│   │   │   ├── delete.py
+│   │   │   ├── edit.py
+│   │   │   └── new.py
+│   │   ├── space/
+│   │   │   ├── __init__.py
+│   │   │   ├── delete.py
+│   │   │   ├── edit.py
+│   │   │   └── new.py
 │   │   └── user/
 │   │       ├── __init__.py
 │   │       ├── login.py
 │   │       └── logout.py
-│   ├── hashing.py
-│   ├── model.py
-│   ├── permissions.py
 │   └── routes/
 │       ├── __init__.py
 │       ├── booking.py
