@@ -16,12 +16,13 @@ if not os.path.exists(app.config["TEMP_FOLDER"]):
 # from app.routes.login import b_login
 # from app.routes.admin import admin
 # from app.routes.user import user
+from app.routes.user import user
 
 db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "b_login.login"
+login_manager.login_view = "user.user_login"
 
 # Create DB
 with app.app_context():
@@ -37,6 +38,7 @@ def load_user(user_id):
 # app.register_blueprint(b_login)
 # app.register_blueprint(admin, url_prefix="/admin")
 # app.register_blueprint(user, url_prefix="/user")
+app.register_blueprint(user)
 
 if __name__ == "__main__":
     print(app.url_map)

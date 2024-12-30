@@ -17,7 +17,7 @@
 
   {% include 'flash.html' %}
 
-  <form method="POST" action="{{ url_for('b_login.login') }}">
+  <form method="POST" action="{{ url_for('user.user_login') }}">
     {{ login_detail.csrf_token }}
 
     {{ render_field(login_detail.request_username) }}

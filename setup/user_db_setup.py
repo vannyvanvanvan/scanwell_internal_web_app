@@ -6,11 +6,11 @@ from driver import *
 # ------------------------------------------------------------------------------
 
 with app.app_context():
-    user1 = User(user_id=1, username='admin@mail.com',
+    user1 = User(id=1, username='admin@mail.com',
                       password=hash_string("test1"), rank='admin')
-    user2 = User(user_id=2, username='user@mail.com',
+    user2 = User(id=2, username='user@mail.com',
                       password=hash_string("test2"), rank='user')
-    user3 = User(user_id=3, username='user2@mail.com',
+    user3 = User(id=3, username='user2@mail.com',
                       password=hash_string("test3"), rank='user')
 
 
