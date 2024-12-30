@@ -53,7 +53,7 @@ def validate_login(form: LoginForm):
         return render_template("login.html", login_detail=form)
 
 
-def show_login_form():
+def login_page():
     login_form = LoginForm()
 
     if login_form.validate_on_submit():

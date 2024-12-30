@@ -2,7 +2,8 @@ from datetime import timedelta
 from flask import Blueprint, redirect, session, url_for
 from flask_login import login_required, logout_user
 
-from app.functions.user.login import show_login_form
+from app.functions.user.login import login_page
+from app.functions.user.logout import logout_page
 
 user = Blueprint(
     "user", __name__, template_folder="../templates", static_folder="../static"
@@ -17,14 +18,13 @@ def make_session_permanent():
 
 @user.route("/login", methods=["GET", "POST"])
 def user_login():
-    return show_login_form()
+    return login_page()
 
 
 @user.route("/logout")
 @login_required
 def user_logout():
-    logout_user()
-    return redirect(url_for("user.login"))
+    return logout_page()
 
 @user.route("/home")
 @login_required
