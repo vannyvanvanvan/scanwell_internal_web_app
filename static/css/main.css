@@ -37,6 +37,7 @@ header.admin {
   grid-template-columns: 3fr 1fr;
   grid-gap: 8px;
   align-items: center;
+  text-transform: capitalize;
 }
 
 .menu-bar-button {

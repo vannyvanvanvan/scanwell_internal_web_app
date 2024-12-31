@@ -13,10 +13,6 @@ app.config["TEMP_FOLDER"] = "%s/temp/" % app.instance_path
 if not os.path.exists(app.config["TEMP_FOLDER"]):
     os.makedirs(app.config["TEMP_FOLDER"])
 
-# from app.routes.login import b_login
-# from app.routes.admin import admin
-# from app.routes.user import user
-from app.routes.user import user
 
 db.init_app(app)
 
@@ -34,11 +30,11 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-# # Eegistering blueprint
-# app.register_blueprint(b_login)
-# app.register_blueprint(admin, url_prefix="/admin")
-# app.register_blueprint(user, url_prefix="/user")
-app.register_blueprint(user)
+# # Registering blueprint
+from app.routes.user import user_routes
+from app.routes.schedule import schedule_routes
+app.register_blueprint(user_routes)
+app.register_blueprint(schedule_routes, url_prefix="/schedule")
 
 if __name__ == "__main__":
     print(app.url_map)

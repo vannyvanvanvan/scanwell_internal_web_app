@@ -18,7 +18,7 @@ class User(db.Model, UserMixin):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"<User: id={self.id}, username={self.username}, password={self.password}>"
+        return f"<User: id={self.id}, username={self.username}, rank={self.rank}>"
 
     def __lt__(self, other):
         return self.id < other.id
@@ -48,7 +48,7 @@ class Schedule(db.Model):
     spaces = db.relationship("Space", backref="schedule", lazy="joined")
 
     def __repr__(self):
-        return "<schedule %r>" % self.sch_id
+        return f"<Schedule: id={self.sch_id}, cs={self.cs}, week={self.week}>"
 
     def __lt__(self, other):
         return self.sch_id < other.sch_id
@@ -77,7 +77,7 @@ class Space(db.Model):
     bookings = db.relationship("Booking", backref="space", lazy="joined")
 
     def __repr__(self):
-        return "<space %r>" % self.spc_id
+        return f"<Space: id={self.spc_id}, schedule={self.sch_id}, spcstatus={self.spcstatus}, void={self.void}>"
 
     def __lt__(self, other):
         return self.spc_id < other.spc_id
@@ -105,7 +105,7 @@ class Reserve(db.Model):
     owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def __repr__(self):
-        return "<reserve %r>" % self.rsv_id
+        return f"<Reserve: id={self.rsv_id}, space={self.spc_id}, sales={self.sales}, void={self.void}>"
 
     def __lt__(self, other):
         return self.rsv_id < other.rsv_id
@@ -130,6 +130,7 @@ class Booking(db.Model):
     owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def __repr__(self):
+        return f"<Booking: id={self.bk_id}, space={self.spc_id}, so={self.so}, void={self.void}>"
         return "<booking %r>" % self.bk_id
 
     def __lt__(self, other):

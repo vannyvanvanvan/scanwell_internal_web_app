@@ -5,41 +5,41 @@ from flask_login import current_user
 from app.model import Schedule
 from flask import request, flash
 from sqlalchemy.exc import SQLAlchemyError
-from app.model import db
+from driver import db
 
 
-# Function to handle editing an existing schedule
-def edit_schedule(sch_id: int):
+# Show existing schedule
+def show_schedule(sch_id: int):
     try:
         # Fetching by ID
-        schedule_to_edit = Schedule.query.get_or_404(sch_id)
+        Schedule_data = Schedule.query.get_or_404(sch_id)
 
-        schedule_to_edit.cs = request.form["cs"]
-        schedule_to_edit.week = int(request.form["week"])
-        schedule_to_edit.carrier = request.form["carrier"]
-        schedule_to_edit.service = request.form["service"]
-        schedule_to_edit.mv = request.form["mv"]
-        schedule_to_edit.pol = request.form["pol"]
-        schedule_to_edit.pod = request.form["pod"]
-        schedule_to_edit.routing = request.form["routing"]
-        schedule_to_edit.cyopen = datetime.strptime(request.form["cyopen"], "%Y-%m-%d")
-        schedule_to_edit.sicutoff = datetime.strptime(
+        Schedule_data.cs = request.form["cs"]
+        Schedule_data.week = int(request.form["week"])
+        Schedule_data.carrier = request.form["carrier"]
+        Schedule_data.service = request.form["service"]
+        Schedule_data.mv = request.form["mv"]
+        Schedule_data.pol = request.form["pol"]
+        Schedule_data.pod = request.form["pod"]
+        Schedule_data.routing = request.form["routing"]
+        Schedule_data.cyopen = datetime.strptime(request.form["cyopen"], "%Y-%m-%d")
+        Schedule_data.sicutoff = datetime.strptime(
             "{year} {time}".format(
                 year=request.form["sicutoff"],
                 time=request.form["sicutoff_time"],
             ),
             "%Y-%m-%d %H:%M",
         )
-        schedule_to_edit.cycvcls = datetime.strptime(
+        Schedule_data.cycvcls = datetime.strptime(
             "{year} {time}".format(
                 year=request.form["cycvcls"],
                 time=request.form["cycvcls_time"],
             ),
             "%Y-%m-%d %H:%M",
         )
-        schedule_to_edit.etd = datetime.strptime(request.form["etd"], "%Y-%m-%d")
-        schedule_to_edit.eta = datetime.strptime(request.form["eta"], "%Y-%m-%d")
-        schedule_to_edit.owner = current_user.id
+        Schedule_data.etd = datetime.strptime(request.form["etd"], "%Y-%m-%d")
+        Schedule_data.eta = datetime.strptime(request.form["eta"], "%Y-%m-%d")
+        Schedule_data.owner = current_user.id
         db.session.commit()
         flash("Schedule updated successfully!", "success")
         return True

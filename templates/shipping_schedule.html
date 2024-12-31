@@ -16,19 +16,14 @@
     {{ render_input_text(name='Carrier', id='carrier', required=True, value=data.carrier) }}
     {{ render_input_text(name='Service', id='service', required=True, value=data.service) }}
     {{ render_input_text(name='Routing', id='routing', required=True, value=data.routing) }}
-    {{ render_input_text(name='MV', id='MV', required=True, value=data.MV) }}
-    {{ render_input_text(name='POL', id='POL', required=True, value=data.POL) }}
-    {{ render_input_text(name='POD', id='POD', required=True, value=data.POD) }}
-    {{ render_input_date(name='CY Open', id='CY_Open', required=True, value=data.CY_Open) }}
-    {{ render_input_datetime(name='SI Cut Off', id='SI_Cut_Off', required=True, value=data.SI_Cut_Off) }}
-    {{ render_input_datetime(name='CY CY CLS', id='CY_CY_CLS', required=True, value=data.CY_CY_CLS) }}
-    {{ render_input_date(name='ETD', id='ETD', required=True, value=data.ETD) }}
-    {{ render_input_date(name='ETA', id='ETA', required=True, value=data.ETA) }}
-
-    {% if current_user.rank=='admin' %}
-    {{ render_input_text(name='status', id='status', required=True, value=data.status) }}
-    {% endif %}
-
+    {{ render_input_text(name='MV', id='MV', required=True, value=data.mv) }}
+    {{ render_input_text(name='POL', id='POL', required=True, value=data.pol) }}
+    {{ render_input_text(name='POD', id='POD', required=True, value=data.pod) }}
+    {{ render_input_date(name='CY Open', id='CY_Open', required=True, value=data.cyopen) }}
+    {{ render_input_datetime(name='SI Cut Off', id='SI_Cut_Off', required=True, value=data.sicutoff) }}
+    {{ render_input_datetime(name='CY CY CLS', id='CY_CV_CLS', required=True, value=data.cycvcls) }}
+    {{ render_input_date(name='ETD', id='ETD', required=True, value=data.etd) }}
+    {{ render_input_date(name='ETA', id='ETA', required=True, value=data.eta) }}
     <div class="d-inline-flex gap-2">
       <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
       <input class="btn btn-primary" type="submit" value="Submit" />

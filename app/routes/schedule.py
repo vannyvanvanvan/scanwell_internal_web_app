@@ -1,5 +1,3 @@
-from datetime import datetime
-from app.model import Schedule
 from app.permissions import rank_required
 from flask import (
     Blueprint,
@@ -8,11 +6,12 @@ from flask import (
     request,
 )
 from flask_login import current_user, login_required
-from app.functions.schedule.new import add_schedule
+
+from app.functions.schedule.new import new_schedule, new_schedule_page
 from app.functions.schedule.edit import edit_schedule
 from app.functions.schedule.delete import delete_schedule
 
-schedule = Blueprint(
+schedule_routes = Blueprint(
     "schedule",
     __name__,
     template_folder="../../templates",
@@ -20,56 +19,36 @@ schedule = Blueprint(
 )
 
 
-@schedule.route("/add")
+@schedule_routes.route("/add", methods=["GET", "POST"])
 @login_required
 @rank_required(["admin"])
 def schedule_add():
-    if add_schedule():
-        # Redirect to the view area leave this blank for now
-        return redirect("schedule.list")
-    # Do i still need this?
-    return render_template(
-        "edit_Schedule.html",
-        mode="Add",
-        data=Schedule(
-            cs="",
-            week=datetime.now().isocalendar().week,
-            carrier="",
-            service="",
-            mv="",
-            pol="",
-            pod="",
-            routing="",
-            cyopen=datetime.now(),
-            sicutoff=datetime.now(),
-            cycvcls=datetime.now(),
-            etd=datetime.now(),
-            eta=datetime.now(),
-            owner=current_user.id
-        ),
-    )
+    print("hi", current_user.rank)
+    return "dlllm"
+    # if request.method == "POST":
+    #     new_schedule_id = new_schedule(request.form)
+    #     if new_schedule_id != -1:
+    #         return schedule_edit(new_schedule_id)
+    # else:
+    #     return new_schedule_page()
 
 
-@schedule.route("/edit/<int:sch_id>", methods=["GET", "POST"])
-@login_required
-@rank_required(["admin"])
-def schedule_edit(sch_id: int):
-    if request.method == "POST":
-        if edit_schedule(sch_id):
-            # Returning to a new updated list
-            return redirect("schedule.list")
-        
-    else:
-        return render_template("edit_Schedule.html", mode="Edit")
+# @schedule_routes.route("/edit/<int:sch_id>", methods=["GET", "POST"])
+# @login_required
+# @rank_required(["admin"])
+# def schedule_edit(sch_id: int):
+#     if request.method == "POST":
+#         if edit_schedule(sch_id):
+#             # Returning to a new updated list
+#             return redirect("schedule_routes.list")
+
+#     else:
+#         return render_template("edit_Schedule.html", mode="Edit")
 
 
-@schedule.route("/delete/<int:sch_id>", methods=["GET", "POST"])
-@login_required
-@rank_required(["admin"])
-def schedule_delete(sch_id: int):
-    if request.method == "POST":
-        if delete_schedule(sch_id):
-            # Same again return to a new updated list
-            return redirect("schedule.list")
-    else:
-        return redirect("schedule.list")
+# @schedule_routes.route("/delete/<int:sch_id>", methods=["POST"])
+# @login_required
+# @rank_required(["admin"])
+# def schedule_delete(sch_id: int):
+#     delete_schedule(sch_id)
+#     return redirect("schedule_routes.list")
