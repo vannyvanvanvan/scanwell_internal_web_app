@@ -58,9 +58,9 @@ def schedule_edit(sch_id: int):
         if edit_schedule(sch_id):
             # Returning to a new updated list
             return redirect("schedule.list")
-        return render_template("edit_Schedule.html", mode="Edit")
+        
     else:
-        pass
+        return render_template("edit_Schedule.html", mode="Edit")
 
 
 @schedule.route("/delete/<int:sch_id>", methods=["GET", "POST"])
@@ -71,6 +71,5 @@ def schedule_delete(sch_id: int):
         if delete_schedule(sch_id):
             # Same again return to a new updated list
             return redirect("schedule.list")
-        return redirect("schedule.list")
     else:
-        pass
+        return redirect("schedule.list")
