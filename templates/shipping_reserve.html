@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% from '_render_input.html' import render_input_text, render_input_number, render_input_date %}
+
+{% block head %}
+<title>Manage Reserve</title>
+{% endblock %}
+
+{% block body %}
+
+{% include 'header.html' %}
+<section class="container p-4">
+
+  <h3>Reserve</h3>
+
+  <form method="POST" class="mt-4">
+
+    {% comment %} {{ render_input_number(name='Reserve ID', id='rsv_id', required=True, value=data.rsv_id, readonly=True) }}
+    {{ render_input_number(name='Space ID', id='spc_id', required=True, value=data.spc_id) }} {% endcomment %}
+    {{ render_input_text(name='Sales', id='sales', required=True, value=data.sales) }}
+    {{ render_input_number(name='Sale Price', id='saleprice', required=True, value=data.saleprice) }}
+    {{ render_input_date(name='Reserve Date', id='rsv_date', required=True, value=data.rsv_date.strftime('%Y-%m-%d')) }}
+    {{ render_input_date(name='Confirm Date', id='cfm_date', value=data.cfm_date.strftime('%Y-%m-%d') if data.cfm_date else '') }}
+    {{ render_input_text(name='Confirm CS', id='cfm_cs', value=data.cfm_cs) }}
+    {{ render_input_text(name='Void', id='void', required=True, value=data.void) }}
+    {{ render_input_text(name='Remark', id='remark', value=data.remark) }}
+
+    <div class="d-inline-flex gap-2 mt-3">
+      <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Save Changes" />
+    </div>
+  </form>
+</section>
+
+{% endblock %}
