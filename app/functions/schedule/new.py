@@ -24,7 +24,6 @@ def new_schedule_page() -> str:
             cycvcls=datetime.now(),
             etd=datetime.now(),
             eta=datetime.now(),
-            owner=current_user.id,
         ),
     )
 

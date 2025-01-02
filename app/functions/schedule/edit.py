@@ -2,10 +2,78 @@ from datetime import datetime
 from werkzeug.exceptions import NotFound
 
 from flask_login import current_user
+from app.functions.schedule.validate import (
+    default_or_valid_date,
+    default_or_valid_datetime,
+    default_or_valid_week,
+    is_valid_date,
+    now_or_valid_date,
+    now_or_valid_datetime,
+    now_or_valid_week,
+)
 from app.model import Schedule
-from flask import request, flash
+from flask import redirect, render_template, request, flash, url_for
 from sqlalchemy.exc import SQLAlchemyError
 from app.model import db
+
+
+def edit_schedule_page(sch_id: int) -> str:
+    try:
+        schedule = Schedule.query.get_or_404(sch_id)
+        return render_template("shipping_schedule.html", mode="Edit", data=schedule)
+    except NotFound:
+        flash(
+            "Schedule not found, please try again. No changes were made to the database."
+        )
+        return redirect(url_for("user.user_home"))
+
+
+def edit_invalid_schedule_page(sch_id: int, form: dict) -> str:
+    try:
+        original_schedule = Schedule.query.get_or_404(sch_id)
+        return render_template(
+            "shipping_schedule.html",
+            mode="Add",
+            data=Schedule(
+                cs=form["cs"],
+                week=default_or_valid_week(original_schedule.week, form["week"]),
+                carrier=form["carrier"],
+                service=form["service"],
+                mv=form["mv"],
+                pol=form["pol"],
+                pod=form["pod"],
+                routing=form["routing"],
+                cyopen=default_or_valid_date(original_schedule.cyopen, form["cyopen"]),
+                sicutoff=default_or_valid_datetime(
+                    original_schedule.sicutoff, form["sicutoff"], form["sicutoff_time"]
+                ),
+                cycvcls=default_or_valid_datetime(
+                    original_schedule.sicutoff, form["cycvcls"], form["cycvcls_time"]
+                ),
+                etd=default_or_valid_date(original_schedule.cyopen, form["etd"]),
+                eta=default_or_valid_date(original_schedule.cyopen, form["eta"]),
+            ),
+        )
+    except NotFound:
+        return render_template(
+            "shipping_schedule.html",
+            mode="Add",
+            data=Schedule(
+                cs=form["cs"],
+                week=now_or_valid_week(form["week"]),
+                carrier=form["carrier"],
+                service=form["service"],
+                mv=form["mv"],
+                pol=form["pol"],
+                pod=form["pod"],
+                routing=form["routing"],
+                cyopen=now_or_valid_date(form["cyopen"]),
+                sicutoff=now_or_valid_datetime(form["sicutoff"], form["sicutoff_time"]),
+                cycvcls=now_or_valid_datetime(form["cycvcls"], form["cycvcls_time"]),
+                etd=now_or_valid_date(form["etd"]),
+                eta=now_or_valid_date(form["eta"]),
+            ),
+        )
 
 
 # Function to handle editing an existing schedule
@@ -47,6 +115,7 @@ def edit_schedule(sch_id: int):
         flash(
             "Schedule not found, please try again. No changes were made to the database."
         )
+        return False
     except SQLAlchemyError as e:
         db.session.rollback()
         flash(f"Database error: {str(e)}", "danger")

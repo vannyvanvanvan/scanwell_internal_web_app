@@ -41,7 +41,7 @@
   <div class="col-sm-10 d-flex">
     <input class="form-control" type="date" name="{{ id }}" id="{{ id }}" value="{{ value.date() }}" {% if required %}
       required {% endif %} />
-    <input class="form-control" type="time" name="{{ id }}_Time" id="{{ id }}_Time"
+    <input class="form-control" type="time" name="{{ id }}_time" id="{{ id }}_time"
       value="{{ value.strftime('%H:%M') }}" {% if required %} required {% endif %} />
   </div>
 </div>
