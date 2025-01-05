@@ -1,6 +1,10 @@
 from datetime import datetime
 
 
+def is_valid_string(string: str) -> bool:
+    return string.isidentifier()
+
+
 def is_valid_number(number: str) -> bool:
     return number.isdigit()
 
@@ -16,7 +20,7 @@ def is_valid_week(week: str) -> bool:
 def now_or_valid_week(check_week: str) -> int:
     return (
         datetime.now().isocalendar().week
-        if not is_valid_number(check_week)
+        if not is_valid_week(check_week)
         else int(check_week)
     )
 
@@ -34,11 +38,19 @@ def is_valid_date(date: str) -> bool:
 
 
 def now_or_valid_date(check_date: str) -> str:
-    return datetime.now() if not is_valid_date(check_date) else check_date
+    return (
+        datetime.now()
+        if not is_valid_date(check_date)
+        else datetime.strptime(check_date, "%Y-%m-%d")
+    )
 
 
 def default_or_valid_date(default_date: datetime, check_date: str) -> datetime:
-    return default_date if not is_valid_date(check_date) else check_date
+    return (
+        default_date
+        if not is_valid_date(check_date)
+        else datetime.strptime(check_date, "%Y-%m-%d")
+    )
 
 
 def is_valid_datetime(date: str, time: str) -> bool:
@@ -67,5 +79,43 @@ def default_or_valid_datetime(
     )
 
 
+def is_valid_schedule_dict(form: dict) -> bool:
+    return all(
+        item in form
+        for item in [
+            "cs",
+            "week",
+            "carrier",
+            "service",
+            "mv",
+            "pol",
+            "pod",
+            "routing",
+            "cyopen",
+            "sicutoff",
+            "sicutoff_time",
+            "cycvcls",
+            "cycvcls_time",
+            "etd",
+            "eta",
+        ]
+    )
+
+
 def is_valid_schedule_form(form: dict) -> bool:
-    return True
+    return (
+        is_valid_schedule_dict(form)
+        and is_valid_string(form["cs"])
+        and is_valid_week(form["week"])
+        and is_valid_string(form["carrier"])
+        and is_valid_string(form["service"])
+        and is_valid_string(form["mv"])
+        and is_valid_string(form["pol"])
+        and is_valid_string(form["pod"])
+        and is_valid_string(form["routing"])
+        and is_valid_date(form["cyopen"])
+        and is_valid_datetime(form["sicutoff"], form["sicutoff_time"])
+        and is_valid_datetime(form["cycvcls"], form["cycvcls_time"])
+        and is_valid_date(form["etd"])
+        and is_valid_date(form["eta"])
+    )

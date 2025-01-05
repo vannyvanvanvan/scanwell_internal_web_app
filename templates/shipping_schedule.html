@@ -1,34 +1,35 @@
 {% extends 'base.html' %}
-{% from '_render_input.html' import render_input_text, render_input_number, render_input_date %}
+{% from '_render_input.html' import render_input_text, render_input_number, render_input_date, render_input_datetime %}
 
 {% block head %}
-  <title>{{ mode }} Manage Schedule</title>
+<title>{{ mode|capitalize }} Schedule</title>
 {% endblock %}
 
 {% block body %}
-  {% include 'header.html' %}
-  <section class="container p-4">
-    <h3>{{ mode }} Manage Schedule</h3>
+{% include 'header.html' %}
+<div class="mt-4">{% include 'flash.html' %}</div>
+<section class="container p-4">
+  <h3>{{ mode|capitalize }} Schedule</h3>
 
-    <form method="POST" class="mt-4">
-      {{ render_input_text(name='Customer Service (CS)', id='cs', required=True, value=data.cs) }}
-      {{ render_input_number(name='Week', id='week', required=True, value=data.week) }}
-      {{ render_input_text(name='Carrier', id='carrier', required=True, value=data.carrier) }}
-      {{ render_input_text(name='Service', id='service', required=True, value=data.service) }}
-      {{ render_input_text(name='MV', id='mv', required=True, value=data.mv) }}
-      {{ render_input_text(name='POL', id='pol', required=True, value=data.pol) }}
-      {{ render_input_text(name='POD', id='pod', required=True, value=data.pod) }}
-      {{ render_input_text(name='Routing', id='routing', required=True, value=data.routing) }}
-      {{ render_input_date(name='CY Open', id='cyopen', required=True, value=data.cyopen.strftime('%Y-%m-%d')) }}
-      {{ render_input_date(name='SI Cutoff', id='sicutoff', required=True, value=data.sicutoff.strftime('%Y-%m-%d')) }}
-      {{ render_input_date(name='CY CV Closing', id='cycvcls', required=True, value=data.cycvcls.strftime('%Y-%m-%d')) }}
-      {{ render_input_date(name='ETD', id='etd', required=True, value=data.etd.strftime('%Y-%m-%d')) }}
-      {{ render_input_date(name='ETA', id='eta', required=True, value=data.eta.strftime('%Y-%m-%d')) }}
+  <form method="POST" class="mt-4">
+    {{ render_input_text(name='Customer Service (CS)', id='cs', required=True, value=data.cs) }}
+    {{ render_input_number(name='Week', id='week', required=True, value=data.week) }}
+    {{ render_input_text(name='Carrier', id='carrier', required=True, value=data.carrier) }}
+    {{ render_input_text(name='Service', id='service', required=True, value=data.service) }}
+    {{ render_input_text(name='MV', id='mv', required=True, value=data.mv) }}
+    {{ render_input_text(name='POL', id='pol', required=True, value=data.pol) }}
+    {{ render_input_text(name='POD', id='pod', required=True, value=data.pod) }}
+    {{ render_input_text(name='Routing', id='routing', required=True, value=data.routing) }}
+    {{ render_input_date(name='CY Open', id='cyopen', required=True, value=data.cyopen) }}
+    {{ render_input_datetime(name='SI Cutoff', id='sicutoff', required=True, value=data.sicutoff) }}
+    {{ render_input_datetime(name='CY CV Closing', id='cycvcls', required=True, value=data.cycvcls) }}
+    {{ render_input_date(name='ETD', id='etd', required=True, value=data.etd) }}
+    {{ render_input_date(name='ETA', id='eta', required=True, value=data.eta) }}
 
-      <div class="d-inline-flex gap-2">
-        <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
-        <input class="btn btn-primary" type="submit" value="Submit" />
-      </div>
-    </form>
-  </section>
+    <div class="d-inline-flex gap-2">
+      <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Submit" />
+    </div>
+  </form>
+</section>
 {% endblock %}

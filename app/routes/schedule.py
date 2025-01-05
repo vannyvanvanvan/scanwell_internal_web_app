@@ -36,9 +36,7 @@ def schedule_add():
 @rank_required(["admin"])
 def schedule_edit(sch_id: int):
     if request.method == "POST":
-        if edit_schedule(sch_id):
-            # Returning to a new updated list
-            return redirect(url_for("user.user_home"))
+        return edit_schedule(sch_id)
     return edit_schedule_page(sch_id)
 
 

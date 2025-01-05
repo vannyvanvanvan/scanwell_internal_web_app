@@ -1,5 +1,10 @@
 from datetime import datetime
 from flask_login import current_user
+from app.functions.schedule.validate import (
+    now_or_valid_date,
+    now_or_valid_datetime,
+    now_or_valid_week,
+)
 from app.model import Schedule
 from flask import render_template, flash
 from sqlalchemy.exc import SQLAlchemyError
@@ -9,7 +14,7 @@ from app.model import db
 def new_schedule_page() -> str:
     return render_template(
         "shipping_schedule.html",
-        mode="Add",
+        mode="add",
         data=Schedule(
             cs="",
             week=datetime.now().isocalendar().week,
@@ -24,6 +29,28 @@ def new_schedule_page() -> str:
             cycvcls=datetime.now(),
             etd=datetime.now(),
             eta=datetime.now(),
+        ),
+    )
+
+
+def new_populated_schedule_page(form: dict) -> str:
+    return render_template(
+        "shipping_schedule.html",
+        mode="add",
+        data=Schedule(
+            cs=form["cs"],
+            week=now_or_valid_week(form["week"]),
+            carrier=form["carrier"],
+            service=form["service"],
+            mv=form["mv"],
+            pol=form["pol"],
+            pod=form["pod"],
+            routing=form["routing"],
+            cyopen=now_or_valid_date(form["cyopen"]),
+            sicutoff=now_or_valid_datetime(form["sicutoff"], form["sicutoff_time"]),
+            cycvcls=now_or_valid_datetime(form["cycvcls"], form["cycvcls_time"]),
+            etd=now_or_valid_date(form["etd"]),
+            eta=now_or_valid_date(form["eta"]),
         ),
     )
 
