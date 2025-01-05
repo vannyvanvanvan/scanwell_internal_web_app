@@ -36,7 +36,7 @@ def validate_login(form: LoginForm):
     )
 
     if matched_user is None:
-        flash("Invalid username or password, error message: 100")
+        flash("Invalid username or password", "danger")
         return render_template("login.html", login_detail=form)
 
     _password_hash = hash_string(_form_password)
@@ -49,7 +49,7 @@ def validate_login(form: LoginForm):
         login_user(user=matched_user, remember=_remember_login)
         return redirect(url_for("user.user_home"))
     else:
-        flash("Invalid username or password, error message: 101")
+        flash("Invalid username or password", "danger")
         return render_template("login.html", login_detail=form)
 
 
