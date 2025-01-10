@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField
 from flask_login import login_user
 from wtforms.validators import InputRequired, Length
 
-from app.hashing import hash_string
+from app.functions.hashing import hash_string
 from app.model import User, db
 
 

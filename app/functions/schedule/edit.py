@@ -2,7 +2,7 @@ from datetime import datetime
 from werkzeug.exceptions import NotFound
 
 from app.functions.schedule.new import new_populated_schedule_page
-from app.functions.schedule.validate import (
+from app.functions.validate import (
     default_or_valid_date,
     default_or_valid_datetime,
     default_or_valid_week,

@@ -1,4 +1,4 @@
-from app.permissions import rank_required
+from app.functions.permissions import rank_required
 from flask import (
     Blueprint,
     request,

@@ -1,4 +1,4 @@
-from app.hashing import hash_string
+from app.functions.hashing import hash_string
 from driver import *
 
 

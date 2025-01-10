@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_login import current_user
-from app.functions.schedule.validate import (
+from app.functions.validate import (
     is_valid_schedule_form,
     now_or_valid_date,
     now_or_valid_datetime,

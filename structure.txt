@@ -1,74 +1,75 @@
-.
-├── .gitignore
-├── README.md
-├── Unitest/
-│   └── frontend/
-│       ├── add_shipping.py
-│       └── login_script.py
-├── app/
-│   ├── __init__.py
-│   ├── hashing.py
-│   ├── model.py
-│   ├── permissions.py
-│   ├── functions/
-│   │   ├── booking/
-│   │   │   ├── __init__.py
-│   │   │   ├── delete.py
-│   │   │   ├── edit.py
-│   │   │   └── new.py
-│   │   ├── reserve/
-│   │   │   ├── __init__.py
-│   │   │   ├── delete.py
-│   │   │   ├── edit.py
-│   │   │   └── new.py
-│   │   ├── schedule/
-│   │   │   ├── __init__.py
-│   │   │   ├── delete.py
-│   │   │   ├── edit.py
-│   │   │   └── new.py
-│   │   ├── space/
-│   │   │   ├── __init__.py
-│   │   │   ├── delete.py
-│   │   │   ├── edit.py
-│   │   │   └── new.py
-│   │   └── user/
-│   │       ├── __init__.py
-│   │       ├── login.py
-│   │       └── logout.py
-│   └── routes/
-│       ├── __init__.py
-│       ├── booking.py
-│       ├── reserve.py
-│       ├── schedule.py
-│       ├── space.py
-│       └── user.py
-├── driver.py
-├── requirements.txt
-├── setup/
-│   ├── csv_importer.py
-│   ├── dummy_shipping_db_setup.py
-│   ├── query_terminal.py
-│   ├── shipping_db_setup.py
-│   └── user_db_setup.py
-├── static/
-│   ├── auto_comp.js
-│   └── css/
-│       └── main.css
-├── structure.txt
-├── templates/
-│   ├── _render_field.html
-│   ├── _render_input.html
-│   ├── base.html
-│   ├── confirm_order.html
-│   ├── csv_import.html
-│   ├── csv_import_preview.html
-│   ├── dashboard.html
-│   ├── edit_booking.html
-│   ├── flash.html
-│   ├── header.html
-│   ├── home.html
-│   ├── login.html
-│   ├── search.html
-│   ├── shipping_schedule.html
-│   ├── shipping_table.html
-│   └── shipping_table_results.html
+|-- .gitignore
+|-- README.md
+|-- Unitest/
+|   |-- frontend/
+|       |-- add_shipping.py
+|       |-- login_script.py
+|-- app/
+|   |-- __init__.py
+|   |-- functions/
+|       |-- booking/
+|           |-- __init__.py
+|           |-- delete.py
+|           |-- edit.py
+|           |-- new.py
+|       |-- reserve/
+|           |-- __init__.py
+|           |-- delete.py
+|           |-- edit.py
+|           |-- new.py
+|       |-- schedule/
+|           |-- __init__.py
+|           |-- delete.py
+|           |-- edit.py
+|           |-- new.py
+|           |-- validate.py
+|       |-- space/
+|           |-- __init__.py
+|           |-- delete.py
+|           |-- edit.py
+|           |-- new.py
+|       |-- user/
+|           |-- __init__.py
+|           |-- login.py
+|           |-- logout.py
+|   |-- hashing.py
+|   |-- model.py
+|   |-- permissions.py
+|-- app/routes/
+|   |-- __init__.py
+|   |-- booking.py
+|   |-- reserve.py
+|   |-- schedule.py
+|   |-- space.py
+|   |-- user.py
+|-- driver.py
+|-- requirements.txt
+|-- setup/
+|   |-- csv_importer.py
+|   |-- dummy_shipping_db_setup.py
+|   |-- query_terminal.py
+|   |-- shipping_db_setup.py
+|   |-- user_db_setup.py
+|-- static/
+|   |-- auto_comp.js
+|   |-- css/
+|       |-- main.css
+|-- structure.txt
+|-- templates/
+|   |-- _render_field.html
+|   |-- _render_input.html
+|   |-- base.html
+|   |-- csv_import.html
+|   |-- csv_import_preview.html
+|   |-- dashboard.html
+|   |-- flash.html
+|   |-- header.html
+|   |-- home.html
+|   |-- login.html
+|   |-- search.html
+|   |-- shipping_booking.html
+|   |-- shipping_reserve.html
+|   |-- shipping_schedule.html
+|   |-- shipping_space.html
+|   |-- shipping_table.html
+|   |-- shipping_table_results.html
