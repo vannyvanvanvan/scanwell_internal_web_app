@@ -1,7 +1,6 @@
 from datetime import datetime
 from werkzeug.exceptions import NotFound
 
-from flask_login import current_user
 from app.functions.schedule.new import new_populated_schedule_page
 from app.functions.schedule.validate import (
     default_or_valid_date,

@@ -2,13 +2,12 @@ from app.permissions import rank_required
 from flask import (
     Blueprint,
     redirect,
-    render_template,
     request,
     url_for,
 )
-from flask_login import current_user, login_required
+from flask_login import login_required
 
-from app.functions.schedule.new import new_schedule, new_schedule_page
+from app.functions.schedule.new import create_schedule, new_schedule_page
 from app.functions.schedule.edit import edit_schedule, edit_schedule_page
 from app.functions.schedule.delete import delete_schedule
 
@@ -25,9 +24,7 @@ schedule_routes = Blueprint(
 @rank_required(["admin"])
 def schedule_add():
     if request.method == "POST":
-        new_schedule_id = new_schedule(request.form)
-        if new_schedule_id != -1:
-            return schedule_edit(new_schedule_id)
+        return create_schedule(request.form)
     return new_schedule_page()
 
 

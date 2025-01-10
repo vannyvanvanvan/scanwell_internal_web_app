@@ -1,12 +1,13 @@
 from datetime import datetime
 from flask_login import current_user
 from app.functions.schedule.validate import (
+    is_valid_schedule_form,
     now_or_valid_date,
     now_or_valid_datetime,
     now_or_valid_week,
 )
 from app.model import Schedule
-from flask import render_template, flash
+from flask import redirect, render_template, flash, url_for
 from sqlalchemy.exc import SQLAlchemyError
 from app.model import db
 
@@ -47,8 +48,10 @@ def new_populated_schedule_page(form: dict) -> str:
             pod=form["pod"],
             routing=form["routing"],
             cyopen=now_or_valid_date(form["cyopen"]),
-            sicutoff=now_or_valid_datetime(form["sicutoff"], form["sicutoff_time"]),
-            cycvcls=now_or_valid_datetime(form["cycvcls"], form["cycvcls_time"]),
+            sicutoff=now_or_valid_datetime(
+                form["sicutoff"], form["sicutoff_time"]),
+            cycvcls=now_or_valid_datetime(
+                form["cycvcls"], form["cycvcls_time"]),
             etd=now_or_valid_date(form["etd"]),
             eta=now_or_valid_date(form["eta"]),
         ),
@@ -57,7 +60,13 @@ def new_populated_schedule_page(form: dict) -> str:
 
 # Function to handle adding a new schedule
 # if add successful return sch_id, else return -1
-def new_schedule(form: dict) -> int:
+def create_schedule(form: dict) -> int:
+
+    # check validity of edited information
+    if not is_valid_schedule_form(form):
+        flash("Some of your changes are invalid. Please try again.", "danger")
+        return new_populated_schedule_page(form)
+
     try:
         schedule_to_add = Schedule(
             cs=form["cs"],
@@ -90,7 +99,7 @@ def new_schedule(form: dict) -> int:
         db.session.add(schedule_to_add)
         db.session.commit()
         flash("Schedule added successfully!", "success")
-        return schedule_to_add.sch_id
+        return redirect(url_for("schedule.schedule_edit", sch_id=schedule_to_add.sch_id))
     except SQLAlchemyError as e:
         db.session.rollback()
         flash(f"Database error: {str(e)}", "danger")
