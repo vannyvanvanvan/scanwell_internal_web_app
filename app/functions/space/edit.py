@@ -1,6 +1,6 @@
 from flask import render_template, request, flash, redirect, url_for
 from sqlalchemy.exc import SQLAlchemyError
-from app.functions.validate import default_or_valid_datetime, default_or_valid_number, is_valid_space_form
+from app.functions.validate import default_or_valid_date, default_or_valid_datetime, default_or_valid_number, is_valid_space_form
 from app.model import Space, db
 from datetime import datetime
 from werkzeug.exceptions import NotFound
@@ -28,7 +28,7 @@ def invalid_space_page(spc_id: int, form: dict) -> str:
                 size = form['size'],
                 avgrate = default_or_valid_number(original_space.avgrate, form['avgrate']),
                 sugrate = default_or_valid_number(original_space.sugrate, form['sugrate']),
-                ratevalid = default_or_valid_datetime(original_space.ratevalid, form['ratevalid']),
+                ratevalid = default_or_valid_date(original_space.ratevalid, form['ratevalid']),
                 proport = form['proport'],
                 spcstatus = form['spcstatus']
             ),

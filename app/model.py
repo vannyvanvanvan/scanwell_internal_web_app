@@ -15,7 +15,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(200), nullable=False)
     rank = db.Column(db.String(50), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self):
         return f"<User: id={self.id}, username={self.username}, rank={self.rank}>"
@@ -37,11 +37,11 @@ class Schedule(db.Model):
     pol = db.Column(db.String(100), nullable=False)
     pod = db.Column(db.String(100), nullable=False)
     routing = db.Column(db.String(100), nullable=False)
-    cyopen = db.Column(db.DateTime, default=datetime.utcnow)
-    sicutoff = db.Column(db.DateTime, default=datetime.utcnow)
-    cycvcls = db.Column(db.DateTime, default=datetime.utcnow)
-    etd = db.Column(db.DateTime, default=datetime.utcnow)
-    eta = db.Column(db.DateTime, default=datetime.utcnow)
+    cyopen = db.Column(db.DateTime, default=datetime.utcnow())
+    sicutoff = db.Column(db.DateTime, default=datetime.utcnow())
+    cycvcls = db.Column(db.DateTime, default=datetime.utcnow())
+    etd = db.Column(db.DateTime, default=datetime.utcnow())
+    eta = db.Column(db.DateTime, default=datetime.utcnow())
 
     owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
@@ -62,12 +62,12 @@ class Space(db.Model):
     size = db.Column(db.String(100), nullable=False)
     avgrate = db.Column(db.Integer, nullable=False)
     sugrate = db.Column(db.Integer, nullable=False)
-    ratevalid = db.Column(db.DateTime, default=datetime.utcnow)
+    ratevalid = db.Column(db.DateTime, default=datetime.utcnow())
     proport = db.Column(db.Boolean, nullable=False, default=False)
     spcstatus = db.Column(db.String(20), nullable=False, default="USABLE")
     last_modified_by = db.Column(db.Integer, nullable=True)
     last_modified_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+        db.DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow()
     )
 
     owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
@@ -95,7 +95,7 @@ class Reserve(db.Model):
     spc_id = db.Column(db.Integer, db.ForeignKey("space.spc_id"), nullable=False)
     sales = db.Column(db.String(100), nullable=False)
     saleprice = db.Column(db.Integer, nullable=False)
-    rsv_date = db.Column(db.DateTime, default=datetime.utcnow)
+    rsv_date = db.Column(db.DateTime, default=datetime.utcnow())
     cfm_date = db.Column(db.DateTime, nullable=True)
     cfm_cs = db.Column(db.String(100), nullable=True)
     void = db.Column(db.Boolean, nullable=False, default=False)
