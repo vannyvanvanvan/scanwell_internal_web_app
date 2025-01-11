@@ -2,6 +2,7 @@ from datetime import timedelta
 from flask import Blueprint, session
 from flask_login import login_required
 
+from app.functions.user.home import home_page
 from app.functions.user.login import login_page
 from app.functions.user.logout import logout_page
 
@@ -26,7 +27,8 @@ def user_login():
 def user_logout():
     return logout_page()
 
+
 @user_routes.route("/home")
 @login_required
 def user_home():
-    return "home"
+    return home_page()
