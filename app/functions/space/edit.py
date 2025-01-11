@@ -3,7 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.functions.validate import (
     default_or_valid_date,
     default_or_valid_number,
-    is_checked_proport,
+    is_checked_key,
     is_valid_space_form,
 )
 from app.model import Space, db
@@ -41,7 +41,7 @@ def invalid_space_page(spc_id: int, form: dict) -> str:
                 ratevalid=default_or_valid_date(
                     original_space.ratevalid, form["ratevalid"]
                 ),
-                proport=is_checked_proport(form),
+                proport=is_checked_key(form),
                 spcstatus=form["spcstatus"],
             ),
         )
@@ -67,7 +67,7 @@ def edit_space(spc_id: int) -> str:
         space_to_edit.ratevalid = datetime.strptime(
             request.form["ratevalid"], "%Y-%m-%d"
         )
-        space_to_edit.proport = is_checked_proport(request.form)
+        space_to_edit.proport = is_checked_key(request.form)
         space_to_edit.spcstatus = request.form["spcstatus"]
         db.session.commit()
         flash("Space updated successfully!", "success")

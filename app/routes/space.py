@@ -1,15 +1,15 @@
+from flask_login import login_required
 from app.functions.permissions import rank_required
+from app.functions.space.new import create_space, new_space_page
+from app.functions.space.edit import edit_space, edit_space_page
+from app.functions.space.delete import delete_space
+
 from flask import (
     Blueprint,
     redirect,
     request,
     url_for,
 )
-from flask_login import login_required
-
-from app.functions.space.delete import delete_space
-from app.functions.space.edit import edit_space, edit_space_page
-from app.functions.space.new import create_space, new_space_page
 
 space_routes = Blueprint(
     "space",

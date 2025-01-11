@@ -1,15 +1,14 @@
+from flask_login import login_required
 from app.functions.permissions import rank_required
+from app.functions.schedule.new import create_schedule, new_schedule_page
+from app.functions.schedule.edit import edit_schedule, edit_schedule_page
+from app.functions.schedule.delete import delete_schedule
 from flask import (
     Blueprint,
     redirect,
     request,
     url_for,
 )
-from flask_login import login_required
-
-from app.functions.schedule.new import create_schedule, new_schedule_page
-from app.functions.schedule.edit import edit_schedule, edit_schedule_page
-from app.functions.schedule.delete import delete_schedule
 
 schedule_routes = Blueprint(
     "schedule",

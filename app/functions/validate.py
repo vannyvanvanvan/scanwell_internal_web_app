@@ -1,8 +1,8 @@
 from datetime import datetime
 
 
-def is_checked_proport(form: dict) -> bool:
-    return "proport" in form and form["proport"] == "on"
+def is_checked_key(form: dict, key: str) -> bool:
+    return key in form and form[key] == "on"
 
 
 def is_valid_string(string: str) -> bool:
@@ -176,7 +176,7 @@ def is_valid_space_dict(form: dict) -> bool:
 
 
 def is_valid_space_form(form: dict) -> bool:
-    print(form)
+    # Return True/False if all key values are valid
     return (
         is_valid_space_dict(form)
         and is_valid_string(form["size"])
@@ -184,4 +184,28 @@ def is_valid_space_form(form: dict) -> bool:
         and is_valid_number(form["sugrate"])
         and is_valid_date(form["ratevalid"])
         and is_valid_string(form["spcstatus"])
+    )
+
+# Reserve
+# =============================================================================
+def is_valid_reserve_dict(form: dict) -> bool:
+    # Check if dictionary contains all keys for reserve data
+    return all(
+        key in form
+        for key in ["spc_id", "sales", "saleprice", "rsv_date", "cfm_cs", "void", "remark"]
+    )
+
+
+def is_valid_reserve_form(form: dict) -> bool:
+    # Return True/False if all key values are valid
+    return (
+        is_valid_reserve_dict(form)
+        and is_valid_number(form["spc_id"])
+        and is_valid_string(form["sales"])
+        and is_valid_number(form["saleprice"])
+        and is_valid_date(form["rsv_date"])
+        and is_valid_date(form["cfm_date"])
+        and is_valid_string(form["cfm_cs"])
+        # and is_checked_key(form["void"])
+        # and is_valid_string(form["remark"])
     )
