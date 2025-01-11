@@ -33,8 +33,10 @@ def load_user(user_id):
 # # Registering blueprint
 from app.routes.user import user_routes
 from app.routes.schedule import schedule_routes
+from app.routes.space import space_routes
 app.register_blueprint(user_routes)
 app.register_blueprint(schedule_routes, url_prefix="/schedule")
+app.register_blueprint(space_routes, url_prefix="/space")
 
 if __name__ == "__main__":
     print(app.url_map)

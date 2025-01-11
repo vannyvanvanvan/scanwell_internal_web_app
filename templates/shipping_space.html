@@ -11,17 +11,12 @@
     <h3>Manage Space</h3>
 
     <form method="POST" class="mt-4">
-      {% comment %} {{ render_input_number(name='Space ID', id='spc_id', required=True, value=data.spc_id, readonly=True) }}
-      {{ render_input_number(name='Schedule ID', id='sch_id', required=True, value=data.sch_id) }} {% endcomment %}
+    
       {{ render_input_text(name='Size', id='size', required=True, value=data.size) }}
       {{ render_input_number(name='Avgrate', id='avgrate', required=True, value=data.avgrate) }}
       {{ render_input_number(name='Sugrate', id='sugrate', required=True, value=data.sugrate) }}
-      {{ render_input_date(name='Rate valid', id='ratevalid', required=True, value=data.ratevalid.strftime('%Y-%m-%d')) }}
+      {{ render_input_date(name='Rate valid', id='ratevalid', required=True, value=data.ratevalid) }}
       {{ render_input_text(name='Proport', id='proport', required=True, value=data.proport) }}
-      {% comment %} {{ render_input_text(name='Space Status', id='spcstatus', required=True, value=data.spcstatus) }}
-      {{ render_input_text(name='Void', id='void', required=True, value=data.void) }}
-      {{ render_input_text(name='Last Modified By', id='last_modified_by', value=data.last_modified_by, readonly=True) }}
-      {{ render_input_date(name='Last Modified At', id='last_modified_at', value=data.last_modified_at.strftime('%Y-%m-%d'), readonly=True) }} {% endcomment %}
 
       <div class="d-inline-flex gap-2 mt-3">
         <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>

@@ -63,10 +63,9 @@ class Space(db.Model):
     avgrate = db.Column(db.Integer, nullable=False)
     sugrate = db.Column(db.Integer, nullable=False)
     ratevalid = db.Column(db.DateTime, default=datetime.utcnow)
-    proport = db.Column(db.String(50), nullable=False)
+    proport = db.Column(db.Boolean, nullable=False, default=False)
     spcstatus = db.Column(db.String(20), nullable=False, default="USABLE")
-    void = db.Column(db.String(1), default="F")
-    last_modified_by = db.Column(db.String(100), nullable=True)
+    last_modified_by = db.Column(db.Integer, nullable=True)
     last_modified_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
     )
@@ -99,7 +98,7 @@ class Reserve(db.Model):
     rsv_date = db.Column(db.DateTime, default=datetime.utcnow)
     cfm_date = db.Column(db.DateTime, nullable=True)
     cfm_cs = db.Column(db.String(100), nullable=True)
-    void = db.Column(db.String(1), default="F")
+    void = db.Column(db.Boolean, nullable=False, default=False)
     remark = db.Column(db.String(300), nullable=True)
 
     owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
@@ -124,14 +123,13 @@ class Booking(db.Model):
     term = db.Column(db.String(100), nullable=False)
     sales = db.Column(db.String(100), nullable=False)
     saleprice = db.Column(db.Integer, nullable=False)
-    void = db.Column(db.String(1), default="F")
+    void = db.Column(db.Boolean, nullable=False, default=False)
     remark = db.Column(db.String(300), nullable=True)
 
     owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def __repr__(self):
         return f"<Booking: id={self.bk_id}, space={self.spc_id}, so={self.so}, void={self.void}>"
-        return "<booking %r>" % self.bk_id
 
     def __lt__(self, other):
         return self.bk_id < other.bk_id

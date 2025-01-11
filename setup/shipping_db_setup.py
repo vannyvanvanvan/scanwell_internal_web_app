@@ -60,27 +60,27 @@ with app.app_context():
     # Space
     space1 = Space(
         spc_id=1, sch_id=1, size='40HQ', avgrate=7447, sugrate=7550, 
-        ratevalid=to_date('2024-12-31'), proport="T", spcstatus='BK_PENDING', owner=1
+        ratevalid=to_date('2024-12-31'), proport=True, spcstatus='BK_PENDING', owner=1
     )
     space2 = Space(
         spc_id=2, sch_id=1, size='20GP', avgrate=3247, sugrate=3550, 
-        ratevalid=to_date('2024-12-31'), proport="T", spcstatus='USABLE', owner=1
+        ratevalid=to_date('2024-12-31'), proport=True, spcstatus='USABLE', owner=1
     )
     space3 = Space(
         spc_id=3, sch_id=1, size='40GP', avgrate=7447, sugrate=7550, 
-        ratevalid=to_date('2024-11-30'), proport="T", spcstatus='BK_RESERVED', owner=1
+        ratevalid=to_date('2024-11-30'), proport=True, spcstatus='BK_RESERVED', owner=1
     )
     space4 = Space(
         spc_id=4, sch_id=2, size='45HQ', avgrate=7684, sugrate=7800, 
-        ratevalid=to_date('2024-07-31'), proport="F", spcstatus='USABLE', owner=1
+        ratevalid=to_date('2024-07-31'), proport=False, spcstatus='USABLE', owner=1
     )
     space5 = Space(
         spc_id=5, sch_id=2, size='40HQ', avgrate=7447, sugrate=7600, 
-        ratevalid=to_date('2024-07-31'), proport="T", spcstatus='INVALID', owner=1
+        ratevalid=to_date('2024-07-31'), proport=True, spcstatus='INVALID', owner=1
     )
     space6 = Space(
         spc_id=6, sch_id=3, size='20GP', avgrate=2601, sugrate=2680, 
-        ratevalid=to_date('2024-09-30'), proport="F", spcstatus='USABLE', owner=1
+        ratevalid=to_date('2024-09-30'), proport=False, spcstatus='USABLE', owner=1
     )
 
     db.session.add_all([space1, space2, space3, space4, space5, space6])
@@ -88,7 +88,7 @@ with app.app_context():
     # Reserve
     reserve1 = Reserve(
         rsv_id=1, spc_id=1, sales='ERIC', saleprice=8000, rsv_date=to_date('2024-07-01'), 
-        cfm_date=to_date('2024-07-01'), cfm_cs='FANNY', void="F", remark='TEST', owner=1
+        cfm_date=to_date('2024-07-01'), cfm_cs='FANNY', void=False, remark='TEST', owner=1
     )
 
     db.session.add(reserve1)
@@ -97,23 +97,23 @@ with app.app_context():
     booking1 = Booking(
         bk_id=1, spc_id=1, so='SZPEJ4609700', findest='HOUSTON,TX',
         ct_cl='Contract', shipper='CMECH', consignee='DZN CONCEPTS INC.',
-        term='CIF', sales='ERIC', saleprice=8000, void="F", remark='取消', owner=1
+        term='CIF', sales='ERIC', saleprice=8000, void=False, remark='取消', owner=1
     )
     booking2 = Booking(
         bk_id=2, spc_id=2, so='SZPEL0126600', findest='CINCINNATI,OH',
         ct_cl='Contract', shipper='EXPRESS SOLUTIONS', 
         consignee='BOOKING UNION (USA) INC', term='FOB', 
-        sales='CHI-CHRIS', saleprice=8184, void="F", remark='', owner=1
+        sales='CHI-CHRIS', saleprice=8184, void=False, remark='', owner=1
     )
     booking3 = Booking(
         bk_id=3, spc_id=3, so='SZPEL0138900', findest='HOUSTON,TX',
         ct_cl='Contract', shipper='', consignee='',
-        term='', sales='', saleprice='', void="F", remark='', owner=1
+        term='', sales='', saleprice='', void=False, remark='', owner=1
     )
     booking4 = Booking(
         bk_id=4, spc_id=4, so='181AY0245399880D1', findest='',
         ct_cl='CO-LOAD', shipper='CHEUNG HING PLASTIC', consignee='GOODCO',
-        term='FOB', sales='CHI-CHRIS', saleprice=8184, void="T", remark='', owner=1
+        term='FOB', sales='CHI-CHRIS', saleprice=8184, void=True, remark='', owner=1
     )
 
     db.session.add_all([booking1, booking2, booking3, booking4])

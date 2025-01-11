@@ -50,9 +50,8 @@ def create_spaces(n=20):
             avgrate=randint(1000, 5000),
             sugrate=randint(1000, 5000),
             ratevalid=datetime.utcnow() + timedelta(days=randint(1, 30)),
-            proport=choice(["F", "T"]),
+            proport=choice([False, True]),
             spcstatus=choice(["USABLE", "RV_SUBMIT", "BK_RESERVED", "INVALID"]),
-            void=choice(["F", "T"]),
             last_modified_by=fake.name(),
             last_modified_at=datetime.utcnow(),
             owner=choice(users).user_id,
@@ -72,7 +71,7 @@ def create_reserve(n=15):
             saleprice=randint(1500, 6000),
             rsv_date=datetime.utcnow(),
             remark=fake.sentence(),
-            void="F",
+            void=choice([False, True]),
             owner=choice(users).user_id,
         )
         db.session.add(reserve)
@@ -94,7 +93,7 @@ def create_bookings(n=10):
             term=choice(["CFR", "EXW", "FOB"]),
             sales=fake.name(),
             saleprice=randint(2000, 7000),
-            void="F",
+            void=choice([False, True]),
             remark=fake.sentence(),
             owner=choice(users).user_id,
         )

@@ -12,6 +12,8 @@
 |           |-- delete.py
 |           |-- edit.py
 |           |-- new.py
+|       |-- hashing.py
+|       |-- permissions.py
 |       |-- reserve/
 |           |-- __init__.py
 |           |-- delete.py
@@ -22,7 +24,6 @@
 |           |-- delete.py
 |           |-- edit.py
 |           |-- new.py
-|           |-- validate.py
 |       |-- space/
 |           |-- __init__.py
 |           |-- delete.py
@@ -32,16 +33,15 @@
 |           |-- __init__.py
 |           |-- login.py
 |           |-- logout.py
-|   |-- hashing.py
+|       |-- validate.py
 |   |-- model.py
-|   |-- permissions.py
-|-- app/routes/
-|   |-- __init__.py
-|   |-- booking.py
-|   |-- reserve.py
-|   |-- schedule.py
-|   |-- space.py
-|   |-- user.py
+|   |-- routes/
+|       |-- __init__.py
+|       |-- booking.py
+|       |-- reserve.py
+|       |-- schedule.py
+|       |-- space.py
+|       |-- user.py
 |-- driver.py
 |-- requirements.txt
 |-- setup/

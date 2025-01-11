@@ -1,6 +1,10 @@
 from datetime import datetime
 
 
+def is_valid_boolean(string: str) -> bool:
+    return bool(string)
+
+
 def is_valid_string(string: str) -> bool:
     # Return True/False if string is valid alphamumeric
     return string.isidentifier()
@@ -14,6 +18,11 @@ def is_valid_number(number: str) -> bool:
 def zero_or_valid_number(check_number: str) -> int:
     # Return 0 if number is not valid, else return parsed integer
     return 0 if not is_valid_number(check_number) else int(check_number)
+
+
+def default_or_valid_number(default_number: int, check_number: str) -> int:
+    # Return default number if number is not valid, else return parsed integer
+    return default_number if not is_valid_number(check_number) else int(check_number)
 
 
 def is_valid_week(week: str) -> bool:
@@ -32,7 +41,7 @@ def now_or_valid_week(check_week: str) -> int:
 
 def default_or_valid_week(default_week: int, check_week: str) -> int:
     # Return first parameter if second parameter is invalid week
-    return default_week if not is_valid_number(check_week) else int(check_week)
+    return default_week if not is_valid_week(check_week) else int(check_week)
 
 
 def is_valid_date(date: str) -> bool:
@@ -90,7 +99,8 @@ def default_or_valid_datetime(
         else datetime.strptime(f"{check_date} {check_time}", "%Y-%m-%d %H:%M")
     )
 
-
+# Schedule
+# =============================================================================
 def is_valid_schedule_dict(form: dict) -> bool:
     # Check if dictionary contains all keys for schedule data
     return all(
@@ -132,4 +142,33 @@ def is_valid_schedule_form(form: dict) -> bool:
         and is_valid_datetime(form["cycvcls"], form["cycvcls_time"])
         and is_valid_date(form["etd"])
         and is_valid_date(form["eta"])
+    )
+
+
+# Space
+# =============================================================================
+def is_valid_space_dict(form: dict) -> bool:
+    # Check if dictionary contains all keys for space data
+    return all(
+        item in form
+        for item in [
+            "size",
+            "avgrate",
+            "sugrate",
+            "ratevalid",
+            "proport",
+            "spcstatus"
+        ]
+    )
+
+
+def is_valid_space_form(form: dict) -> bool:
+    return (
+        is_valid_space_dict(form)
+        and is_valid_string(form["size"])
+        and is_valid_number(form["avgrate"])
+        and is_valid_number(form["sugrate"])
+        and is_valid_date(form["ratevalid"])
+        and is_valid_boolean(form["proport"])
+        and is_valid_string(form["spcstatus"])
     )
