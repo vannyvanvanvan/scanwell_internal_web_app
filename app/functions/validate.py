@@ -1,8 +1,8 @@
 from datetime import datetime
 
 
-def is_valid_boolean(string: str) -> bool:
-    return bool(string)
+def is_valid_proport(form: dict) -> bool:
+    return "proport" in form and form["proport"] == "on"
 
 
 def is_valid_string(string: str) -> bool:
@@ -26,9 +26,7 @@ def is_valid_spcstatus(spcstatus: set) -> bool:
 
 def default_or_valid_spcstatus(check_spcstatus: str) -> str:
     print(is_valid_spcstatus(check_spcstatus), check_spcstatus)
-    return (
-        "USABLE" if not is_valid_spcstatus(check_spcstatus) else check_spcstatus
-    )
+    return "USABLE" if not is_valid_spcstatus(check_spcstatus) else check_spcstatus
 
 
 def is_valid_number(number: str) -> bool:
@@ -173,18 +171,17 @@ def is_valid_space_dict(form: dict) -> bool:
     # Check if dictionary contains all keys for space data
     return all(
         item in form
-        for item in ["size", "avgrate", "sugrate", "ratevalid", "proport", "spcstatus"]
+        for item in ["size", "avgrate", "sugrate", "ratevalid", "spcstatus"]
     )
 
 
 def is_valid_space_form(form: dict) -> bool:
-    print(is_valid_string(form["size"]))
+    print(form)
     return (
         is_valid_space_dict(form)
         and is_valid_string(form["size"])
         and is_valid_number(form["avgrate"])
         and is_valid_number(form["sugrate"])
         and is_valid_date(form["ratevalid"])
-        and is_valid_boolean(form["proport"])
         and is_valid_string(form["spcstatus"])
     )
