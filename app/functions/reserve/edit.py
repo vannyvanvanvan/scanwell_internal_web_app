@@ -39,8 +39,6 @@ def invalid_reserve_page(rsv_id: int, form: dict) -> str:
                 cfm_date=default_or_valid_date(
                     original_reserve.cfm_date, form['cfm_date']),
                 cfm_cs=form['cfm_cs'],
-
-                # Change later
                 void=is_checked_key(form['void']),
                 remark=form['remark'],
             ),

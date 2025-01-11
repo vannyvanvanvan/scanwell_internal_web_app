@@ -15,6 +15,7 @@ def new_reserve_page(spc_id: int) -> str:
             sales="",
             saleprice=0,
             rsv_date=datetime.now(),
+            
             # Not sure about this
             cfm_date=datetime.now(),
             cfm_cs="",
@@ -27,12 +28,12 @@ def new_populated_reserve_page(form: dict, spc_id: int) -> str:
     return render_template(
         "shipping_reserve.html",
         mode="add",
-        new_reserve = Reserve(
+        data = Reserve(
             spc_id=spc_id,
             sales=form["sales"],
             saleprice=zero_or_valid_number(form["saleprice"]),
             rsv_date=now_or_valid_date(form["rsv_date"]),
-            cfm_date=default_or_valid_date(form["cfm_date"]),
+            cfm_date=now_or_valid_date(form["cfm_date"]),
             cfm_cs=form["cfm_cs"],
             void=form.get("void", ""),
             remark=form["remark"],
@@ -42,7 +43,7 @@ def new_populated_reserve_page(form: dict, spc_id: int) -> str:
 def create_reserve(form: dict, spc_id: int) -> int:
     if not is_valid_reserve_form(form):
         flash("Some of your changes are invalid. Please try again.", "danger")
-        return new_reserve_page(form, spc_id)
+        return new_populated_reserve_page(form, spc_id)
 
     try:
         new_reserve = Reserve(
@@ -65,4 +66,4 @@ def create_reserve(form: dict, spc_id: int) -> int:
         return -1
     except ValueError as e:
         flash(f"Value error: {str(e)}", "danger")
-        return -1
+        return -1 
