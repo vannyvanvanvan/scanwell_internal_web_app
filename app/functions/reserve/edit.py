@@ -1,14 +1,15 @@
 from flask import render_template, request, flash, redirect, url_for
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.exceptions import NotFound
+from app.model import Reserve, db
+from datetime import datetime
+
 from app.functions.validate import (
     default_or_valid_date,
     default_or_valid_number,
     is_checked_key,
     is_valid_reserve_form,
 )
-from app.model import Reserve, db
-from datetime import datetime
-from werkzeug.exceptions import NotFound
 
 
 def edit_reserve_page(rsv_id: int) -> str:
@@ -55,12 +56,8 @@ def invalid_reserve_page(rsv_id: int, form: dict) -> str:
         return redirect(url_for("user.user_home"))
 
 
-def edit_reserve(rsv_id: int, form: dict):
+def edit_reserve(rsv_id: int) -> str:
     if not is_valid_reserve_form(request.form):
-
-        # Do we need to add feedback for error
-        # flash("Some inputs are invalid. Please try again.", "danger")
-
         return invalid_reserve_page(rsv_id, request.form)
     try:
         reserve_to_edit = Reserve.query.get_or_404(rsv_id)
@@ -73,10 +70,7 @@ def edit_reserve(rsv_id: int, form: dict):
             request.form["cfm_date"], "%Y-%m-%d"
         )
         reserve_to_edit.cfm_cs = request.form["cfm_cs"]
-
-        # wait edit later
         reserve_to_edit.void = is_checked_key(request.form, "void")
-
         reserve_to_edit.remark = request.form["remark"]
         db.session.commit()
         flash("Reserve updated successfully!", "success")

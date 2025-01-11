@@ -1,14 +1,15 @@
 from flask import render_template, request, flash, redirect, url_for
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.exceptions import NotFound
+from app.model import Space, db
+from datetime import datetime
+
 from app.functions.validate import (
     default_or_valid_date,
     default_or_valid_number,
     is_checked_key,
     is_valid_space_form,
 )
-from app.model import Space, db
-from datetime import datetime
-from werkzeug.exceptions import NotFound
 
 
 def edit_space_page(spc_id: int) -> str:
@@ -41,7 +42,7 @@ def invalid_space_page(spc_id: int, form: dict) -> str:
                 ratevalid=default_or_valid_date(
                     original_space.ratevalid, form["ratevalid"]
                 ),
-                proport=is_checked_key(form),
+                proport=is_checked_key(form["proport"]),
                 spcstatus=form["spcstatus"],
             ),
         )
@@ -67,7 +68,7 @@ def edit_space(spc_id: int) -> str:
         space_to_edit.ratevalid = datetime.strptime(
             request.form["ratevalid"], "%Y-%m-%d"
         )
-        space_to_edit.proport = is_checked_key(request.form)
+        space_to_edit.proport = is_checked_key(request.form, "proport")
         space_to_edit.spcstatus = request.form["spcstatus"]
         db.session.commit()
         flash("Space updated successfully!", "success")

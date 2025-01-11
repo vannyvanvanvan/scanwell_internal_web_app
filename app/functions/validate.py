@@ -1,6 +1,7 @@
 from datetime import datetime
 import re
 
+
 def is_checked_key(form: dict, key: str) -> bool:
     return key in form and form[key] == "on"
 
@@ -172,7 +173,13 @@ def is_valid_space_dict(form: dict) -> bool:
     # Check if dictionary contains all keys for space data
     return all(
         item in form
-        for item in ["size", "avgrate", "sugrate", "ratevalid", "spcstatus"]
+        for item in [
+            "size", 
+            "avgrate", 
+            "sugrate", 
+            "ratevalid", 
+            "spcstatus"
+        ]
     )
 
 
@@ -193,7 +200,14 @@ def is_valid_space_form(form: dict) -> bool:
 def is_valid_reserve_dict(form: dict) -> bool:
     # Check if dictionary contains all keys for reserve data
     return all(
-        key in form for key in ["sales", "saleprice", "rsv_date", "cfm_cs", "remark"]
+        item in form 
+        for item in [
+            "sales", 
+            "saleprice", 
+            "rsv_date", 
+            "cfm_cs", 
+            "remark"
+        ]
     )
 
 
@@ -206,5 +220,40 @@ def is_valid_reserve_form(form: dict) -> bool:
         and is_valid_date(form["rsv_date"])
         and is_valid_date(form["cfm_date"])
         and is_valid_string(form["cfm_cs"])
+        and is_valid_string(form["remark"])
+    )
+
+# Booking
+# =============================================================================
+def is_valid_booking_dict(form: dict) -> bool:
+    # Check if dictionary contains all keys for booking data
+    return all(
+        item in form
+        for item in [
+            "so",
+            "findest",
+            "ct_cl",
+            "shipper",
+            "consignee",
+            "term",
+            "sales",
+            "saleprice",
+            "remark",
+        ]
+    )
+
+
+def is_valid_booking_form(form: dict) -> bool:
+    # Return True/False if all key values are valid
+    return (
+        is_valid_booking_dict(form)
+        and is_valid_string(form["so"])
+        and is_valid_string(form["findest"])
+        and is_valid_string(form["ct_cl"])
+        and is_valid_string(form["shipper"])
+        and is_valid_string(form["consignee"])
+        and is_valid_string(form["term"])
+        and is_valid_string(form["sales"])
+        and is_valid_number(form["saleprice"])
         and is_valid_string(form["remark"])
     )

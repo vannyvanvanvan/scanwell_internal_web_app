@@ -1,8 +1,7 @@
 from flask import flash
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
-from app.model import Space
-from app.model import db
+from app.model import Space, db
 
 
 def delete_space(spc_id: int) -> None:

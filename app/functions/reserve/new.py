@@ -1,11 +1,10 @@
-from datetime import datetime
 from flask import render_template, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
-from app.model import Reserve
-from app.model import db
+from app.model import Reserve, db
+from datetime import datetime
+
 from app.functions.validate import (
-    default_or_valid_date,
     is_checked_key,
     is_valid_reserve_form,
     now_or_valid_date,
@@ -22,7 +21,6 @@ def new_reserve_page(spc_id: int) -> str:
             sales="",
             saleprice=0,
             rsv_date=datetime.now(),
-            # Not sure about this
             cfm_date=datetime.now(),
             cfm_cs="",
             void=False,

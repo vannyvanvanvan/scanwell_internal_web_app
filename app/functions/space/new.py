@@ -1,14 +1,14 @@
-from datetime import datetime
-from flask_login import current_user
 from flask import render_template, flash, redirect, url_for
+from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
+from app.model import Space, db
+from datetime import datetime
 from app.functions.validate import (
     default_or_valid_spcstatus,
     is_valid_space_form,
     now_or_valid_date,
     zero_or_valid_number,
 )
-from app.model import Space, db
 
 
 def new_space_page(sch_id: int) -> str:

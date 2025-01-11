@@ -1,8 +1,7 @@
-from app.model import Schedule
 from flask import flash
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
-from app.model import db
+from app.model import Schedule, db
 
 
 # Function to handle deleting a schedule

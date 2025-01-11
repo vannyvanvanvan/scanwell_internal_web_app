@@ -1,17 +1,16 @@
+from flask import redirect, render_template, request, flash, url_for
 from datetime import datetime
 from werkzeug.exceptions import NotFound
-
 from app.functions.schedule.new import new_populated_schedule_page
+from app.model import Schedule, db
+
+from sqlalchemy.exc import SQLAlchemyError
 from app.functions.validate import (
     default_or_valid_date,
     default_or_valid_datetime,
     default_or_valid_week,
     is_valid_schedule_form,
 )
-from app.model import Schedule
-from flask import redirect, render_template, request, flash, url_for
-from sqlalchemy.exc import SQLAlchemyError
-from app.model import db
 
 
 # Schedule edit page when user clicked edit from user home

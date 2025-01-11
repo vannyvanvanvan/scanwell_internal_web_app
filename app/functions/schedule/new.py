@@ -1,15 +1,15 @@
-from datetime import datetime
+from flask import redirect, render_template, flash, url_for
 from flask_login import current_user
+from sqlalchemy.exc import SQLAlchemyError
+from app.model import Schedule, db
+from datetime import datetime
+
 from app.functions.validate import (
     is_valid_schedule_form,
     now_or_valid_date,
     now_or_valid_datetime,
     now_or_valid_week,
 )
-from app.model import Schedule
-from flask import redirect, render_template, flash, url_for
-from sqlalchemy.exc import SQLAlchemyError
-from app.model import db
 
 
 def new_schedule_page() -> str:

@@ -1,21 +1,17 @@
 {% extends 'base.html' %}
-{% from '_render_input.html' import render_input_text, render_input_number %}
+{% from '_render_input.html' import render_input_text, render_input_number, render_input_date, render_input_checkbox %}
 
 {% block head %}
-<title>Manage Booking</title>
+  <title>{{ mode|capitalize }} Booking</title>
 {% endblock %}
 
 {% block body %}
-
-{% include 'header.html' %}
-<section class="container p-4">
-
-  <h3>Manage Booking</h3>
+  {% include 'header.html' %}
+  <div class="mt-4">{% include 'flash.html' %}</div>
+  <section class="container p-4">
+    <h3>{{ mode|capitalize }} Booking</h3>
 
   <form method="POST" class="mt-4">
-
-    {% comment %} {{ render_input_number(name='Booking ID', id='bk_id', required=True, value=data.bk_id, readonly=True) }}
-    {{ render_input_number(name='Space ID', id='spc_id', required=True, value=data.spc_id) }} {% endcomment %}
     {{ render_input_text(name='SO', id='so', required=True, value=data.so) }}
     {{ render_input_text(name='Final Destination', id='findest', required=True, value=data.findest) }}
     {{ render_input_text(name='Container Class', id='ct_cl', required=True, value=data.ct_cl) }}
@@ -24,7 +20,7 @@
     {{ render_input_text(name='Term', id='term', required=True, value=data.term) }}
     {{ render_input_text(name='Sales', id='sales', required=True, value=data.sales) }}
     {{ render_input_number(name='Sale Price', id='saleprice', required=True, value=data.saleprice) }}
-    {{ render_input_text(name='Void', id='void', required=True, value=data.void) }}
+    {{ render_input_checkbox(name='Void', id='void', required=True, checked=data.void) }}
     {{ render_input_text(name='Remark', id='remark', value=data.remark) }}
 
     <div class="d-inline-flex gap-2 mt-3">
