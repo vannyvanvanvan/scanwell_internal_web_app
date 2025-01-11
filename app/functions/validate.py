@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def is_valid_proport(form: dict) -> bool:
+def is_checked_proport(form: dict) -> bool:
     return "proport" in form and form["proport"] == "on"
 
 
