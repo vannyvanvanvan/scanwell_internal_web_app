@@ -32,7 +32,7 @@ def new_populated_space_page(form: dict, sch_id: int) -> str:
             avgrate=zero_or_valid_number(form["avgrate"]),
             sugrate=zero_or_valid_number(form["sugrate"]),
             ratevalid=now_or_valid_date(form["ratevalid"]),
-            proport=form["proport"],
+            proport=form.get("proport", ""),
             spcstatus=form.get("spcstatus", "USABLE"),
             owner=current_user.id,
         ),
@@ -40,11 +40,14 @@ def new_populated_space_page(form: dict, sch_id: int) -> str:
 
 
 def create_space(form: dict, sch_id: int) -> int:
+    print("test2.1")
     if not is_valid_space_form(form):
+        print("test2.1.1")
         flash("Some of your changes are invalid. Please try again.", "danger")
         return new_populated_space_page(form, sch_id)
 
     try:
+        print("test2.1.2")
         new_space = Space(
             sch_id=sch_id,
             size=form["size"],
@@ -57,8 +60,10 @@ def create_space(form: dict, sch_id: int) -> int:
             last_modified_by=current_user.id,
             last_modified_at=datetime.utcnow
         )
+        print("test2.2")
         db.session.add(new_space)
         db.session.commit()
+        print("test2.3")
         flash("Space created successfully!", "success")
         return redirect(url_for("space.edit_space_page", spc_id=new_space.spc_id))
     except SQLAlchemyError as e:

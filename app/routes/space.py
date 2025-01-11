@@ -24,6 +24,7 @@ space_routes = Blueprint(
 @rank_required(["admin"])
 def space_add(sch_id: int):
     if request.method == "POST":
+        print("test")
         return create_space(request.form, sch_id)
     return new_space_page(sch_id)
 

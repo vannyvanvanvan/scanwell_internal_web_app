@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from '_render_input.html' import render_input_text, render_input_number, render_input_date %}
+{% from '_render_input.html' import render_input_text, render_input_number, render_input_date, render_input_checkbox %}
 
 {% block head %}
   <title>Manage Space</title>
@@ -7,6 +7,7 @@
 
 {% block body %}
   {% include 'header.html' %}
+  <div class="mt-4">{% include 'flash.html' %}</div>
   <section class="container p-4">
     <h3>Manage Space</h3>
 
@@ -16,7 +17,8 @@
       {{ render_input_number(name='Avgrate', id='avgrate', required=True, value=data.avgrate) }}
       {{ render_input_number(name='Sugrate', id='sugrate', required=True, value=data.sugrate) }}
       {{ render_input_date(name='Rate valid', id='ratevalid', required=True, value=data.ratevalid) }}
-      {{ render_input_text(name='Proport', id='proport', required=True, value=data.proport) }}
+      {{ render_input_checkbox(name='Proport', id='proport', value=True, checked=True) }}
+      {{ render_input_text(name='Space status', id='spcstatus', required=True, value=data.spcstatus) }}
 
       <div class="d-inline-flex gap-2 mt-3">
         <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
