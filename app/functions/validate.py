@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import re
 
 def is_checked_key(form: dict, key: str) -> bool:
     return key in form and form[key] == "on"
@@ -7,7 +7,9 @@ def is_checked_key(form: dict, key: str) -> bool:
 
 def is_valid_string(string: str) -> bool:
     # Return True/False if string is valid alphamumeric
-    return string.isalnum()
+    pattern = r'^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>/? ]*$'
+    return bool(re.match(pattern, string))
+
 
 def is_valid_spcstatus(spcstatus: set) -> bool:
     return is_valid_string(spcstatus) and spcstatus in [
@@ -185,13 +187,13 @@ def is_valid_space_form(form: dict) -> bool:
         and is_valid_string(form["spcstatus"])
     )
 
+
 # Reserve
 # =============================================================================
 def is_valid_reserve_dict(form: dict) -> bool:
     # Check if dictionary contains all keys for reserve data
     return all(
-        key in form
-        for key in ["spc_id", "sales", "saleprice", "rsv_date", "cfm_cs", "void", "remark"]
+        key in form for key in ["sales", "saleprice", "rsv_date", "cfm_cs", "remark"]
     )
 
 

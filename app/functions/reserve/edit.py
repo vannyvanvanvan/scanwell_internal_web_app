@@ -31,16 +31,19 @@ def invalid_reserve_page(rsv_id: int, form: dict) -> str:
             "shipping_reserve.html",
             mode="edit",
             data=Reserve(
-                sales=form['sales'],
+                sales=form["sales"],
                 saleprice=default_or_valid_number(
-                    original_reserve.saleprice, form['saleprice']),
+                    original_reserve.saleprice, form["saleprice"]
+                ),
                 rsv_date=default_or_valid_date(
-                    original_reserve.rsv_date, form['rsv_date']),
+                    original_reserve.rsv_date, form["rsv_date"]
+                ),
                 cfm_date=default_or_valid_date(
-                    original_reserve.cfm_date, form['cfm_date']),
-                cfm_cs=form['cfm_cs'],
-                void=is_checked_key(form['void']),
-                remark=form['remark'],
+                    original_reserve.cfm_date, form["cfm_date"]
+                ),
+                cfm_cs=form["cfm_cs"],
+                void=is_checked_key(form["void"]),
+                remark=form["remark"],
             ),
         )
 
@@ -50,6 +53,7 @@ def invalid_reserve_page(rsv_id: int, form: dict) -> str:
             "primary",
         )
         return redirect(url_for("user.user_home"))
+
 
 def edit_reserve(rsv_id: int, form: dict):
     if not is_valid_reserve_form(request.form):
@@ -63,14 +67,15 @@ def edit_reserve(rsv_id: int, form: dict):
         reserve_to_edit.sales = request.form["sales"]
         reserve_to_edit.saleprice = int(request.form["saleprice"])
         reserve_to_edit.rsv_date = datetime.strptime(
-            request.form["rsv_date"], "%Y-%m-%d")
-        reserve_to_edit.cfm_date = (
-            datetime.strptime(request.form["cfm_date"], "%Y-%m-%d")
+            request.form["rsv_date"], "%Y-%m-%d"
+        )
+        reserve_to_edit.cfm_date = datetime.strptime(
+            request.form["cfm_date"], "%Y-%m-%d"
         )
         reserve_to_edit.cfm_cs = request.form["cfm_cs"]
 
         # wait edit later
-        reserve_to_edit.void = is_checked_key("void")
+        reserve_to_edit.void = is_checked_key(request.form, "void")
 
         reserve_to_edit.remark = request.form["remark"]
         db.session.commit()

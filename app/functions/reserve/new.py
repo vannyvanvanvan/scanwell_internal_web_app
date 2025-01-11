@@ -1,9 +1,16 @@
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for
+from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from app.model import Reserve
 from app.model import db
-from app.functions.validate import default_or_valid_date, is_valid_reserve_form, now_or_valid_date, zero_or_valid_number
+from app.functions.validate import (
+    default_or_valid_date,
+    is_checked_key,
+    is_valid_reserve_form,
+    now_or_valid_date,
+    zero_or_valid_number,
+)
 
 
 def new_reserve_page(spc_id: int) -> str:
@@ -15,7 +22,6 @@ def new_reserve_page(spc_id: int) -> str:
             sales="",
             saleprice=0,
             rsv_date=datetime.now(),
-            
             # Not sure about this
             cfm_date=datetime.now(),
             cfm_cs="",
@@ -24,11 +30,12 @@ def new_reserve_page(spc_id: int) -> str:
         ),
     )
 
+
 def new_populated_reserve_page(form: dict, spc_id: int) -> str:
     return render_template(
         "shipping_reserve.html",
         mode="add",
-        data = Reserve(
+        data=Reserve(
             spc_id=spc_id,
             sales=form["sales"],
             saleprice=zero_or_valid_number(form["saleprice"]),
@@ -39,6 +46,7 @@ def new_populated_reserve_page(form: dict, spc_id: int) -> str:
             remark=form["remark"],
         ),
     )
+
 
 def create_reserve(form: dict, spc_id: int) -> int:
     if not is_valid_reserve_form(form):
@@ -53,8 +61,9 @@ def create_reserve(form: dict, spc_id: int) -> int:
             rsv_date=datetime.strptime(form["rsv_date"], "%Y-%m-%d"),
             cfm_date=datetime.strptime(form["cfm_date"], "%Y-%m-%d"),
             cfm_cs=form["cfm_cs"],
-            void=bool(form["void"]),
+            void=is_checked_key(form, "void"),
             remark=form["remark"],
+            owner=current_user.id,
         )
         db.session.add(new_reserve)
         db.session.commit()
@@ -66,4 +75,4 @@ def create_reserve(form: dict, spc_id: int) -> int:
         return -1
     except ValueError as e:
         flash(f"Value error: {str(e)}", "danger")
-        return -1 
+        return -1
