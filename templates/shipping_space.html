@@ -2,14 +2,14 @@
 {% from '_render_input.html' import render_input_text, render_input_number, render_input_date, render_input_checkbox %}
 
 {% block head %}
-  <title>Manage Space</title>
+  <title>{{ mode|capitalize }} Space</title>
 {% endblock %}
 
 {% block body %}
   {% include 'header.html' %}
   <div class="mt-4">{% include 'flash.html' %}</div>
   <section class="container p-4">
-    <h3>Manage Space</h3>
+    <h3>{{ mode|capitalize }} Space</h3>
 
     <form method="POST" class="mt-4">
     
