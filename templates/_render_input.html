@@ -69,3 +69,16 @@
 </div>
 
 {% endmacro %}
+
+{% macro render_input_select(name, id, required=False, value='', options=[]) %}
+<div class="form-group">
+    <label for="{{ id }}">{{ name }}</label>
+    <select class="form-control" id="{{ id }}" name="{{ id }}"{% if required %} required {% endif %}>
+        {% for opt_value, opt_label in options %}
+            <option value="{{ opt_value }}" {% if value == opt_value %} selected {% endif %}>
+                {{ opt_label }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+{% endmacro %}
