@@ -36,11 +36,13 @@ from app.routes.schedule import schedule_routes
 from app.routes.space import space_routes
 from app.routes.reserve import reserve_routes
 from app.routes.booking import booking_routes
+from app.routes.search import search_routes
 app.register_blueprint(user_routes)
 app.register_blueprint(schedule_routes, url_prefix="/schedule")
 app.register_blueprint(space_routes, url_prefix="/space")
 app.register_blueprint(reserve_routes, url_prefix="/reserve")
 app.register_blueprint(booking_routes, url_prefix="/booking")
+app.register_blueprint(search_routes, url_prefix="/admin")
 
 if __name__ == "__main__":
     print(app.url_map)

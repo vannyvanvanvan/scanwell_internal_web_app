@@ -1,11 +1,17 @@
 <section class="container p-4">
   <h3>Shipping Schedule</h3>
   <div class="border rounded">
+    
+    <div class="p-2">
+      <input type="text" class="form-control" placeholder="Search..." name="q" hx-get="{{ url_for('search.search') }}" hx-trigger="keyup changed delay:500ms" hx-target="#results" hx-indicator="#loading" />
+      <div id="loading" style="display: none;">Loading...</div>
+
+    </div>
     <table class="table align-middle m-0">
       <thead class="table-light">
         <tr>
-          {% if current_user.rank=='admin' %}
-          <th>ID</th>
+          {% if current_user.rank == 'admin' %}
+            <th>ID</th>
           {% endif %}
 
           <th>Carrier</th>
