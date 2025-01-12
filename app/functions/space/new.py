@@ -5,6 +5,7 @@ from app.model import Space, db
 from datetime import datetime
 from app.functions.validate import (
     default_or_valid_spcstatus,
+    is_checked_key,
     is_valid_space_form,
     now_or_valid_date,
     zero_or_valid_number,
@@ -57,7 +58,7 @@ def create_space(form: dict, sch_id: int) -> int:
             avgrate=int(form["avgrate"]),
             sugrate=int(form["sugrate"]),
             ratevalid=datetime.strptime(form["ratevalid"], "%Y-%m-%d"),
-            proport=bool(form["proport"]),
+            proport=is_checked_key(form, "proport"),
             spcstatus=default_or_valid_spcstatus(form["spcstatus"]),
             owner=current_user.id,
             last_modified_by=current_user.id,
