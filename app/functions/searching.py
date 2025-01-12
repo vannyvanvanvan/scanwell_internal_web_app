@@ -1,81 +1,85 @@
-from datetime import datetime
 from flask import render_template
 from flask_login import current_user
-from sqlalchemy import or_
-from app.model import Schedule, Space, Reserve, Booking
+from app.model import Schedule
 
-# Function for making a search query in the database
-def search_database(query: str):
-    
+
+def query_in_list(query: str, match_list: list) -> bool:
+    match_list = list(map(str.lower, match_list))
+    for item in match_list:
+        if query in item:
+            return True
+    return False
+
+
+def find_match(query: str) -> list:
+
+    all_schedules = Schedule.query.all()
     results = []
 
-    schedules = (
-        Schedule.query.filter(
-            or_(
-                Schedule.carrier.ilike(f"%{query}%"),
-                Schedule.service.ilike(f"%{query}%"),
-                Schedule.routing.ilike(f"%{query}%"),
-                Schedule.mv.ilike(f"%{query}%"),
-                Schedule.pol.ilike(f"%{query}%"),
-                Schedule.pod.ilike(f"%{query}%"),
-            )
-        )
-        .limit(50)
-        .all()
-    )
-    results.extend(schedules)
+    for schedule in all_schedules:
+        if query_in_list(
+            query,
+            [
+                schedule.carrier,
+                schedule.service,
+                schedule.routing,
+                schedule.mv,
+                schedule.pol,
+                schedule.pod,
+            ],
+        ):
+            results.append(schedule)
+            break
+        for space in schedule.spaces:
+            match_found = False
+            if query_in_list(query, [space.size, space.spcstatus]):
+                results.append(schedule)
+                break
+            for reserve in space.reserves:
+                if query_in_list(
+                    query,
+                    [reserve.sales, reserve.cfm_cs, reserve.remark],
+                ):
+                    results.append(schedule)
+                    match_found = True
+                    break
+            if match_found:
+                break
+            for booking in space.bookings:
+                if query_in_list(
+                    query,
+                    [
+                        booking.so,
+                        booking.findest,
+                        booking.ct_cl,
+                        booking.shipper,
+                        booking.consignee,
+                        booking.term,
+                        booking.sales,
+                        booking.remark,
+                    ],
+                ):
+                    results.append(schedule)
+                    break
 
-    spaces = (
-        Space.query.filter(
-            or_(
-                Space.size.ilike(f"%{query}%"),
-                Space.spcstatus.ilike(f"%{query}%"),
-            )
-        )
-        .limit(50)
-        .all()
-    )
-    results.extend(spaces)
-
-    reserves = (
-        Reserve.query.filter(
-            or_(
-                Reserve.sales.ilike(f"%{query}%"),
-                Reserve.remark.ilike(f"%{query}%"),
-            )
-        )
-        .limit(50)
-        .all()
-    )
-    results.extend(reserves)
-
-    bookings = (
-        Booking.query.filter(
-            or_(
-                Booking.so.ilike(f"%{query}%"),
-                Booking.findest.ilike(f"%{query}%"),
-                Booking.ct_cl.ilike(f"%{query}%"),
-                Booking.shipper.ilike(f"%{query}%"),
-                Booking.consignee.ilike(f"%{query}%"),
-                Booking.sales.ilike(f"%{query}%"),
-                Booking.remark.ilike(f"%{query}%"),
-            )
-        )
-        .limit(50)
-        .all()
-    )
-    results.extend(bookings)
-    
-    print(f"Search query: {query}")
-    print(f"Total results found: {len(results)}")
-
-    print(f"Schedules found: {len(schedules)}")
-    print(f"Spaces found: {len(spaces)}")
-    print(f"Reserve found: {len(reserves)}")
-    print(f"Booking found: {len(bookings)}")
     return results
 
 
+def schedule_table_results(schedules: list) -> str:
+    return render_template(
+        "schedule_table_results.html", current_user=current_user, results=schedules
+    )
+
+
+def sort_schedules(schedules: list) -> list:
+    for schedule in schedules:
+        schedule.spaces.sort()
+        for space in schedule.spaces:
+            space.reserves.sort()
+            space.bookings.sort()
+
+
 def render_search_results(query: str):
-    results = search_database(query)
-    return render_template("shipping_table_results.html", current_user=current_user,  results=results)
+    results = find_match(query)
+    sort_schedules(results)
+    return schedule_table_results(results)
