@@ -1,8 +1,8 @@
 from datetime import timedelta
 from flask import Blueprint, session
-from flask_login import login_required
+from flask_login import current_user, login_required
 
-from app.functions.user.home import home_page
+from app.functions.user.home import home_page, sales_home_page
 from app.functions.user.login import login_page
 from app.functions.user.logout import logout_page
 
@@ -31,4 +31,6 @@ def user_logout():
 @user_routes.route("/home")
 @login_required
 def user_home():
+    if current_user.rank == "sp":
+        return sales_home_page()
     return home_page()

@@ -1,0 +1,35 @@
+<section class="container p-4">
+  <h3>Your Reserves</h3>
+  <div class="border rounded">
+
+    <div class="p-2">
+      <input type="text" class="form-control" placeholder="Search..." name="q"
+        hx-get="{{ url_for('search.search_sales_reserve') }}" hx-trigger="keyup changed delay:500ms"
+        hx-target="#results" hx-indicator="#loading" />
+      <div id="loading" style="display: none;">Loading...</div>
+
+    </div>
+    <table class="table align-middle m-0">
+      <thead>
+        {% if current_user.rank == 'admin' %}
+        <th>ID</th>
+        {% endif %}
+        <th>Sales</th>
+        <th>Sale Price</th>
+        <th>Reserve Date</th>
+        <th>Confirm Date</th>
+        <th>Confirmed By</th>
+        <th>Void</th>
+        <th>Remark</th>
+        {% if current_user.rank == 'admin' %}
+        <th>Owner</th>
+        {% endif %}
+        <th></th>
+      </thead>
+      <tbody id="results">
+        
+        {% include 'reserve_table_results.html' %}
+      </tbody>
+    </table>
+  </div>
+</section>

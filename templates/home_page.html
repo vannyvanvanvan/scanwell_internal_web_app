@@ -10,7 +10,11 @@
 {% include 'flash.html' %}
 
 <!-- Display Shipping Data -->
+{% if current_user.rank in ["admin", "cs"] %}
 {% include 'schedule_table.html' %}
+{% else %}
+{% include 'reserve_table.html' %}
+{% endif %}
 
 <script>
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
