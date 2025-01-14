@@ -1,17 +1,21 @@
 from flask import render_template
 from flask_login import current_user
-from app.model import Schedule
+from app.model import Reserve, Schedule
+
+
+def flatten_string_lower(var: any) -> str:
+    return str(var).lower()
 
 
 def query_in_list(query: str, match_list: list) -> bool:
-    match_list = list(map(str.lower, match_list))
+    match_list = list(map(flatten_string_lower, match_list))
     for item in match_list:
         if query in item:
             return True
     return False
 
 
-def find_match(query: str) -> list:
+def find_all_match(query: str) -> list:
 
     all_schedules = Schedule.query.all()
     results = []
@@ -79,7 +83,37 @@ def sort_schedules(schedules: list) -> list:
             space.bookings.sort()
 
 
-def render_search_results(query: str):
-    results = find_match(query)
+def search_all_results(query: str):
+    results = find_all_match(query)
     sort_schedules(results)
     return schedule_table_results(results)
+
+
+def reserve_table_results(reserves: list) -> str:
+    return render_template(
+        "reserve_table_results.html", current_user=current_user, reserves=reserves
+    )
+
+
+def search_sales_reserve_results(query: str):
+    all_reserves = Reserve.query.all()
+    all_reserves.sort()
+    results = []
+
+    if not query:
+        results = all_reserves
+    else:
+        for reserve in all_reserves:
+            if query_in_list(
+                query,
+                [
+                    reserve.sales,
+                    reserve.saleprice,
+                    reserve.rsv_date,
+                    reserve.cfm_date,
+                    reserve.cfm_cs,
+                    reserve.remark,
+                ],
+            ):
+                results.append(reserve)
+    return reserve_table_results(results)

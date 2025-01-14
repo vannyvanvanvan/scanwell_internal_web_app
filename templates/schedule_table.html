@@ -3,7 +3,7 @@
   <div class="border rounded">
     
     <div class="p-2">
-      <input type="text" class="form-control" placeholder="Search..." name="q" hx-get="{{ url_for('search.search') }}" hx-trigger="keyup changed delay:500ms" hx-target="#results" hx-indicator="#loading" />
+      <input type="text" class="form-control" placeholder="Search..." name="q" hx-get="{{ url_for('search.search_all') }}" hx-trigger="keyup changed delay:500ms" hx-target="#results" hx-indicator="#loading" />
       <div id="loading" style="display: none;">Loading...</div>
 
     </div>
