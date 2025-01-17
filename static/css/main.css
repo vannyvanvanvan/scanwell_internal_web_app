@@ -14,21 +14,21 @@ header {
   color: white;
 }
 
-header.special {
+header.admin {
   background: rgb(92, 6, 6);
   background: linear-gradient(
     13deg,
-    rgba(92, 6, 6, 1) 0%,
-    rgba(237, 73, 55, 1) 100%
+    rgb(121, 0, 67) 0%,
+    rgb(169, 55, 214) 100%
   );
 }
 
-header.admin {
+header.cs {
   background: rgb(6, 85, 10);
   background: linear-gradient(
     13deg,
-    rgba(6, 85, 10) 0%,
-    rgb(47, 221, 140) 100%
+    rgb(15, 99, 19) 0%,
+    rgb(41, 197, 125) 100%
   );
 }
 

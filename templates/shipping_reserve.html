@@ -2,28 +2,31 @@
 {% from '_render_input.html' import render_input_text, render_input_number, render_input_date, render_input_checkbox %}
 
 {% block head %}
-  <title>{{ mode|capitalize }} Reserve</title>
+<title>{{ mode|capitalize }} Reserve</title>
 {% endblock %}
 
 {% block body %}
-  {% include 'header.html' %}
-  <div class="mt-4">{% include 'flash.html' %}</div>
-  <section class="container p-4">
-    <h3>{{ mode|capitalize }} Reserve</h3>
+{% with title=mode|capitalize + " Reserve" %}
+{% include 'header.html' %}
+{% endwith %}
 
-    <form method="POST" class="mt-4">
-      {{ render_input_text(name='Sales', id='sales', required=True, value=data.sales) }}
-      {{ render_input_number(name='Sale Price', id='saleprice', required=True, value=data.saleprice) }}
-      {{ render_input_date(name='Reserve Date', id='rsv_date', required=True, value=data.rsv_date) }}
-      {{ render_input_date(name='Confirm Date', id='cfm_date', required=True, value=data.cfm_date) }}
-      {{ render_input_text(name='Confirm CS', id='cfm_cs', value=data.cfm_cs) }}
-      {{ render_input_checkbox(name='Void', id='void', required=True, checked=data.void) }}
-      {{ render_input_text(name='Remark', id='remark', value=data.remark) }}
+<div class="mt-4">{% include 'flash.html' %}</div>
+<section class="container p-4">
+  <h3>Reserve Details</h3>
 
-      <div class="d-inline-flex gap-2 mt-3">
-        <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
-        <input class="btn btn-primary" type="submit" value="Save Changes" />
-      </div>
-    </form>
-  </section>
+  <form method="POST" class="mt-4">
+    {{ render_input_text(name='Sales', id='sales', required=True, value=data.sales) }}
+    {{ render_input_number(name='Sale Price', id='saleprice', required=True, value=data.saleprice) }}
+    {{ render_input_date(name='Reserve Date', id='rsv_date', required=True, value=data.rsv_date) }}
+    {{ render_input_date(name='Confirm Date', id='cfm_date', required=True, value=data.cfm_date) }}
+    {{ render_input_text(name='Confirm CS', id='cfm_cs', value=data.cfm_cs) }}
+    {{ render_input_checkbox(name='Void', id='void', required=True, checked=data.void) }}
+    {{ render_input_text(name='Remark', id='remark', value=data.remark) }}
+
+    <div class="d-inline-flex gap-2 mt-3">
+      <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Save Changes" />
+    </div>
+  </form>
+</section>
 {% endblock %}

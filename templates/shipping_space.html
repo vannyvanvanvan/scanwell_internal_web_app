@@ -1,42 +1,46 @@
 {% extends 'base.html' %}
-{% from '_render_input.html' import render_input_text, render_input_number, render_input_date, render_input_checkbox, render_input_select %}
+{% from '_render_input.html' import render_input_text, render_input_number, render_input_date, render_input_checkbox,
+render_input_select %}
 
 {% block head %}
-  <title>{{ mode|capitalize }} Space</title>
+<title>{{ mode|capitalize }} Space</title>
 {% endblock %}
 
 {% block body %}
-  {% include 'header.html' %}
-  <div class="mt-4">
-    {% include 'flash.html' %}
-  </div>
-  <section class="container p-4">
-    <h3>{{ mode|capitalize }} Space</h3>
+{% with title=mode|capitalize + " Space" %}
+{% include 'header.html' %}
+{% endwith %}
 
-    <form method="POST" class="mt-4">
-      {{ render_input_text(name='Size', id='size', required=True, value=data.size) }}
-      {{ render_input_number(name='Avgrate', id='avgrate', required=True, value=data.avgrate) }}
-      {{ render_input_number(name='Sugrate', id='sugrate', required=True, value=data.sugrate) }}
-      {{ render_input_date(name='Rate valid', id='ratevalid', required=True, value=data.ratevalid) }}
-      {{ render_input_checkbox(name='Proport', id='proport', required=True, checked=data.proport) }}
+<div class="mt-4">
+  {% include 'flash.html' %}
+</div>
+<section class="container p-4">
+  <h3>Space Details</h3>
 
-      {{ render_input_select(name='Space status', id='spcstatus', required=True, value=data.spcstatus, 
-          options=[('USABLE', 'USABLE'),
-          ('RV_SUBMIT', 'RV_SUBMIT'),
-          ('RV_CONFIRM', 'RV_CONFIRM'),
-          ('RV_CANCEL', 'RV_CANCEL'),
-          ('BK_CONFIRM', 'BK_CONFIRM'),
-          ('BK_RESERVED', 'BK_RESERVED'),
-          ('BK_PENDING', 'BK_PENDING'),
-          ('BK_CANCEL', 'BK_CANCEL'),
-          ('INVALID', 'INVALID')
-        ]
+  <form method="POST" class="mt-4">
+    {{ render_input_text(name='Size', id='size', required=True, value=data.size) }}
+    {{ render_input_number(name='Avgrate', id='avgrate', required=True, value=data.avgrate) }}
+    {{ render_input_number(name='Sugrate', id='sugrate', required=True, value=data.sugrate) }}
+    {{ render_input_date(name='Rate valid', id='ratevalid', required=True, value=data.ratevalid) }}
+    {{ render_input_checkbox(name='Proport', id='proport', required=True, checked=data.proport) }}
+
+    {{ render_input_select(name='Space status', id='spcstatus', required=True, value=data.spcstatus,
+    options=[('USABLE', 'USABLE'),
+    ('RV_SUBMIT', 'RV_SUBMIT'),
+    ('RV_CONFIRM', 'RV_CONFIRM'),
+    ('RV_CANCEL', 'RV_CANCEL'),
+    ('BK_CONFIRM', 'BK_CONFIRM'),
+    ('BK_RESERVED', 'BK_RESERVED'),
+    ('BK_PENDING', 'BK_PENDING'),
+    ('BK_CANCEL', 'BK_CANCEL'),
+    ('INVALID', 'INVALID')
+    ]
     ) }}
 
-      <div class="d-inline-flex gap-2 mt-3">
-        <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
-        <input class="btn btn-primary" type="submit" value="Save Changes" />
-      </div>
-    </form>
-  </section>
+    <div class="d-inline-flex gap-2 mt-3">
+      <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Save Changes" />
+    </div>
+  </form>
+</section>
 {% endblock %}

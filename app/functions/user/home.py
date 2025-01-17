@@ -9,6 +9,8 @@ from app.functions.schedule.get import get_all_schedules
 def home_page() -> str:
     if current_user.rank == "admin":
         return admin_home_page()
+    elif current_user.rank == "cs":
+        return admin_home_page()
     elif current_user.rank == "sp":
         return sales_home_page()
 

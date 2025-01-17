@@ -6,10 +6,13 @@
 {% endblock %}
 
 {% block body %}
+{% with title=mode|capitalize + " Schedule" %}
 {% include 'header.html' %}
+{% endwith %}
+
 <div class="mt-4">{% include 'flash.html' %}</div>
 <section class="container p-4">
-  <h3>{{ mode|capitalize }} Schedule</h3>
+  <h3>Schedule Details</h3>
 
   <form method="POST" class="mt-4">
     {{ render_input_text(name='Customer Service (CS)', id='cs', required=True, value=data.cs) }}

@@ -2,14 +2,18 @@
 {% from '_render_input.html' import render_input_text, render_input_number, render_input_date, render_input_checkbox %}
 
 {% block head %}
-  <title>{{ mode|capitalize }} Booking</title>
+<title>{{ mode|capitalize }} Booking</title>
 {% endblock %}
 
 {% block body %}
-  {% include 'header.html' %}
-  <div class="mt-4">{% include 'flash.html' %}</div>
-  <section class="container p-4">
-    <h3>{{ mode|capitalize }} Booking</h3>
+
+{% with title=mode|capitalize + " Booking" %}
+{% include 'header.html' %}
+{% endwith %}
+
+<div class="mt-4">{% include 'flash.html' %}</div>
+<section class="container p-4">
+  <h3>Booking Details</h3>
 
   <form method="POST" class="mt-4">
     {{ render_input_text(name='SO', id='so', required=True, value=data.so) }}
