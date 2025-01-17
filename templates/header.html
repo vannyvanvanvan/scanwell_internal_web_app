@@ -1,6 +1,6 @@
-<header class="admin">
+<header class="{{ current_user.rank }}">
   <div id="menu-bar" class="container p-4">
-    <h1>{{ current_user.rank|capitalize }} Dashboard</h1>
+    <h1>{{ title }}</h1>
   </div>
   <div class="container p-2">
     <nav id="menu-bar-nav">

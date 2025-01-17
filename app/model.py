@@ -23,6 +23,16 @@ class User(db.Model, UserMixin):
     def __lt__(self, other):
         return self.id < other.id
 
+    def pretty_rank(self):
+        if self.rank == "admin":
+            return "Admin"
+        elif self.rank == "cs":
+            return "Customer Service"
+        elif self.rank == "sp":
+            return "Sales"
+        else:
+            return "Invalid User"
+
 
 class Schedule(db.Model):
 

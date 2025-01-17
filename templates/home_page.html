@@ -5,7 +5,9 @@
 {% endblock %}
 
 {% block body %}
+{% with title=current_user.pretty_rank() + " Dashboard" %}
 {% include 'header.html' %}
+{% endwith %}
 
 {% include 'flash.html' %}
 
@@ -14,10 +16,7 @@
 {% include 'schedule_table.html' %}
 {% else %}
 {% include 'reserve_table.html' %}
+{% include 'booking_table.html' %}
 {% endif %}
 
-<script>
-  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-  const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl))
-</script>
 {% endblock %}
