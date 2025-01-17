@@ -53,7 +53,6 @@
             <th>Rate Valid</th>
             <th>Proport</th>
             <th>Status</th>
-            <th>Void</th>
             {% if current_user.rank == 'admin' %}
             <th>Last Modified</th>
             <th>By</th>
@@ -69,9 +68,8 @@
               <td>{{ space.avgrate }}</td>
               <td>{{ space.sugrate }}</td>
               <td>{{ space.ratevalid.strftime('%Y-%m-%d %H:%M') }}</td>
-              <td>{{ space.proport }}</td>
+              <td>{{ space.proport_yesno() }}</td>
               <td>{{ space.spcstatus }}</td>
-              <td>{{ space.void }}</td>
               {% if current_user.rank == 'admin' %}
               <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
               <td>{{ space.last_modified_by }}</td>
@@ -138,7 +136,7 @@
                           <td>{{ reserve.rsv_date.strftime('%Y-%m-%d') }}</td>
                           <td>{{ reserve.cfm_date.strftime('%Y-%m-%d') }}</td>
                           <td>{{ reserve.cfm_cs }}</td>
-                          <td>{{ reserve.void }}</td>
+                          <td>{{ reserve.void_yesno() }}</td>
                           <td>{{ reserve.remark }}</td>
                           <td>{{ reserve.owner }}</td>
                           <td>
@@ -205,7 +203,7 @@
                           <td>{{ booking.term }}</td>
                           <td>{{ booking.sales }}</td>
                           <td>{{ booking.saleprice }}</td>
-                          <td>{{ booking.void }}</td>
+                          <td>{{ booking.void_yesno() }}</td>
                           <td>{{ booking.remark }}</td>
                           <td>
                             {% if current_user.rank == 'admin' or current_user.id == booking.owner %}

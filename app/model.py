@@ -97,6 +97,9 @@ class Space(db.Model):
         self.last_modified_by = user_id
         self.last_modified_at = datetime.utcnow()
 
+    def proport_yesno(self):
+        return "Yes" if self.proport else "No"
+
 
 class Reserve(db.Model):
     __tablename__ = "reserve"
@@ -118,6 +121,9 @@ class Reserve(db.Model):
 
     def __lt__(self, other):
         return self.rsv_id < other.rsv_id
+
+    def void_yesno(self):
+        return "Yes" if self.void else "No"
 
 
 class Booking(db.Model):
@@ -143,3 +149,6 @@ class Booking(db.Model):
 
     def __lt__(self, other):
         return self.bk_id < other.bk_id
+
+    def void_yesno(self):
+        return "Yes" if self.void else "No"

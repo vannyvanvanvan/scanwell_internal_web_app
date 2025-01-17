@@ -12,7 +12,7 @@
   <td>{{ booking.term }}</td>
   <td>{{ booking.sales }}</td>
   <td>{{ booking.saleprice }}</td>
-  <td>{{ booking.void }}</td>
+  <td>{{ booking.void_yesno() }}</td>
   <td>{{ booking.remark }}</td>
   <td>
     {% if current_user.rank == 'admin' or current_user.id == booking.owner %}
