@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+{% with title="Space Lookup" %}
+{% include 'header.html' %}
+{% endwith %}
+
+{% include 'flash.html' %}
+
+<section class="container p-4">
+  <h3>Available Spaces</h3>
+  <div class="border rounded">
+
+    <!-- <div class="p-2">
+      <input type="text" class="form-control" placeholder="Search..." name="q"
+        hx-get="{{ url_for('search.search_sales_reserve') }}" hx-trigger="keyup changed delay:500ms"
+        hx-target="#results-reserve" hx-indicator="#loading" />
+      <div id="loading" style="display: none;">Loading...</div>
+
+    </div> -->
+    <table class="table align-middle m-0">
+      <thead>
+        {% if current_user.rank == 'admin' %}
+        <th>ID</th>
+        {% endif %}
+        <th>Size</th>
+        <th>Avg. Rate</th>
+        <th>Sug. Rate</th>
+        <th>Rate Valid</th>
+        <th>Proport</th>
+        {% if current_user.rank == 'admin' %}
+        <th>Status</th>
+        <th>Last Modified</th>
+        <th>By</th>
+        {% endif %}
+        <th></th>
+      </thead>
+      <tbody id="results-reserve">
+        {% if spaces %}
+        {% for space in spaces %}
+        <tr>
+          {% if current_user.rank == 'admin' %}
+          <td>{{ space.spc_id }}</td>
+          {% endif %}
+          <td>{{ space.size }}</td>
+          <td>{{ space.avgrate }}</td>
+          <td>{{ space.sugrate }}</td>
+          <td>{{ space.ratevalid.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ space.proport_yesno() }}</td>
+          {% if current_user.rank == 'admin' %}
+          <td>{{ space.spcstatus }}</td>
+          <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ space.last_modified_by }}</td>
+          {% endif %}
+          <td>
+            <div class="d-flex justify-content-end gap-2">
+              {% if current_user.rank == 'admin' or current_user.id == space.owner %}
+              <div data-bs-toggle="tooltip" data-bs-title="Create reserve">
+                <a class="btn btn-primary" href="{{ url_for('reserve.reserve_add', spc_id=space.spc_id) }}">
+                  <i class="bi bi-plus-lg"></i>
+                </a>
+              </div>
+              <div data-bs-toggle="tooltip" data-bs-title="Edit space">
+                <a class="btn btn-warning" href="{{ url_for('space.space_edit', spc_id=space.spc_id) }}">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+              </div>
+              {% else %}
+              <div>
+                <a class="btn btn-primary" href="{{ url_for('reserve.reserve_add', spc_id=space.spc_id) }}">
+                  Reserve
+                </a>
+              </div>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+          <td colspan="14">There are currently no available space. Please try again later.</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}

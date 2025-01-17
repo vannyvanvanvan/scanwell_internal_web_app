@@ -1,5 +1,6 @@
 from flask_login import login_required
 from app.functions.permissions import rank_required
+from app.functions.space.get import space_list_page
 from app.functions.space.new import create_space, new_space_page
 from app.functions.space.edit import edit_space, edit_space_page
 from app.functions.space.delete import delete_space
@@ -57,9 +58,16 @@ def space_update(spc_id: int):
 
 @space_routes.route("/search/<int:spc_id>", methods=["GET", "POST"])
 @login_required
-@rank_required(["admin", "cs", "sales"])
+@rank_required(["admin", "cs", "sp"])
 def space_search(query: dict):
     if request.method == "POST":
         pass
     else:
         pass
+
+
+@space_routes.route("/list", methods=["GET"])
+@login_required
+@rank_required(["admin", "cs", "sp"])
+def space_list():
+    return space_list_page()
