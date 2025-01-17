@@ -1,11 +1,11 @@
 <section class="container p-4">
-  <h3>Your Reserves</h3>
+  <h3>Your Bookings</h3>
   <div class="border rounded">
 
     <div class="p-2">
       <input type="text" class="form-control" placeholder="Search..." name="q"
         hx-get="{{ url_for('search.search_sales_reserve') }}" hx-trigger="keyup changed delay:500ms"
-        hx-target="#results-reserve" hx-indicator="#loading" />
+        hx-target="#results-booking" hx-indicator="#loading" />
       <div id="loading" style="display: none;">Loading...</div>
 
     </div>
@@ -14,20 +14,21 @@
         {% if current_user.rank == 'admin' %}
         <th>ID</th>
         {% endif %}
+
+        <th>SO</th>
+        <th>Final Destination</th>
+        <th>Contract/Coloader</th>
+        <th>Shipper</th>
+        <th>Consignee</th>
+        <th>Term</th>
         <th>Sales</th>
         <th>Sale Price</th>
-        <th>Reserve Date</th>
-        <th>Confirm Date</th>
-        <th>Confirmed By</th>
         <th>Void</th>
         <th>Remark</th>
-        {% if current_user.rank == 'admin' %}
-        <th>Owner</th>
-        {% endif %}
         <th></th>
       </thead>
-      <tbody id="results-reserve">
-        {% include 'reserve_table_results.html' %}
+      <tbody id="results-booking">
+        {% include 'booking_table_results.html' %}
       </tbody>
     </table>
   </div>

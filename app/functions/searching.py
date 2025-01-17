@@ -1,6 +1,8 @@
 from flask import render_template
 from flask_login import current_user
-from app.model import Reserve, Schedule
+from app.functions.booking.get import booking_table_results
+from app.functions.reserve.get import reserve_table_results
+from app.model import Booking, Reserve, Schedule
 
 
 def flatten_string_lower(var: any) -> str:
@@ -89,12 +91,6 @@ def search_all_results(query: str):
     return schedule_table_results(results)
 
 
-def reserve_table_results(reserves: list) -> str:
-    return render_template(
-        "reserve_table_results.html", current_user=current_user, reserves=reserves
-    )
-
-
 def search_sales_reserve_results(query: str):
     all_reserves = Reserve.query.all()
     all_reserves.sort()
@@ -117,3 +113,27 @@ def search_sales_reserve_results(query: str):
             ):
                 results.append(reserve)
     return reserve_table_results(results)
+
+
+def search_sales_booking_results(query: str):
+    all_bookings = Booking.query.all()
+    all_bookings.sort()
+    results = []
+
+    if not query:
+        results = all_bookings
+    else:
+        for booking in all_bookings:
+            if query_in_list(
+                query,
+                [
+                    booking.sales,
+                    booking.saleprice,
+                    booking.rsv_date,
+                    booking.cfm_date,
+                    booking.cfm_cs,
+                    booking.remark,
+                ],
+            ):
+                results.append(booking)
+    return booking_table_results(results)

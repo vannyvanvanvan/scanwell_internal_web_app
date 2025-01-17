@@ -1,0 +1,32 @@
+{% if bookings %}
+{% for booking in bookings %}
+<tr>
+  {% if current_user.rank == 'admin' %}
+  <td>{{ booking.bk_id }}</td>
+  {% endif %}
+  <td>{{ booking.so }}</td>
+  <td>{{ booking.findest }}</td>
+  <td>{{ booking.ct_cl }}</td>
+  <td>{{ booking.shipper }}</td>
+  <td>{{ booking.consignee }}</td>
+  <td>{{ booking.term }}</td>
+  <td>{{ booking.sales }}</td>
+  <td>{{ booking.saleprice }}</td>
+  <td>{{ booking.void }}</td>
+  <td>{{ booking.remark }}</td>
+  <td>
+    {% if current_user.rank == 'admin' or current_user.id == booking.owner %}
+    <div data-bs-toggle="tooltip" data-bs-title="Edit booking">
+      <a class="btn btn-warning" href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}">
+        <i class="bi bi-pencil-square"></i>
+      </a>
+    </div>
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
+{% else %}
+<tr>
+  <td colspan="14">You do not have any bookings.</td>
+</tr>
+{% endif %}
