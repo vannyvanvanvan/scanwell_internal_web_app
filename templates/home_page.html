@@ -12,7 +12,7 @@
 {% include 'flash.html' %}
 
 <!-- Display Shipping Data -->
-{% if current_user.rank in ["admin", "cs"] %}
+{% if current_user.role.rank in ["admin", "cs"] %}
 {% include 'schedule_table.html' %}
 {% else %}
 {% include 'reserve_table.html' %}

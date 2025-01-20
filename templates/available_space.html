@@ -24,7 +24,7 @@
     </div> -->
     <table class="table align-middle m-0">
       <thead>
-        {% if current_user.rank == 'admin' %}
+        {% if current_user.role.rank == 'admin' %}
         <th>ID</th>
         {% endif %}
         <th>Size</th>
@@ -32,7 +32,7 @@
         <th>Sug. Rate</th>
         <th>Rate Valid</th>
         <th>Proport</th>
-        {% if current_user.rank == 'admin' %}
+        {% if current_user.role.rank == 'admin' %}
         <th>Status</th>
         <th>Last Modified</th>
         <th>By</th>
@@ -43,7 +43,7 @@
         {% if spaces %}
         {% for space in spaces %}
         <tr>
-          {% if current_user.rank == 'admin' %}
+          {% if current_user.role.rank == 'admin' %}
           <td>{{ space.spc_id }}</td>
           {% endif %}
           <td>{{ space.size }}</td>
@@ -51,14 +51,14 @@
           <td>{{ space.sugrate }}</td>
           <td>{{ space.ratevalid.strftime('%Y-%m-%d %H:%M') }}</td>
           <td>{{ space.proport_yesno() }}</td>
-          {% if current_user.rank == 'admin' %}
+          {% if current_user.role.rank == 'admin' %}
           <td>{{ space.spcstatus }}</td>
           <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
           <td>{{ space.last_modified_by }}</td>
           {% endif %}
           <td>
             <div class="d-flex justify-content-end gap-2">
-              {% if current_user.rank == 'admin' or current_user.id == space.owner %}
+              {% if current_user.role.rank == 'admin' or current_user.id == space.owner %}
               <div data-bs-toggle="tooltip" data-bs-title="Create reserve">
                 <a class="btn btn-primary" href="{{ url_for('reserve.reserve_add', spc_id=space.spc_id) }}">
                   <i class="bi bi-plus-lg"></i>

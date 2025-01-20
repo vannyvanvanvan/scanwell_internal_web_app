@@ -1,7 +1,7 @@
 {% if bookings %}
 {% for booking in bookings %}
 <tr>
-  {% if current_user.rank == 'admin' %}
+  {% if current_user.role.rank == 'admin' %}
   <td>{{ booking.bk_id }}</td>
   {% endif %}
   <td>{{ booking.so }}</td>
@@ -15,7 +15,7 @@
   <td>{{ booking.void_yesno() }}</td>
   <td>{{ booking.remark }}</td>
   <td>
-    {% if current_user.rank == 'admin' or current_user.id == booking.owner %}
+    {% if current_user.role.rank == 'admin' or current_user.id == booking.owner %}
     <div data-bs-toggle="tooltip" data-bs-title="Edit booking">
       <a class="btn btn-warning" href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}">
         <i class="bi bi-pencil-square"></i>

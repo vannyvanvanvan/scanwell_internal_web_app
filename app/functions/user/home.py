@@ -7,11 +7,11 @@ from app.functions.schedule.get import get_all_schedules
 
 
 def home_page() -> str:
-    if current_user.rank == "admin":
+    if current_user.role.rank == "admin":
         return admin_home_page()
-    elif current_user.rank == "cs":
+    elif current_user.role.rank == "cs":
         return admin_home_page()
-    elif current_user.rank == "sp":
+    elif current_user.role.rank == "sp":
         return sales_home_page()
 
 

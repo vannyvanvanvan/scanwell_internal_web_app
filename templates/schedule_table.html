@@ -10,7 +10,7 @@
     <table class="table align-middle m-0">
       <thead class="table-light">
         <tr>
-          {% if current_user.rank == 'admin' %}
+          {% if current_user.role.rank == 'admin' %}
             <th>ID</th>
           {% endif %}
 

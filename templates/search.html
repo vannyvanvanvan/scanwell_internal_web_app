@@ -1,7 +1,7 @@
 <!-- Search Form -->
 <section class="container p-4">
   <h3>Search</h3>
-  {% if current_user.rank=='admin' %}
+  {% if current_user.role.rank=='admin' %}
   <input type="text" class="form-control" placeholder="Search" name="q" hx-get="{{ url_for('admin.search') }}"
     hx-trigger="keyup changed delay:500ms" hx-target="#results" />
   {% else %}

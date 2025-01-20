@@ -10,7 +10,7 @@ def rank_required(ranks:List[str]):
         @wraps(func)
         def decorated_view(*args, **kwargs):
             # Only allow access if user has required rank
-            if current_user.rank in ranks:
+            if current_user.role.rank in ranks:
               return func(*args, **kwargs)
             else:
                # Forbidden 

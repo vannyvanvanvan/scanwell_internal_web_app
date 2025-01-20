@@ -1,7 +1,7 @@
 {% if results %}
 {% for result in results %}
 <tr>
-  {% if current_user.rank == 'admin' %}
+  {% if current_user.role.rank == 'admin' %}
   <td>{{ result.sch_id }}</td>
   {% endif %}
 
@@ -26,7 +26,7 @@
           <i class="bi bi-zoom-in"></i>
         </button>
       </div>
-      {% if current_user.rank == 'admin' or current_user.id == result.owner %}
+      {% if current_user.role.rank == 'admin' or current_user.id == result.owner %}
       <div data-bs-toggle="tooltip" data-bs-title="Edit schedule">
         <a class="btn btn-warning" href="{{ url_for('schedule.schedule_edit', sch_id=result.sch_id) }}">
           <i class="bi bi-pencil-square"></i>
@@ -53,7 +53,7 @@
             <th>Rate Valid</th>
             <th>Proport</th>
             <th>Status</th>
-            {% if current_user.rank == 'admin' %}
+            {% if current_user.role.rank == 'admin' %}
             <th>Last Modified</th>
             <th>By</th>
             {% endif %}
@@ -70,7 +70,7 @@
               <td>{{ space.ratevalid.strftime('%Y-%m-%d %H:%M') }}</td>
               <td>{{ space.proport_yesno() }}</td>
               <td>{{ space.spcstatus }}</td>
-              {% if current_user.rank == 'admin' %}
+              {% if current_user.role.rank == 'admin' %}
               <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
               <td>{{ space.last_modified_by }}</td>
               <td>
@@ -87,7 +87,7 @@
                       <i class="bi bi-plus-lg"></i>
                     </a>
                   </div>
-                  {% if current_user.rank == 'admin' or current_user.id == space.owner %}
+                  {% if current_user.role.rank == 'admin' or current_user.id == space.owner %}
                   <div data-bs-toggle="tooltip" data-bs-title="Edit space">
                     <a class="btn btn-warning" href="{{ url_for('space.space_edit', spc_id=space.spc_id) }}">
                       <i class="bi bi-pencil-square"></i>
@@ -107,7 +107,7 @@
                   <div class="border rounded overflow-hidden mt-2 mb-4">
                     <table class="table align-middle m-0">
                       <thead>
-                        {% if current_user.rank == 'admin' %}
+                        {% if current_user.role.rank == 'admin' %}
                         <th>ID</th>
                         {% endif %}
 
@@ -118,7 +118,7 @@
                         <th>Confirmed By</th>
                         <th>Void</th>
                         <th>Remark</th>
-                        {% if current_user.rank == 'admin' %}
+                        {% if current_user.role.rank == 'admin' %}
                         <th>Owner</th>
                         {% endif %}
                         <th></th>
@@ -127,7 +127,7 @@
                         {% if space.reserves %}
                         {% for reserve in space.reserves %}
                         <tr>
-                          {% if current_user.rank == 'admin' %}
+                          {% if current_user.role.rank == 'admin' %}
                           <td>{{ reserve.rsv_id }}</td>
                           {% endif %}
 
@@ -146,7 +146,7 @@
                                   <i class="bi bi-plus-lg"></i>
                                 </a>
                               </div>
-                              {% if current_user.rank == 'admin' or current_user.id == reserve.owner %}
+                              {% if current_user.role.rank == 'admin' or current_user.id == reserve.owner %}
                               <div data-bs-toggle="tooltip" data-bs-title="Edit reserve">
                                 <a class="btn btn-warning" href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">
                                   <i class="bi bi-pencil-square"></i>
@@ -172,7 +172,7 @@
                   <div class="border rounded overflow-hidden mt-2 mb-2">
                     <table class="table align-middle m-0">
                       <thead>
-                        {% if current_user.rank == 'admin' %}
+                        {% if current_user.role.rank == 'admin' %}
                         <th>ID</th>
                         {% endif %}
 
@@ -192,7 +192,7 @@
                         {% if space.bookings %}
                         {% for booking in space.bookings %}
                         <tr>
-                          {% if current_user.rank == 'admin' %}
+                          {% if current_user.role.rank == 'admin' %}
                           <td>{{ booking.bk_id }}</td>
                           {% endif %}
                           <td>{{ booking.so }}</td>
@@ -206,7 +206,7 @@
                           <td>{{ booking.void_yesno() }}</td>
                           <td>{{ booking.remark }}</td>
                           <td>
-                            {% if current_user.rank == 'admin' or current_user.id == booking.owner %}
+                            {% if current_user.role.rank == 'admin' or current_user.id == booking.owner %}
                             <div data-bs-toggle="tooltip" data-bs-title="Edit booking">
                               <a class="btn btn-warning" href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}">
                                 <i class="bi bi-pencil-square"></i>

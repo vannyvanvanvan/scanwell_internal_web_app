@@ -31,8 +31,6 @@ def user_logout():
 @user_routes.route("/home")
 @login_required
 def user_home():
-    if current_user.rank == "sp":
-        return sales_home_page()
     return home_page()
 
 

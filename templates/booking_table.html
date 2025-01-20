@@ -11,7 +11,7 @@
     </div>
     <table class="table align-middle m-0">
       <thead>
-        {% if current_user.rank == 'admin' %}
+        {% if current_user.role.rank == 'admin' %}
         <th>ID</th>
         {% endif %}
 

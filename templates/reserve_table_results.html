@@ -1,7 +1,7 @@
 {% if reserves %}
 {% for reserve in reserves %}
 <tr>
-  {% if current_user.rank == 'admin' %}
+  {% if current_user.role.rank == 'admin' %}
   <td>{{ reserve.rsv_id }}</td>
   {% endif %}
   <td>{{ reserve.sales }}</td>
@@ -11,12 +11,12 @@
   <td>{{ reserve.cfm_cs }}</td>
   <td>{{ reserve.void_yesno() }}</td>
   <td>{{ reserve.remark }}</td>
-  {% if current_user.rank == 'admin' %}
+  {% if current_user.role.rank == 'admin' %}
   <td>{{ reserve.owner }}</td>
   {% endif %}
   <td>
     <div class="d-flex justify-content-end gap-2">
-      {% if current_user.rank in ['admin', 'cs'] %}
+      {% if current_user.role.rank in ['admin', 'cs'] %}
       <div data-bs-toggle="tooltip" data-bs-title="Create booking">
         <a class="btn btn-primary"
           href="{{ url_for('booking.booking_add', spc_id=reserve.spc_id, rsv_id=reserve.rsv_id) }}">
@@ -24,7 +24,7 @@
         </a>
       </div>
       {% endif %}
-      {% if current_user.rank == 'admin' or current_user.id == reserve.owner %}
+      {% if current_user.role.rank == 'admin' or current_user.id == reserve.owner %}
       <div data-bs-toggle="tooltip" data-bs-title="Edit reserve">
         <a class="btn btn-warning" href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">
           <i class="bi bi-pencil-square"></i>
