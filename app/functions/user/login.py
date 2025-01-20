@@ -6,8 +6,9 @@ from flask_login import login_user
 from wtforms.validators import InputRequired, Length
 from sqlalchemy.orm import joinedload
 
+from app.functions.auth_utils import increment_failed_attempts, is_locked, reset_failed_attempts
 from app.functions.hashing import hash_string
-from app.model import User, db
+from app.model import User, db, LoginStatus
 
 
 class LoginForm(FlaskForm):
@@ -45,17 +46,27 @@ def validate_login(form: LoginForm):
     _password_hash = hash_string(_form_password)
     _remember_login = form.remember_me.data
 
-    if (
-        _form_username == matched_user.username
-        and _password_hash == matched_user.password
-    ):
+    # Check if user is locked
+    if matched_user.login_status and is_locked(matched_user.id):
+        flash('Account is locked. Try again later or contact admin.', 'danger')
+        return render_template("login.html", login_detail=form)
+
+    # Successful login
+    if _form_username == matched_user.username and _password_hash == matched_user.password and matched_user.login_status == "offline":
         if matched_user.login_status:
+            
+            # Update last login time
             matched_user.login_status.last_login = datetime.utcnow()
+            reset_failed_attempts(matched_user.login_status)
             db.session.commit()
+
         login_user(user=matched_user, remember=_remember_login)
         return redirect(url_for("user.user_home"))
     else:
+
+        increment_failed_attempts(matched_user.login_status)
         flash("Invalid username or password", "danger")
+
         return render_template("login.html", login_detail=form)
 
 
