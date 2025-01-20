@@ -11,14 +11,14 @@ def is_locked(user_id):
         login_status = LoginStatus(user_id=user_id, status="offline", failed_attempts=0)
         db.session.add(login_status)
         db.session.commit()
-
+        
     if login_status.status == "timedout":
         print(login_status.locked_until)
         print(datetime.utcnow())
-        if login_status.locked_until and datetime.utcnow() < login_status.locked_until and login_status.status == "timedout":
+        if login_status.locked_until and datetime.utcnow() < login_status.locked_until:
             flash(f"Account is locked until {login_status.locked_until}.", "danger")
             return True
-        elif login_status.locked_until and datetime.utcnow() >= login_status.locked_until and login_status.status == "timedout" and login_status.failed_attempts >= 3:
+        elif login_status.locked_until and datetime.utcnow() >= login_status.locked_until and login_status.failed_attempts >= 3:
             # Unlock user if the lock time has passed
             print("Unlocking user")
             login_status.status = "offline"
@@ -61,3 +61,10 @@ def unlock_user(login_status: LoginStatus):
 def reset_failed_attempts(login_status: LoginStatus):
     login_status.failed_attempts = 0
     db.session.commit()
+
+def lock_user(login_status: LoginStatus):
+    login_status.failed_attempts = 9
+    login_status.locked_until = None
+    login_status.status = "locked"
+    db.session.commit()
+    
