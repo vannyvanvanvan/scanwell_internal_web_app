@@ -1,11 +1,14 @@
+from datetime import datetime
 from flask import flash, redirect, render_template, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from flask_login import login_user
 from wtforms.validators import InputRequired, Length
+from sqlalchemy.orm import joinedload
 
+from app.functions.auth_utils import increment_failed_attempts, is_locked, reset_failed_attempts
 from app.functions.hashing import hash_string
-from app.model import User, db
+from app.model import User, db, LoginStatus
 
 
 class LoginForm(FlaskForm):
@@ -13,7 +16,7 @@ class LoginForm(FlaskForm):
         "Username",
         validators=[
             InputRequired("A username is required!"),
-            Length(min=5, max=30, message="Must be between 5 and 10 characters."),
+            Length(min=5, max=30, message="Must be between 5 and 30 characters."),
         ],
     )
     request_password = PasswordField(
@@ -30,8 +33,9 @@ def validate_login(form: LoginForm):
 
     # Look for matching user in db
     matched_user = (
-        db.session.execute(db.select(User).filter_by(username=_form_username))
-        .scalars()
+        db.session.query(User)
+        .options(joinedload(User.role), joinedload(User.login_status))
+        .filter_by(username=_form_username)
         .first()
     )
 
@@ -41,15 +45,34 @@ def validate_login(form: LoginForm):
 
     _password_hash = hash_string(_form_password)
     _remember_login = form.remember_me.data
+    print(_form_username)
+    print(matched_user.username)
+    print(_password_hash)
+    print(matched_user.password)
+    print(matched_user.login_status)
 
-    if (
-        _form_username == matched_user.username
-        and _password_hash == matched_user.password
-    ):
+    # Check if user is locked
+    if matched_user.login_status.status == 'locked':
+        flash('Account is locked. Try again later or contact admin.', 'danger')
+        return render_template("login.html", login_detail=form)
+
+    # Successful login
+    elif _form_username == matched_user.username and _password_hash == matched_user.password and matched_user.login_status.status == "offline":
+
+        if matched_user.login_status:
+
+            # Update last login time
+            matched_user.login_status.last_login = datetime.utcnow()
+            reset_failed_attempts(matched_user.login_status)
+            db.session.commit()
+
         login_user(user=matched_user, remember=_remember_login)
         return redirect(url_for("user.user_home"))
     else:
+
+        increment_failed_attempts(matched_user.login_status)
         flash("Invalid username or password", "danger")
+
         return render_template("login.html", login_detail=form)
 
 
