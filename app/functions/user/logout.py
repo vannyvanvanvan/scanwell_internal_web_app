@@ -4,6 +4,7 @@ from flask_login import current_user, logout_user
 from app.model import db
 
 def logout_page():
+    # Update last logout time
     if current_user.is_authenticated:
         if current_user.login_status:
             current_user.login_status.last_logoff = datetime.utcnow()
