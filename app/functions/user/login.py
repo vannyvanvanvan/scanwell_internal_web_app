@@ -1,8 +1,10 @@
+from datetime import datetime
 from flask import flash, redirect, render_template, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from flask_login import login_user
 from wtforms.validators import InputRequired, Length
+from sqlalchemy.orm import joinedload
 
 from app.functions.hashing import hash_string
 from app.model import User, db
@@ -13,7 +15,7 @@ class LoginForm(FlaskForm):
         "Username",
         validators=[
             InputRequired("A username is required!"),
-            Length(min=5, max=30, message="Must be between 5 and 10 characters."),
+            Length(min=5, max=30, message="Must be between 5 and 30 characters."),
         ],
     )
     request_password = PasswordField(
@@ -30,8 +32,9 @@ def validate_login(form: LoginForm):
 
     # Look for matching user in db
     matched_user = (
-        db.session.execute(db.select(User).filter_by(username=_form_username))
-        .scalars()
+        db.session.query(User)
+        .options(joinedload(User.role), joinedload(User.login_status))
+        .filter_by(username=_form_username)
         .first()
     )
 
@@ -46,6 +49,9 @@ def validate_login(form: LoginForm):
         _form_username == matched_user.username
         and _password_hash == matched_user.password
     ):
+        if matched_user.login_status:
+            matched_user.login_status.last_login = datetime.utcnow()
+            db.session.commit()
         login_user(user=matched_user, remember=_remember_login)
         return redirect(url_for("user.user_home"))
     else:
