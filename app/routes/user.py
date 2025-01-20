@@ -32,3 +32,5 @@ def user_logout():
 @login_required
 def user_home():
     return home_page()
+
+
