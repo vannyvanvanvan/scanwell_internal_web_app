@@ -45,6 +45,7 @@ def validate_login(form: LoginForm):
 
     _password_hash = hash_string(_form_password)
     _remember_login = form.remember_me.data
+    is_locked(matched_user.id)
     print(_form_username)
     print(matched_user.username)
     print(_password_hash)
@@ -53,6 +54,7 @@ def validate_login(form: LoginForm):
 
     # Check if user is locked
     if matched_user.login_status.status == 'locked':
+        is_locked(matched_user.id)
         flash('Account is locked. Try again later or contact admin.', 'danger')
         return render_template("login.html", login_detail=form)
 
@@ -65,11 +67,11 @@ def validate_login(form: LoginForm):
             matched_user.login_status.last_login = datetime.utcnow()
             reset_failed_attempts(matched_user.login_status)
             db.session.commit()
-
+        print("Logged in")
         login_user(user=matched_user, remember=_remember_login)
         return redirect(url_for("user.user_home"))
     else:
-
+        print("Failed login")
         increment_failed_attempts(matched_user.login_status)
         flash("Invalid username or password", "danger")
 

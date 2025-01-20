@@ -22,7 +22,7 @@ def edit_booking_page(bk_id: int) -> str:
 
 def invalid_booking_page(bk_id: int, form: dict) -> str:
     try:
-        ChildProcessError = Booking.query.get_or_404(bk_id)
+        original_booking = Booking.query.get_or_404(bk_id)
         flash("Some of your changes are invalid. Please try again.", "danger")
         return render_template(
             "shipping_booking.html",
