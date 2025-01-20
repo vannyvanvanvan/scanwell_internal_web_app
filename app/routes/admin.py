@@ -1,7 +1,9 @@
+from flask_login import login_required
 from flask import Blueprint, flash, redirect, url_for
-from app.functions.permissions import rank_required
+from app.functions.permissions import role_required
 from app.model import db, LoginStatus
 from app.functions.auth_utils import unlock_user
+
 
 admin_routes = Blueprint(
     "admin", __name__, template_folder="../templates", static_folder="../static"
@@ -9,8 +11,10 @@ admin_routes = Blueprint(
 
 
 @admin_routes.route('/unlock/<int:user_id>', methods=['POST'])
-@rank_required(["admin"])
+@login_required
+@role_required(["admin"])
 def unlock_account(user_id):
+    print(user_id)
     login_status = LoginStatus.query.get(user_id)
 
     if not login_status:

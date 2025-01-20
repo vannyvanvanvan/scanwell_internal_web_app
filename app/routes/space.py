@@ -1,5 +1,5 @@
 from flask_login import login_required
-from app.functions.permissions import rank_required
+from app.functions.permissions import role_required
 from app.functions.space.new import create_space, new_space_page
 from app.functions.space.edit import edit_space, edit_space_page
 from app.functions.space.delete import delete_space
@@ -21,7 +21,7 @@ space_routes = Blueprint(
 
 @space_routes.route("/add/<int:sch_id>", methods=["GET", "POST"])
 @login_required
-@rank_required(["admin"])
+@role_required(["admin"])
 def space_add(sch_id: int):
     if request.method == "POST":
         return create_space(request.form, sch_id)
@@ -30,7 +30,7 @@ def space_add(sch_id: int):
 
 @space_routes.route("/edit/<int:spc_id>", methods=["GET", "POST"])
 @login_required
-@rank_required(["admin"])
+@role_required(["admin"])
 def space_edit(spc_id: int):
     if request.method == "POST":
         return edit_space(spc_id)
@@ -39,7 +39,7 @@ def space_edit(spc_id: int):
 
 @space_routes.route("/delete/<int:spc_id>", methods=["GET"])
 @login_required
-@rank_required(["admin"])
+@role_required(["admin"])
 def space_delete(spc_id: int):
     delete_space(spc_id)
     return redirect(url_for("user.user_home"))
@@ -47,7 +47,7 @@ def space_delete(spc_id: int):
 
 @space_routes.route("/update/<int:spc_id>", methods=["GET", "POST"])
 @login_required
-@rank_required(["admin", "cs"])
+@role_required(["admin", "cs"])
 def space_update(spc_id: int):
     if request.method == "POST":
         pass
@@ -57,7 +57,7 @@ def space_update(spc_id: int):
 
 @space_routes.route("/search/<int:spc_id>", methods=["GET", "POST"])
 @login_required
-@rank_required(["admin", "cs", "sales"])
+@role_required(["admin", "cs", "sales"])
 def space_search(query: dict):
     if request.method == "POST":
         pass
