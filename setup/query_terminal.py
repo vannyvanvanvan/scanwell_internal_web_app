@@ -38,15 +38,15 @@ def get_data():
         schedule_data = query.all()
 
         # Convert results to a list of dictionaries
-        results = []
+        shipping_results = []
         schedule_data.sort()
         for schedule in schedule_data:
             schedule.spaces.sort()
             for space in schedule.spaces:
                 space.reserves.sort()
                 space.bookings.sort()
-            
-            results.append({
+
+            shipping_results.append({
                 'schedule_id': schedule.sch_id,
                 'carrier': schedule.carrier,
                 'service': schedule.service,
@@ -97,8 +97,34 @@ def get_data():
                 ]
             })
 
+        # Query users with roles and login status
+        users_query = (
+            db.session.query(User)
+            .options(
+                joinedload(User.role),
+                joinedload(User.login_status)
+            )
+            .all()
+        )
+
+        users_results = []
+        for user in users_query:
+            users_results.append({
+                'user_id': user.id,
+                'username': user.username,
+                'date_created': user.date_created.strftime('%Y-%m-%d %H:%M:%S'),
+                'role': user.role.rank if user.role else None,
+                'login_status': {
+                    'status': user.login_status.status if user.login_status else None,
+                    'failed_attempts': user.login_status.failed_attempts if user.login_status else None,
+                    'last_login': user.login_status.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.login_status and user.login_status.last_login else None,
+                    'last_logoff': user.login_status.last_logoff.strftime('%Y-%m-%d %H:%M:%S') if user.login_status and user.login_status.last_logoff else None,
+                    'ip_connected': user.login_status.ip_connected if user.login_status else None
+                }
+            })
+
         # Return the results as JSON
-        return jsonify(results)
+        return jsonify(shipping_results, users_results)
 
 
 if __name__ == '__main__':
