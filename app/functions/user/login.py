@@ -42,10 +42,13 @@ def validate_login(form: LoginForm):
     if matched_user is None:
         flash("Invalid username or password", "danger")
         return render_template("login.html", login_detail=form)
-
+    
+    if is_locked(matched_user.id):
+        return render_template("login.html", login_detail=form)
+    
     _password_hash = hash_string(_form_password)
     _remember_login = form.remember_me.data
-    is_locked(matched_user.id)
+
     print(_form_username)
     print(matched_user.username)
     print(_password_hash)
