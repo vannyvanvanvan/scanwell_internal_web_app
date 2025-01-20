@@ -6,7 +6,7 @@ from flask_login import login_user
 from wtforms.validators import InputRequired, Length
 from sqlalchemy.orm import joinedload
 
-from app.functions.auth_utils import increment_failed_attempts, is_locked, reset_failed_attempts
+from app.functions.auth_utils import handle_failed_attempts, is_locked, reset_failed_attempts
 from app.functions.hashing import hash_string
 from app.model import User, db, LoginStatus
 
@@ -75,7 +75,7 @@ def validate_login(form: LoginForm):
         return redirect(url_for("user.user_home"))
     else:
         print("Failed login")
-        increment_failed_attempts(matched_user.login_status)
+        handle_failed_attempts(matched_user.login_status)
         flash("Invalid username or password", "danger")
 
         return render_template("login.html", login_detail=form)

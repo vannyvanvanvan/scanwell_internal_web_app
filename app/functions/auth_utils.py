@@ -30,7 +30,7 @@ def is_locked(user_id):
     return False
 
 # Increase the failed attempts and set lockout counter
-def increment_failed_attempts(login_status: LoginStatus):
+def handle_failed_attempts(login_status: LoginStatus):
     
     if login_status.status == "offline":
         login_status.failed_attempts += 1 
