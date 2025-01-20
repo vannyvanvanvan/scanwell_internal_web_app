@@ -9,7 +9,7 @@ admin_routes = Blueprint(
     "admin", __name__, template_folder="../templates", static_folder="../static"
 )
 
-
+# Remove GET later for security reasons!!!!!!!!!!!!!!!
 @admin_routes.route('/unlock/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 @role_required(["admin"])
