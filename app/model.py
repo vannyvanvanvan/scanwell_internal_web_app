@@ -8,20 +8,47 @@ db = SQLAlchemy()
 # UTC time for every section
 # Each Schedule has multiple Spaces, Each Space has multiple Reserves and Bookings
 class User(db.Model, UserMixin):
-
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(200), nullable=False)
+    username = db.Column(db.String(200), nullable=False, unique=True)
     password = db.Column(db.String(200), nullable=False)
-    rank = db.Column(db.String(50), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow())
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+
+    role = db.relationship("Role", uselist=False, back_populates="user", cascade="all, delete-orphan")
+    login_status = db.relationship("LoginStatus", uselist=False, back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f"<User: id={self.id}, username={self.username}, rank={self.rank}>"
-
+        return f"<User: id={self.id}, username={self.username}>"
     def __lt__(self, other):
         return self.id < other.id
+
+class Role(db.Model):
+    __tablename__ = "role"
+    
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
+    rank = db.Column(db.String(50), nullable=False)
+    
+    user = db.relationship("User", back_populates="role")
+
+    def __repr__(self):
+        return f"<Role: user_id={self.user_id}, rank={self.rank}>"
+
+class LoginStatus(db.Model):
+    __tablename__ = "login_status"
+    
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
+    status = db.Column(db.String(50), nullable=False, default='offline')
+    failed_attempts = db.Column(db.Integer, default=0)
+    last_login = db.Column(db.DateTime, nullable=True)
+    last_logoff = db.Column(db.DateTime, nullable=True)
+    ip_connected = db.Column(db.String(100), nullable=True)
+    
+    user = db.relationship("User", back_populates="login_status")
+
+    def __repr__(self):
+        return f"<LoginStatus: user_id={self.user_id}, status={self.status}, last_login={self.last_login}>"
+
 
 
 class Schedule(db.Model):
