@@ -68,3 +68,9 @@ def lock_user(login_status: LoginStatus):
     login_status.status = "locked"
     db.session.commit()
     
+def boot_user(login_status: LoginStatus):
+    login_status.failed_attempts = 0
+    login_status.locked_until = None
+    login_status.status = "offline"
+    db.session.commit()
+    

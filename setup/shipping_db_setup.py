@@ -1,11 +1,16 @@
 from datetime import datetime
 from driver import *
 
+app = create_app()
+
+
 def to_date(date_str):
     return datetime.strptime(date_str, '%Y-%m-%d').date()
 
+
 def to_datetime(datetime_str):
     return datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+
 
 # Database context
 # ------------------------------------------------------------------------------
@@ -17,39 +22,39 @@ with app.app_context():
     db.session.commit()
 
     # Schedule
-    
+
     schedule1 = Schedule(
         sch_id=1, cs='Fanny', week=29, carrier='ONE', service='PN2',
-        mv='NAVIOS UNISON V.020E', pol='YANTIAN', pod='TACOMA,WA', 
+        mv='NAVIOS UNISON V.020E', pol='YANTIAN', pod='TACOMA,WA',
         routing='ALL WATER', cyopen=to_date('2024-07-09'), sicutoff=to_datetime('2024-07-15 10:00'),
         cycvcls=to_datetime('2024-07-15 10:00'), etd=to_date('2024-07-19'), eta=to_date('2024-08-03'),
         owner=1
     )
     schedule2 = Schedule(
         sch_id=2, cs='Fanny', week=29, carrier='ONE', service='PS4',
-        mv='YM MUTUALITY V.102E', pol='YANTIAN', pod='LOS ANGELES,CA', 
+        mv='YM MUTUALITY V.102E', pol='YANTIAN', pod='LOS ANGELES,CA',
         routing='ALL WATER', cyopen=to_date('2024-07-13'), sicutoff=to_datetime('2024-07-17 16:00'),
         cycvcls=to_datetime('2024-07-18 09:00'), etd=to_date('2024-07-19'), eta=to_date('2024-08-09'),
         owner=1
     )
     schedule3 = Schedule(
         sch_id=3, cs='Fanny', week=29, carrier='ONE', service='PN2',
-        mv='SEASPAN FALCON V.009E', pol='YANTIAN', pod='TACOMA,WA', 
+        mv='SEASPAN FALCON V.009E', pol='YANTIAN', pod='TACOMA,WA',
         routing='ALL WATER', cyopen=to_date('2024-07-17'), sicutoff=to_datetime('2024-07-23 10:00'),
         cycvcls=to_datetime('2024-07-23 10:00'), etd=to_date('2024-07-24'), eta=to_date('2024-08-16'),
         owner=1
     )
     schedule4 = Schedule(
         sch_id=4, cs='Fanny', week=29, carrier='MSC', service='CHINOOK',
-        mv='MSC MARINA UK429A', pol='YANTIAN', pod='PORTLAND,OR', 
+        mv='MSC MARINA UK429A', pol='YANTIAN', pod='PORTLAND,OR',
         routing='ALL WATER', cyopen=to_date('2024-07-13'), sicutoff=to_datetime('2024-07-18 12:00'),
         cycvcls=to_datetime('2024-07-19 12:00'), etd=to_date('2024-07-21'), eta=to_date('2024-08-21'),
         owner=1
     )
-    
+
     schedule5 = Schedule(
         sch_id=5, cs='Fanny', week=29, carrier='ONE', service='PS4',
-        mv='YM UBIQUITY V.065E', pol='YANTIAN', pod='LOS ANGELES,CA', 
+        mv='YM UBIQUITY V.065E', pol='YANTIAN', pod='LOS ANGELES,CA',
         routing='ALL WATER', cyopen=to_date('2024-07-16'), sicutoff=to_datetime('2024-07-21 18:00'),
         cycvcls=to_datetime('2024-07-22 9:00'), etd=to_date('2024-07-26'), eta=to_date('2024-08-15'),
         owner=1
@@ -59,27 +64,27 @@ with app.app_context():
 
     # Space
     space1 = Space(
-        spc_id=1, sch_id=1, size='40HQ', avgrate=7447, sugrate=7550, 
+        spc_id=1, sch_id=1, size='40HQ', avgrate=7447, sugrate=7550,
         ratevalid=to_date('2024-12-31'), proport=True, spcstatus='BK_PENDING', owner=1
     )
     space2 = Space(
-        spc_id=2, sch_id=1, size='20GP', avgrate=3247, sugrate=3550, 
+        spc_id=2, sch_id=1, size='20GP', avgrate=3247, sugrate=3550,
         ratevalid=to_date('2024-12-31'), proport=True, spcstatus='USABLE', owner=1
     )
     space3 = Space(
-        spc_id=3, sch_id=1, size='40GP', avgrate=7447, sugrate=7550, 
+        spc_id=3, sch_id=1, size='40GP', avgrate=7447, sugrate=7550,
         ratevalid=to_date('2024-11-30'), proport=True, spcstatus='BK_RESERVED', owner=1
     )
     space4 = Space(
-        spc_id=4, sch_id=2, size='45HQ', avgrate=7684, sugrate=7800, 
+        spc_id=4, sch_id=2, size='45HQ', avgrate=7684, sugrate=7800,
         ratevalid=to_date('2024-07-31'), proport=False, spcstatus='USABLE', owner=1
     )
     space5 = Space(
-        spc_id=5, sch_id=2, size='40HQ', avgrate=7447, sugrate=7600, 
+        spc_id=5, sch_id=2, size='40HQ', avgrate=7447, sugrate=7600,
         ratevalid=to_date('2024-07-31'), proport=True, spcstatus='INVALID', owner=1
     )
     space6 = Space(
-        spc_id=6, sch_id=3, size='20GP', avgrate=2601, sugrate=2680, 
+        spc_id=6, sch_id=3, size='20GP', avgrate=2601, sugrate=2680,
         ratevalid=to_date('2024-09-30'), proport=False, spcstatus='USABLE', owner=1
     )
 
@@ -87,7 +92,7 @@ with app.app_context():
 
     # Reserve
     reserve1 = Reserve(
-        rsv_id=1, spc_id=1, sales='ERIC', saleprice=8000, rsv_date=to_date('2024-07-01'), 
+        rsv_id=1, spc_id=1, sales='ERIC', saleprice=8000, rsv_date=to_date('2024-07-01'),
         cfm_date=to_date('2024-07-01'), cfm_cs='FANNY', void=False, remark='TEST', owner=1
     )
 
@@ -101,8 +106,8 @@ with app.app_context():
     )
     booking2 = Booking(
         bk_id=2, spc_id=2, so='SZPEL0126600', findest='CINCINNATI,OH',
-        ct_cl='Contract', shipper='EXPRESS SOLUTIONS', 
-        consignee='BOOKING UNION (USA) INC', term='FOB', 
+        ct_cl='Contract', shipper='EXPRESS SOLUTIONS',
+        consignee='BOOKING UNION (USA) INC', term='FOB',
         sales='CHI-CHRIS', saleprice=8184, void=False, remark='', owner=1
     )
     booking3 = Booking(
@@ -120,5 +125,5 @@ with app.app_context():
 
     # Commit changes
     db.session.commit()
-    
+
 # ------------------------------------------------------------------------------

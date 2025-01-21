@@ -1,6 +1,8 @@
-from driver import app
 from app.functions.hashing import hash_string
 from app.model import Role, User, LoginStatus, db
+from driver import create_app
+
+app = create_app()
 
 
 # Database context
@@ -31,8 +33,3 @@ with app.app_context():
 
 # ------------------------------------------------------------------------------
 
-
-def ResetDatabase():
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
