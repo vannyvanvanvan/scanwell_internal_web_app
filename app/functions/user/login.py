@@ -56,13 +56,13 @@ def validate_login(form: LoginForm):
     print(matched_user.login_status)
 
     # Check if user is locked
-    if matched_user.login_status.status == 'locked':
+    if matched_user.login_status.lock_status == 'locked':
         is_locked(matched_user.id)
         flash('Account is locked. Try again later or contact admin.', 'danger')
         return render_template("login.html", login_detail=form)
 
     # Successful login
-    elif _form_username == matched_user.username and _password_hash == matched_user.password and matched_user.login_status.status == "offline":
+    elif _form_username == matched_user.username and _password_hash == matched_user.password and matched_user.login_status.lock_status == "unlocked":
 
         if matched_user.login_status:
 

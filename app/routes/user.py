@@ -1,6 +1,6 @@
 from datetime import timedelta
 from flask import Blueprint, session
-from flask_login import login_required
+from flask_login import current_user, login_required
 
 from app.functions.auth_utils import boot_user
 from app.functions.user.home import home_page
@@ -17,8 +17,10 @@ user_routes = Blueprint(
 def make_session_permanent():
     session.permanent = True
     user_routes.permanent_session_lifetime = timedelta(minutes=30)
-    # Status update
-    return boot_user()
+    if current_user.is_authenticated:
+        login_status = LoginStatus.query.filter_by(user_id=current_user.id).first()
+        if login_status:
+            boot_user(login_status)
 
 
 @user_routes.route("/login", methods=["GET", "POST"])

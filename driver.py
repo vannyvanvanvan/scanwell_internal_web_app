@@ -1,12 +1,14 @@
+from flask_socketio import SocketIO
 from flask import Flask
 from app.model import db, User, Schedule, Space, Reserve, Booking
 from flask_login import LoginManager
 import os
-from app.functions.socket_events import socketio
+
+socketio = SocketIO(cors_allowed_origins="*")
 
 def create_app():
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = "Thisisasecret!"
+    app.config["SECRET_KEY"] = "Thisisasecret!!!"
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 
     # Set up temporary folder for file uploads
