@@ -1,8 +1,6 @@
 from app.functions.hashing import hash_string
 from app.model import Role, User, LoginStatus, db
-from driver import create_app
-
-app = create_app()
+from driver import app
 
 
 # Database context

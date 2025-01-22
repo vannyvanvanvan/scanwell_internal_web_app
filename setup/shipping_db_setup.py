@@ -1,8 +1,6 @@
 from datetime import datetime
-from driver import *
-
-app = create_app()
-
+from driver import app
+from app.model import db, Schedule, Space, Reserve, Booking
 
 def to_date(date_str):
     return datetime.strptime(date_str, '%Y-%m-%d').date()
