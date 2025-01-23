@@ -4,6 +4,10 @@ from app.functions.permissions import role_required
 from app.model import db, LoginStatus
 from app.functions.auth_utils import lock_user, unlock_user
 
+from flask import jsonify
+from app.functions.auth_utils import redis_client
+
+
 
 admin_routes = Blueprint(
     "admin", __name__, template_folder="../templates", static_folder="../static"
@@ -39,3 +43,13 @@ def lock_account(user_id):
     lock_user(login_status)
     flash(f'User {user_id} has been locked.', 'success')
     return redirect(url_for('user.user_home'))
+
+
+@admin_routes.route('/online-users', methods=['GET'])
+def get_online_users():
+    # Get all online users
+    online_users = redis_client.keys("user:online:*") 
+    # Extract user IDs
+    user_ids = [key.split(":")[-1] for key in online_users] 
+
+    return jsonify({"online_users": user_ids})
