@@ -1,50 +1,45 @@
-from flask import request
-from flask_socketio import SocketIO, emit
+from flask_socketio import emit
 from flask_login import current_user
-from app.model import db, LoginStatus
+from datetime import datetime, timedelta
+import redis
 
-socketio = SocketIO()
+redis_client = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
 
-@socketio.on('connect')
-def handle_connect():
-    if current_user.is_authenticated:
-        try:
-            login_status = LoginStatus.query.filter_by(user_id=current_user.id).first()
-            if not login_status:
-                login_status = LoginStatus(user_id=current_user.id, status="online", ip_connected=request.remote_addr)
-                db.session.add(login_status)
-            # Prevent overriding away status
-            elif login_status.status != "away":
-                login_status.status = "online"
-                login_status.ip_connected = request.remote_addr
-            db.session.commit()
-            print(f"User {current_user.username} connected. Status: {login_status.status}")
-        except Exception as e:
-            print(f"Error updating user status: {e}")
+def mark_user_online(user_id, ip):
+    redis_client.setex(f"online_user:{user_id}", timedelta(minutes=10), ip)
+    
+# def set_user_away(user_id):
+#     redis_client.setex(f"away_user:{user_id}", timedelta(minutes=3), "away")
 
-@socketio.on('user_status')
-def handle_status(data):
-    if current_user.is_authenticated:
-        try:
-            status = data.get("status")
-            login_status = LoginStatus.query.filter_by(user_id=current_user.id).first()
-            
-            if login_status:
-                login_status.status = status
-                db.session.commit()
-            
-            print(f"User {current_user.username} status updated to: {status}")
-        except Exception as e:
-            print(f"Error updating user status: {e}")
+def mark_user_offline(user_id):
+    redis_client.delete(f"online_user:{user_id}")
+    redis_client.delete(f"away_user:{user_id}")
 
-@socketio.on('disconnect')
-def handle_disconnect():
-    if current_user.is_authenticated:
-        try:
-            login_status = LoginStatus.query.filter_by(user_id=current_user.id).first()
-             
-            login_status.status = "offline"
-            db.session.commit()
-            print(f"User {current_user.username} disconnected.")
-        except Exception as e:
-            print(f"Error updating user status on disconnect: {e}")
+def register_socket_events(socketio):
+    @socketio.on("connect")
+    def handle_connect():
+        print(f"[DEBUG] User {current_user.get_id()} connected.")
+        if current_user.is_authenticated:
+            mark_user_online(current_user.get_id(), "WebSocket")
+            emit("update_online_status", {"status": "online"}, broadcast=True)
+
+    @socketio.on("disconnect")
+    def handle_disconnect():
+        if current_user.is_authenticated:
+            mark_user_offline(current_user.get_id())
+            print(f"User {current_user.get_id()} disconnected.")
+            emit("update_online_status", {"status": "offline"}, broadcast=True)
+
+    # @socketio.on("user_away")
+    # def handle_user_away():
+    #     if current_user.is_authenticated:
+    #         set_user_away(current_user.get_id())
+    #         emit("update_online_status", {"status": "away"}, broadcast=True)
+    #     print(f"[DEBUG] User {current_user.get_id()} is now away.")
+
+    # @socketio.on("user_active")
+    # def handle_user_active():
+    #     if current_user.is_authenticated:
+    #         mark_user_online(current_user.get_id(), "WebSocket")
+    #         emit("update_online_status", {"status": "online"}, broadcast=True)
+    #     print(f"[DEBUG] User {current_user.get_id()} is now active.")
