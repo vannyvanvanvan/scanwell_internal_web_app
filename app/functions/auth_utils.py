@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
-
 from flask import flash
-import redis
 from app.model import db, LoginStatus
+import redis
+
 
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
@@ -76,20 +76,3 @@ def boot_user(login_status: LoginStatus):
     login_status.locked_until = None
     login_status.lock_status = "unlocked"
     db.session.commit()
-    
-def is_user_online(user_id):
-    # Check if the user is online from Redis instead of the database
-    return redis_client.exists(f"online_user:{user_id}")
-
-def set_user_online(user_id, ip):
-    # Mark user as online in Redis
-    redis_client.setex(f"online_user:{user_id}", timedelta(minutes=5), ip)
-
-def set_user_away(user_id):
-    # Mark user as away but still trackable
-    redis_client.setex(f"away_user:{user_id}", timedelta(minutes=2), "away")
-
-def remove_user_online(user_id):
-    # Remove user from Redis when they go offline
-    redis_client.delete(f"online_user:{user_id}")
-    redis_client.delete(f"away_user:{user_id}")
