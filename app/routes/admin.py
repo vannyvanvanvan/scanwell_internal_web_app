@@ -46,10 +46,15 @@ def lock_account(user_id):
 
 
 @admin_routes.route('/online-users', methods=['GET'])
-def get_online_users():
+@login_required
+@role_required(["admin"])
+def get_online_users():    
     # Get all online users
-    online_users = redis_client.keys("user:online:*") 
-    # Extract user IDs
-    user_ids = [key.split(":")[-1] for key in online_users] 
+    online_users = redis_client.keys("online_user:*")
+    away_users = redis_client.keys("away_user:*")
 
-    return jsonify({"online_users": user_ids})
+    # Extract user IDs
+    online_user_ids = [key.split(":")[-1] for key in online_users]
+    away_user_ids = [key.split(":")[-1] for key in away_users]
+
+    return jsonify({"online_users": online_user_ids, "away_users": away_user_ids})
