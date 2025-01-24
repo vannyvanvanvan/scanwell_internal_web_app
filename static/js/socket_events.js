@@ -1,17 +1,25 @@
 var socket = io.connect(window.location.protocol + "//" + document.domain + ":" + location.port);
 
-// Detect idle user and mark as away after 3 minutes
 var awayTimeout = setTimeout(setUserAway, 180000);
+var isAway = false;  
 
 function resetTimer() {
     clearTimeout(awayTimeout);
-    socket.emit("user_active");
+    if (isAway) {  
+        // Only emit if the user was previously away
+        socket.emit("user_active");  
+        isAway = false;
+    }
     awayTimeout = setTimeout(setUserAway, 180000);
 }
 
 function setUserAway() {
-    console.log("User is idle.");
-    socket.emit("user_away");
+    // Only emit if the user was previously active
+    if (!isAway) {  
+        console.log("[DEBUG] User is idle.");
+        socket.emit("user_away");
+        isAway = true;
+    }
 }
 
 // Detect user interaction
@@ -21,17 +29,18 @@ document.onkeypress = resetTimer;
 document.onclick = resetTimer;
 document.onscroll = resetTimer;
 
-// Listen for updates
-socket.on("update_online_status", function (data) {
-    console.log("User status updated:", data.status);
-});
-
-
+// Listen for WebSocket events
 socket.on("connect", function () {
     console.log("[DEBUG] Connected to WebSocket");
-    socket.emit("user_active");
+    // Mark user as active on connection
+    socket.emit("user_active"); 
+    isAway = false;
 });
 
 socket.on("disconnect", function () {
     console.log("[DEBUG] Disconnected from WebSocket");
+});
+
+socket.on("update_online_status", function (data) {
+    console.log("[DEBUG] User status updated:", data.status);
 });
