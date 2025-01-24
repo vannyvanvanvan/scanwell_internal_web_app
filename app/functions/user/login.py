@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template, session, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from flask_login import login_user
@@ -65,11 +65,12 @@ def validate_login(form: LoginForm):
     elif _form_username == matched_user.username and _password_hash == matched_user.password and matched_user.login_status.lock_status == "unlocked":
 
         if matched_user.login_status:
-
             # Update last login time
             matched_user.login_status.last_login = datetime.utcnow()
             reset_failed_attempts(matched_user.login_status)
             db.session.commit()
+            # Added to ensure session is permanent
+            session.permanent = True
         print("Logged in")
         login_user(user=matched_user, remember=_remember_login)
         return redirect(url_for("user.user_home"))

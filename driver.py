@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask import Flask
 from flask_socketio import SocketIO
 from app.model import db, User, Schedule, Space, Reserve, Booking
@@ -7,6 +8,7 @@ import os
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "Thisisasecret!"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=30)
 
 # Set up temporary folder for file uploads
 app.config["TEMP_FOLDER"] = "%s/temp/" % app.instance_path

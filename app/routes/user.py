@@ -15,8 +15,9 @@ user_routes = Blueprint(
 
 @user_routes.before_request
 def make_session_permanent():
-    session.permanent = True
-    user_routes.permanent_session_lifetime = timedelta(minutes=30)
+    # I don't think this is needed
+    # session.permanent = True
+    # user_routes.permanent_session_lifetime = timedelta(minutes=30)
     if current_user.is_authenticated:
         login_status = LoginStatus.query.filter_by(user_id=current_user.id).first()
         if login_status:
