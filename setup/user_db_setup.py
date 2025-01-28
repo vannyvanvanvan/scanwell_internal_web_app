@@ -1,6 +1,6 @@
-from driver import app
 from app.functions.hashing import hash_string
 from app.model import Role, User, LoginStatus, db
+from driver import app
 
 
 # Database context
@@ -21,9 +21,9 @@ with app.app_context():
     role3 = Role(user_id=user3.id, rank='sp')
 
     # Creating default login status
-    login_status1 = LoginStatus(user_id=user1.id, status='offline', failed_attempts=0)
-    login_status2 = LoginStatus(user_id=user2.id, status='offline', failed_attempts=0)
-    login_status3 = LoginStatus(user_id=user3.id, status='offline', failed_attempts=0)
+    login_status1 = LoginStatus(user_id=user1.id, lock_status='unlocked', failed_attempts=0)
+    login_status2 = LoginStatus(user_id=user2.id, lock_status='unlocked', failed_attempts=0)
+    login_status3 = LoginStatus(user_id=user3.id, lock_status='unlocked', failed_attempts=0)
 
     db.session.add_all([role1, role2, role3, login_status1, login_status2, login_status3])
     
@@ -31,8 +31,3 @@ with app.app_context():
 
 # ------------------------------------------------------------------------------
 
-
-def ResetDatabase():
-    with app.app_context():
-        db.drop_all()
-        db.create_all()

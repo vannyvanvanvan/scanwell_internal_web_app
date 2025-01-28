@@ -5,7 +5,7 @@ from flask_login import current_user
 
 
 # Restrict access based on list of ranks
-def rank_required(ranks:List[str]):
+def role_required(ranks:List[str]):
     def decorator(func):
         @wraps(func)
         def decorated_view(*args, **kwargs):

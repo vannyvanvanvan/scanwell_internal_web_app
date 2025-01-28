@@ -48,7 +48,7 @@ class LoginStatus(db.Model):
     __tablename__ = "login_status"
     
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
-    status = db.Column(db.String(50), nullable=False, default='offline')
+    lock_status = db.Column(db.String(50), nullable=False, default='unlocked')
     failed_attempts = db.Column(db.Integer, default=0)
     locked_until = db.Column(db.DateTime, nullable=True)
     last_login = db.Column(db.DateTime, nullable=True)
@@ -58,7 +58,7 @@ class LoginStatus(db.Model):
     user = db.relationship("User", back_populates="login_status")
 
     def __repr__(self):
-        return f"<LoginStatus: user_id={self.user_id}, status={self.status}, last_login={self.last_login}>"
+        return f"<LoginStatus: user_id={self.user_id}, status={self.lock_status}, last_login={self.last_login}>"
 
 
 

@@ -1,5 +1,7 @@
 from flask import Blueprint, flash, render_template, request
 from flask_login import login_required
+from app.functions.permissions import role_required
+from app.functions.searching import render_search_results
 from app.functions.permissions import rank_required
 from app.functions.searching import search_all_results, search_sales_reserve_results
 
