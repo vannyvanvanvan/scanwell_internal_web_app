@@ -11,8 +11,10 @@ def home_page() -> str:
         return admin_home_page()
     elif current_user.role.rank == "cs":
         return admin_home_page()
-    elif current_user.role.rank == "sp":
+    elif current_user.role.rank == "sales":
         return sales_home_page()
+    else:
+        return 'Please contain the admin to get a proper role to access this page.'
 
 
 def admin_home_page() -> str:

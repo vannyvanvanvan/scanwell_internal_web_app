@@ -18,7 +18,7 @@ with app.app_context():
     # Assigning roles
     role1 = Role(user_id=user1.id, rank='admin')
     role2 = Role(user_id=user2.id, rank='cs')
-    role3 = Role(user_id=user3.id, rank='sp')
+    role3 = Role(user_id=user3.id, rank='sales')
 
     # Creating default login status
     login_status1 = LoginStatus(user_id=user1.id, lock_status='unlocked', failed_attempts=0)

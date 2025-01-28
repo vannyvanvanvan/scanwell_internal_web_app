@@ -28,7 +28,7 @@ class User(db.Model, UserMixin):
             return "Admin"
         elif self.role.rank == "cs":
             return "Customer Service"
-        elif self.role.rank == "sp":
+        elif self.role.rank == "sales":
             return "Sales"
         else:
             return "Invalid User"

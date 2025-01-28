@@ -1,12 +1,11 @@
-from datetime import timedelta
-from flask import Blueprint, session
+from flask import Blueprint
 from flask_login import current_user, current_user, login_required
 
 from app.functions.auth_utils import boot_user
 from app.functions.user.home import home_page
 from app.functions.user.login import login_page
 from app.functions.user.logout import logout_page
-from app.model import db, LoginStatus
+from app.model import LoginStatus
 
 user_routes = Blueprint(
     "user", __name__, template_folder="../templates", static_folder="../static"
