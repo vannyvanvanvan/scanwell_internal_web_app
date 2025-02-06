@@ -3,6 +3,8 @@ from flask_login import current_user
 from datetime import timedelta
 import redis
 
+from app.functions.auth_utils import boot_user
+
 redis_client = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
 
 def mark_user_online(user_id, ip):
@@ -34,6 +36,7 @@ def register_socket_events(socketio):
         if current_user.is_authenticated:
             mark_user_offline(current_user.get_id())
             emit("update_online_status", {"status": "offline"}, broadcast=True)
+            boot_user(current_user.get_id())
         print(f"[DEBUG] User {current_user.get_id()} disconnected.")
 
     @socketio.on("user_away")
