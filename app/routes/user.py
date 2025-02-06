@@ -17,10 +17,11 @@ def make_session_permanent():
     # I don't think this is needed
     # session.permanent = True
     # user_routes.permanent_session_lifetime = timedelta(minutes=30)
-    if current_user.is_authenticated:
-        login_status = LoginStatus.query.filter_by(user_id=current_user.id).first()
-        if login_status:
-            boot_user(login_status)
+    
+    # if current_user.is_authenticated:
+    #     login_status = LoginStatus.query.filter_by(user_id=current_user.id).first()
+    #     if login_status:
+    #         boot_user(login_status)
 
 
 @user_routes.route("/login", methods=["GET", "POST"])

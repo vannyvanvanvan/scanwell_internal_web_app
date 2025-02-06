@@ -19,13 +19,13 @@ admin_routes = Blueprint(
 @role_required(["admin"])
 def unlock_account(user_id):
     print(f"Attempting to unlock user ID: {user_id}")
-    login_status = LoginStatus.query.get(user_id)
+    login_status_user_id = LoginStatus.query.get(user_id)
 
-    if not login_status:
+    if not login_status_user_id:
         flash('User not found', 'danger')
         return redirect(url_for('user.user_home'))
 
-    unlock_user(login_status)
+    unlock_user(login_status_user_id)
     flash(f'User {user_id} has been unlocked.', 'success')
     return redirect(url_for('user.user_home'))
 
@@ -34,13 +34,13 @@ def unlock_account(user_id):
 @role_required(["admin"])
 def lock_account(user_id):
     print(f"Attempting to lock user ID: {user_id}")
-    login_status = LoginStatus.query.get(user_id)
+    login_status_user_id = LoginStatus.query.get(user_id)
 
-    if not login_status:
+    if not login_status_user_id:
         flash('User not found', 'danger')
         return redirect(url_for('user.user_home'))
 
-    lock_user(login_status)
+    lock_user(login_status_user_id)
     flash(f'User {user_id} has been locked.', 'success')
     return redirect(url_for('user.user_home'))
 
