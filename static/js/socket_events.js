@@ -1,25 +1,37 @@
 var socket = io.connect(window.location.protocol + "//" + document.domain + ":" + location.port);
 
-var awayTimeout = setTimeout(setUserAway, 180000);
-var isAway = false;  
+// 5 minutes for away status
+var awayTimeout = setTimeout(setUserAway, 300000);
+var bootTimeout = setTimeout(bootUser, 1800000); 
+var isAway = false;
 
 function resetTimer() {
     clearTimeout(awayTimeout);
-    if (isAway) {  
+    clearTimeout(bootTimeout);
+
+    if (isAway) {
         // Only emit if the user was previously away
-        socket.emit("user_active");  
+        socket.emit("user_active");
         isAway = false;
     }
-    awayTimeout = setTimeout(setUserAway, 180000);
+
+    // Reset timers
+    awayTimeout = setTimeout(setUserAway, 300000);
+    bootTimeout = setTimeout(bootUser, 1800000);
 }
 
 function setUserAway() {
     // Only emit if the user was previously active
-    if (!isAway) {  
+    if (!isAway) {
         console.log("[DEBUG] User is idle.");
         socket.emit("user_away");
         isAway = true;
     }
+}
+
+function bootUser() {
+    console.log("[DEBUG] User is being booted due to inactivity.");
+    socket.emit("user_boot");
 }
 
 // Detect user interaction
@@ -33,7 +45,7 @@ document.onscroll = resetTimer;
 socket.on("connect", function () {
     console.log("[DEBUG] Connected to WebSocket");
     // Mark user as active on connection
-    socket.emit("user_active"); 
+    socket.emit("user_active");
     isAway = false;
 });
 

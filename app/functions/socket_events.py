@@ -1,54 +1,48 @@
 from flask_socketio import emit
 from flask_login import current_user
-from datetime import timedelta
 import redis
-
-from app.functions.auth_utils import boot_user
 
 redis_client = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
 
-def mark_user_online(user_id, ip):
-    # Check if user is already marked as online to avoid redundant updates
-    if redis_client.get(f"online_user:{user_id}") is None:
-        redis_client.setex(f"online_user:{user_id}", int(timedelta(minutes=10).total_seconds()), ip)
-    redis_client.delete(f"away_user:{user_id}")  
-
-def set_user_away(user_id):
-    # Check if user is already away to avoid redundant updates
-    if redis_client.get(f"away_user:{user_id}") is None:
-        redis_client.setex(f"away_user:{user_id}", int(timedelta(minutes=5).total_seconds()), "away")
-    redis_client.delete(f"online_user:{user_id}") 
-        
-def mark_user_offline(user_id):
-    redis_client.delete(f"online_user:{user_id}")
-    redis_client.delete(f"away_user:{user_id}")
-
 def register_socket_events(socketio):
-    @socketio.on("connect")
-    def handle_connect():
+    @socketio.on("user_active")
+    def handle_user_active():
         if current_user.is_authenticated:
-            mark_user_online(current_user.get_id(), "WebSocket")
-            emit("update_online_status", {"status": "online"}, broadcast=True)
-        print(f"[DEBUG] User {current_user.get_id()} connected.")
-
-    @socketio.on("disconnect")
-    def handle_disconnect():
-        if current_user.is_authenticated:
-            mark_user_offline(current_user.get_id())
-            emit("update_online_status", {"status": "offline"}, broadcast=True)
-            boot_user(current_user.get_id())
-        print(f"[DEBUG] User {current_user.get_id()} disconnected.")
+            # Update Redis to mark user as active
+            if redis_client.get(f"online_user:{current_user.id}") is None:
+                redis_client.set(f"online_user:{current_user.id}", "active")
+                emit("update_online_status", {"status": "active"}, broadcast=True)
+                redis_client.delete(f"away_user:{current_user.id}")  
+                print(f"[DEBUG] User {current_user.id} is now online.")
 
     @socketio.on("user_away")
     def handle_user_away():
         if current_user.is_authenticated:
-            set_user_away(current_user.get_id())
-            emit("update_online_status", {"status": "away"}, broadcast=True)
-        print(f"[DEBUG] User {current_user.get_id()} is now away.")
+            # Update Redis to mark user as away
+            if redis_client.get(f"away_user:{current_user.id}") is None:
+                redis_client.set(f"away_user:{current_user.id}", "away")
+                emit("update_online_status", {"status": "away"}, broadcast=True)
+                redis_client.delete(f"online_user:{current_user.id}")
+                print(f"[DEBUG] User {current_user.id} is now away.")
 
-    @socketio.on("user_active")
-    def handle_user_active():
+    @socketio.on("user_boot")
+    def handle_user_boot():
         if current_user.is_authenticated:
-            mark_user_online(current_user.get_id(), "WebSocket")
-            emit("update_online_status", {"status": "online"}, broadcast=True)
-        print(f"[DEBUG] User {current_user.get_id()} is now active.")
+            # Boot the user and remove them from Redis
+            user_id = current_user.id
+            redis_client.delete(f"away_user:{user_id}")
+            # login_status_id = LoginStatus.query.filter_by(user_id=user_id).first()
+            # if login_status_id:
+            #     print("boot off user")
+            # Boot user doesnt work for now, wip
+            #     boot_user(user_id)
+            print(f"[DEBUG] User {user_id} has been booted due to inactivity.")
+            emit("update_online_status", {"status": "booted"}, broadcast=True)
+
+    @socketio.on("disconnect")
+    def handle_disconnect():
+        if current_user.is_authenticated:
+            # Remove user from Redis on disconnect
+            user_id = current_user.id
+            redis_client.delete(f"online_user:{user_id}")
+            print(f"[DEBUG] User {user_id} has disconnected.")
