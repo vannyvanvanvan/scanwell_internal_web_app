@@ -15,11 +15,19 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(200), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
-    role = db.relationship("Role", uselist=False, back_populates="user", cascade="all, delete-orphan")
-    login_status = db.relationship("LoginStatus", uselist=False, back_populates="user", cascade="all, delete-orphan")
+    role = db.relationship(
+        "Role", uselist=False, back_populates="user", cascade="all, delete-orphan"
+    )
+    login_status = db.relationship(
+        "LoginStatus",
+        uselist=False,
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self):
         return f"<User: id={self.id}, username={self.username}>"
+
     def __lt__(self, other):
         return self.id < other.id
 
@@ -33,33 +41,34 @@ class User(db.Model, UserMixin):
         else:
             return "Invalid User"
 
+
 class Role(db.Model):
     __tablename__ = "role"
-    
+
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
     rank = db.Column(db.String(50), nullable=False)
-    
+
     user = db.relationship("User", back_populates="role")
 
     def __repr__(self):
         return f"<Role: user_id={self.user_id}, rank={self.rank}>"
 
+
 class LoginStatus(db.Model):
     __tablename__ = "login_status"
-    
+
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
-    lock_status = db.Column(db.String(50), nullable=False, default='unlocked')
+    lock_status = db.Column(db.String(50), nullable=False, default="unlocked")
     failed_attempts = db.Column(db.Integer, default=0)
     locked_until = db.Column(db.DateTime, nullable=True)
     last_login = db.Column(db.DateTime, nullable=True)
     last_logoff = db.Column(db.DateTime, nullable=True)
     ip_connected = db.Column(db.String(100), nullable=True)
-    
+
     user = db.relationship("User", back_populates="login_status")
 
     def __repr__(self):
         return f"<LoginStatus: user_id={self.user_id}, status={self.lock_status}, last_login={self.last_login}>"
-
 
 
 class Schedule(db.Model):
@@ -114,7 +123,7 @@ class Space(db.Model):
     bookings = db.relationship("Booking", backref="space", lazy="joined")
 
     def __repr__(self):
-        return f"<Space: id={self.spc_id}, schedule={self.sch_id}, spcstatus={self.spcstatus}, void={self.void}>"
+        return f"<Space: id={self.spc_id}, schedule={self.sch_id}, spcstatus={self.spcstatus}>"
 
     def __lt__(self, other):
         return self.spc_id < other.spc_id

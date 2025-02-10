@@ -27,6 +27,9 @@
         {% if current_user.role.rank == 'admin' %}
         <th>ID</th>
         {% endif %}
+        <th>POL</th>
+        <th>POD</th>
+        <th>ETD</th>
         <th>Size</th>
         <th>Avg. Rate</th>
         <th>Sug. Rate</th>
@@ -41,11 +44,14 @@
       </thead>
       <tbody id="results-reserve">
         {% if spaces %}
-        {% for space in spaces %}
+        {% for schedule, space in spaces %}
         <tr>
           {% if current_user.role.rank == 'admin' %}
           <td>{{ space.spc_id }}</td>
           {% endif %}
+          <td>{{ schedule.pol }}</td>
+          <td>{{ schedule.pod }}</td>
+          <td>{{ schedule.etd }}</td>
           <td>{{ space.size }}</td>
           <td>{{ space.avgrate }}</td>
           <td>{{ space.sugrate }}</td>
