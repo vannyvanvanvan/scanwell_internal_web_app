@@ -19,3 +19,7 @@ def space_list_page() -> str:
     return render_template(
         "available_space.html", current_user=current_user, spaces=get_usable_spaces()
     )
+
+
+def get_space_by_id(spc_id: int) -> Space:
+    return Space.query.filter(Space.spc_id == spc_id).first()

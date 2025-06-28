@@ -1,6 +1,8 @@
 from flask import render_template, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
+from app.functions.schedule.get import get_schedule_pol_pod_etd
+from app.functions.space.get import get_space_by_id
 from app.model import Reserve, db
 from datetime import datetime
 
@@ -74,3 +76,39 @@ def create_reserve(form: dict, spc_id: int) -> int:
     except ValueError as e:
         flash(f"Value error: {str(e)}", "danger")
         return -1
+
+
+def reserve_space(spc_id: int) -> bool:
+    space_to_reserve = get_space_by_id(spc_id)
+    if not space_to_reserve:
+        return False
+
+    try:
+        new_reserve = Reserve(
+            spc_id=spc_id,
+            sales=current_user.username,
+            saleprice=space_to_reserve.sugrate,
+            rsv_date=datetime.utcnow(),
+            owner=current_user.id,
+        )
+        db.session.add(new_reserve)
+        db.session.commit()
+        flash("Reserve created successfully!", "success")
+        return True
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        flash(f"Database error: {str(e)}", "danger")
+        return False
+
+
+def reserve_space_page(spc_id: int) -> str:
+    space = get_space_by_id(spc_id)
+    return (
+        render_template(
+            "shipping_reserve_space.html",
+            schedule=get_schedule_pol_pod_etd(space.sch_id),
+            space=space,
+        )
+        if space
+        else redirect("user.user_home")
+    )
