@@ -51,7 +51,7 @@
           {% endif %}
           <td>{{ schedule.pol }}</td>
           <td>{{ schedule.pod }}</td>
-          <td>{{ schedule.etd }}</td>
+          <td>{{ schedule.etd.strftime('%Y-%m-%d') }}</td>
           <td>{{ space.size }}</td>
           <td>{{ space.avgrate }}</td>
           <td>{{ space.sugrate }}</td>
@@ -77,7 +77,7 @@
               </div>
               {% else %}
               <div>
-                <a class="btn btn-primary" href="{{ url_for('reserve.reserve_add', spc_id=space.spc_id) }}">
+                <a class="btn btn-primary" href="{{ url_for('space.space_reserve', spc_id=space.spc_id) }}">
                   Reserve
                 </a>
               </div>

@@ -1,5 +1,6 @@
 from flask_login import login_required
 from app.functions.permissions import role_required
+from app.functions.reserve.new import reserve_space, reserve_space_page
 from app.functions.space.get import space_list_page
 from app.functions.space.new import create_space, new_space_page
 from app.functions.space.edit import edit_space, edit_space_page
@@ -71,3 +72,18 @@ def space_search(query: dict):
 @role_required(["admin", "cs", "sales"])
 def space_list():
     return space_list_page()
+
+
+@space_routes.route("/reserve/<int:spc_id>", methods=["GET", "POST"])
+@login_required
+@role_required(["admin", "cs", "sales"])
+def space_reserve(spc_id: int):
+    if request.method == "POST":
+        success = reserve_space(spc_id)
+        return (
+            redirect(url_for("user.user_home"))
+            if success
+            else redirect(url_for("space.space_list"))
+        )
+    else:
+        return reserve_space_page(spc_id)
