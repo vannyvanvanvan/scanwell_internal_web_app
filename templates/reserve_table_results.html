@@ -7,7 +7,7 @@
   <td>{{ reserve.sales }}</td>
   <td>{{ reserve.saleprice }}</td>
   <td>{{ reserve.rsv_date.strftime('%Y-%m-%d') }}</td>
-  <td>{{ reserve.cfm_date.strftime('%Y-%m-%d') }}</td>
+  <td>{% if reserve.cfm_date %}{{ reserve.cfm_date.strftime('%Y-%m-%d') }}{% endif %}</td>
   <td>{{ reserve.cfm_cs }}</td>
   <td>{{ reserve.void_yesno() }}</td>
   <td>{{ reserve.remark }}</td>
