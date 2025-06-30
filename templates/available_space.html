@@ -1,99 +1,142 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>Space Lookup</title>
+  <title>Space Lookup</title>
 {% endblock %}
 
 {% block body %}
-{% with title="Space Lookup" %}
-{% include 'header.html' %}
-{% endwith %}
+  {% with title='Space Lookup' %}
+    {% include 'header.html' %}
+  {% endwith %}
 
-{% include 'flash.html' %}
+  {% include 'flash.html' %}
 
-<section class="container p-4">
-  <h3>Available Spaces</h3>
-  <div class="border rounded">
-
-    <!-- <div class="p-2">
+  <section class="container p-4">
+    <h3>Available Spaces</h3>
+    <div class="border rounded">
+      <!--  <div class="p-2">
       <input type="text" class="form-control" placeholder="Search..." name="q"
         hx-get="{{ url_for('search.search_sales_reserve') }}" hx-trigger="keyup changed delay:500ms"
         hx-target="#results-reserve" hx-indicator="#loading" />
       <div id="loading" style="display: none;">Loading...</div>
 
-    </div> -->
-    <table class="table align-middle m-0">
-      <thead>
-        {% if current_user.role.rank == 'admin' %}
-        <th>ID</th>
-        {% endif %}
-        <th>POL</th>
-        <th>POD</th>
-        <th>ETD</th>
-        <th>Size</th>
-        <th>Avg. Rate</th>
-        <th>Sug. Rate</th>
-        <th>Rate Valid</th>
-        <th>Proport</th>
-        {% if current_user.role.rank == 'admin' %}
-        <th>Status</th>
-        <th>Last Modified</th>
-        <th>By</th>
-        {% endif %}
-        <th></th>
-      </thead>
-      <tbody id="results-reserve">
-        {% if spaces %}
-        {% for schedule, space in spaces %}
-        <tr>
+    </div>  -->
+      <table class="table align-middle m-0">
+        <thead>
           {% if current_user.role.rank == 'admin' %}
-          <td>{{ space.spc_id }}</td>
+            <th>ID</th>
           {% endif %}
-          <td>{{ schedule.pol }}</td>
-          <td>{{ schedule.pod }}</td>
-          <td>{{ schedule.etd.strftime('%Y-%m-%d') }}</td>
-          <td>{{ space.size }}</td>
-          <td>{{ space.avgrate }}</td>
-          <td>{{ space.sugrate }}</td>
-          <td>{{ space.ratevalid.strftime('%Y-%m-%d %H:%M') }}</td>
-          <td>{{ space.proport_yesno() }}</td>
+          <th>POL</th>
+          <th>POD</th>
+          <th>ETD</th>
+          <th>Size</th>
+          <th>Avg. Rate</th>
+          <th>Sug. Rate</th>
+          <th>Rate Valid</th>
+          <th>Proport</th>
           {% if current_user.role.rank == 'admin' %}
-          <td>{{ space.spcstatus }}</td>
-          <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
-          <td>{{ space.last_modified_by }}</td>
+            <th>Status</th>
+            <th>Last Modified</th>
+            <th>By</th>
           {% endif %}
+          <th></th>
+        </thead>
+
+        <!-- Added this -->
+        <tr class="p-2">
           <td>
-            <div class="d-flex justify-content-end gap-2">
-              {% if current_user.role.rank == 'admin' or current_user.id == space.owner %}
-              <div data-bs-toggle="tooltip" data-bs-title="Create reserve">
-                <a class="btn btn-primary" href="{{ url_for('reserve.reserve_add', spc_id=space.spc_id) }}">
-                  <i class="bi bi-plus-lg"></i>
-                </a>
-              </div>
-              <div data-bs-toggle="tooltip" data-bs-title="Edit space">
-                <a class="btn btn-warning" href="{{ url_for('space.space_edit', spc_id=space.spc_id) }}">
-                  <i class="bi bi-pencil-square"></i>
-                </a>
-              </div>
-              {% else %}
-              <div>
-                <a class="btn btn-primary" href="{{ url_for('space.space_reserve', spc_id=space.spc_id) }}">
-                  Reserve
-                </a>
-              </div>
-              {% endif %}
-            </div>
+            <input type="text" class="form-control form-control-sm" placeholder="POL..." name="pol_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+            hx-include="[name$='_filter'], [name='global_search']" />
+            <datalist id="pol-suggestions">
+            </datalist>
+          </td>
+          <td>
+            <input type="text" class="form-control form-control-sm" placeholder="POD..." name="pod_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+            hx-include="[name$='_filter'], [name='global_search']" />
+          </td>
+          <td>
+            <input type="date" class="form-control form-control-sm" name="etd_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+            hx-trigger="change delay:300ms" hx-target="#results-spaces" hx-indicator="#loading" 
+            hx-include="[name$='_filter'], [name='global_search']" />
+          </td>
+          <td>
+            <input type="text" class="form-control form-control-sm" placeholder="Size..." name="size_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+            hx-include="[name$='_filter'], [name='global_search']" />
+          </td>
+          <td>
+            <input type="number" class="form-control form-control-sm" placeholder="Avg Rate..." name="avgrate_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+            hx-include="[name$='_filter'], [name='global_search']" />
+          </td>
+          <td>
+            <input type="number" class="form-control form-control-sm" placeholder="Min Rate..." name="sugrate_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+            hx-include="[name$='_filter'], [name='global_search']" />
+          </td>
+          <td>
+            <input type="date" class="form-control form-control-sm" placeholder="Rate Valid..." name="ratevalid_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+            hx-include="[name$='_filter'], [name='global_search']" />
+          </td>
+          <td>
+            <select class="form-select form-select-sm" name="proport_filter" hx-get="{{ url_for('search.search_available_spaces') }}" hx-trigger="change delay:300ms" 
+            hx-target="#results-spaces" hx-indicator="#loading" hx-include="[name$='_filter'], [name='global_search']">
+              <option value="">All</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
           </td>
         </tr>
-        {% endfor %}
-        {% else %}
-        <tr>
-          <td colspan="14">There are currently no available space. Please try again later.</td>
-        </tr>
-        {% endif %}
-      </tbody>
-    </table>
-  </div>
-</section>
 
+        <!-- From results-reserves -> results-spaces?? -->
+        <tbody id="results-spaces">
+          {% if spaces %}
+            {% for schedule, space in spaces %}
+              <tr>
+                {% if current_user.role.rank == 'admin' %}
+                  <td>{{ space.spc_id }}</td>
+                {% endif %}
+                <td>{{ schedule.pol }}</td>
+                <td>{{ schedule.pod }}</td>
+                <td>{{ schedule.etd.strftime('%Y-%m-%d') }}</td>
+                <td>{{ space.size }}</td>
+                <td>{{ space.avgrate }}</td>
+                <td>{{ space.sugrate }}</td>
+                <td>{{ space.ratevalid.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>{{ space.proport_yesno() }}</td>
+                {% if current_user.role.rank == 'admin' %}
+                  <td>{{ space.spcstatus }}</td>
+                  <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                  <td>{{ space.last_modified_by }}</td>
+                {% endif %}
+                <td>
+                  <div class="d-flex justify-content-end gap-2">
+                    {% if current_user.role.rank == 'admin' or current_user.id == space.owner %}
+                      <div data-bs-toggle="tooltip" data-bs-title="Create reserve">
+                        <a class="btn btn-primary" href="{{ url_for('reserve.reserve_add', spc_id=space.spc_id) }}"><i class="bi bi-plus-lg"></i></a>
+                      </div>
+                      <div data-bs-toggle="tooltip" data-bs-title="Edit space">
+                        <a class="btn btn-warning" href="{{ url_for('space.space_edit', spc_id=space.spc_id) }}"><i class="bi bi-pencil-square"></i></a>
+                      </div>
+                    {% else %}
+                      <div>
+                        <a class="btn btn-primary" href="{{ url_for('space.space_reserve', spc_id=space.spc_id) }}">Reserve</a>
+                      </div>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="14">There are currently no available space. Please try again later.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </section>
 {% endblock %}
