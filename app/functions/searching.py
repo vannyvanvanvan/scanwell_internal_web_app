@@ -2,7 +2,9 @@ from flask import render_template
 from flask_login import current_user
 from app.functions.booking.get import booking_table_results
 from app.functions.reserve.get import reserve_table_results
-from app.model import Booking, Reserve, Schedule
+from app.model import Booking, Reserve, Schedule, Space, db
+
+from datetime import datetime
 
 
 def flatten_string_lower(var: any) -> str:
@@ -137,3 +139,38 @@ def search_sales_booking_results(query: str):
             ):
                 results.append(booking)
     return booking_table_results(results)
+
+
+def search_available_spaces_results(filters):
+    query = db.session.query(Schedule, Space).join(
+        Space, Schedule.sch_id == Space.sch_id)
+    if filters["pol"]:
+        query = query.filter(Schedule.pol.ilike(f'%{filters["pol"]}%'))
+    if filters["pod"]:
+        query = query.filter(Schedule.pod.ilike(f'%{filters["pod"]}%'))
+    if filters["etd"]:
+        try:
+            etd_date = datetime.strptime(filters["etd"], '%Y-%m-%d').date()
+            query = query.filter(db.func.date(Schedule.etd) == etd_date)
+        except ValueError:
+            pass
+    if filters["size"]:
+        query = query.filter(Space.size.ilike(f'%{filters["size"]}%'))
+    if filters["avgrate"]:
+        query = query.filter(Space.avgrate == int(filters["avgrate"]))
+    if filters["sugrate"]:
+        query = query.filter(Space.sugrate == int(filters["sugrate"]))
+    if filters["ratevalid"]:
+        try:
+            valid_date = datetime.strptime(
+                filters["ratevalid"], '%Y-%m-%d').date()
+            query = query.filter(db.func.date(Space.ratevalid) == valid_date)
+        except ValueError:
+            pass
+    if filters["proport"]:
+        is_proport = filters["proport"] == "yes"
+        query = query.filter(Space.proport == is_proport)
+
+    query = query.filter(Space.spcstatus == "USABLE")
+
+    return query.all()
