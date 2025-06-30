@@ -1,0 +1,16 @@
+{% for schedule, space in spaces %}
+  <tr>
+    <td>{{ schedule.pol }}</td>
+    <td>{{ schedule.pod }}</td>
+    <td>{{ schedule.etd.strftime('%Y-%m-%d') }}</td>
+    <td>{{ space.size }}</td>
+    <td>{{ space.avgrate }}</td>
+    <td>{{ space.sugrate }}</td>
+    <td>{{ space.ratevalid.strftime('%Y-%m-%d %H:%M') }}</td>
+    <td>{{ space.proport_yesno() }}</td>
+  </tr>
+{% else %}
+  <tr>
+    <td colspan="14">No matching spaces found</td>
+  </tr>
+{% endfor %}
