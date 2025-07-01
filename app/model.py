@@ -44,7 +44,7 @@ class User(db.Model, UserMixin):
 
 class Role(db.Model):
     __tablename__ = "role"
-
+    # 3 user role: admin, cs, sales. 1 system role: system
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
     rank = db.Column(db.String(50), nullable=False)
 
