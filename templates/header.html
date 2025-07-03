@@ -5,7 +5,13 @@
   <div class="container p-2">
     <nav id="menu-bar-nav">
       <a href="{{ url_for('user.user_home') }}">Home</a>
+
       <a href="{{ url_for('space.space_list') }}">Space Lookup</a>
+
+      {% if current_user.role.rank in ['admin', 'cs'] %}
+        <a href="{{ url_for('schedule.schedule_add') }}">Schedule</a>
+      {% endif %}
+
       <a href="{{ url_for('user.user_logout') }}">Logout</a>
     </nav>
   </div>

@@ -42,54 +42,56 @@
           <th></th>
         </thead>
 
+        {% if current_user.role.rank == 'sales' %}
         <!-- Added this -->
-        <tr class="p-2">
-          <td>
-            <input type="text" class="form-control form-control-sm" placeholder="POL..." name="pol_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
-            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
-            hx-include="[name$='_filter'], [name='global_search']" />
-            <datalist id="pol-suggestions">
-            </datalist>
-          </td>
-          <td>
-            <input type="text" class="form-control form-control-sm" placeholder="POD..." name="pod_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
-            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
-            hx-include="[name$='_filter'], [name='global_search']" />
-          </td>
-          <td>
-            <input type="date" class="form-control form-control-sm" name="etd_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
-            hx-trigger="change delay:300ms" hx-target="#results-spaces" hx-indicator="#loading" 
-            hx-include="[name$='_filter'], [name='global_search']" />
-          </td>
-          <td>
-            <input type="text" class="form-control form-control-sm" placeholder="Size..." name="size_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
-            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
-            hx-include="[name$='_filter'], [name='global_search']" />
-          </td>
-          <td>
-            <input type="number" class="form-control form-control-sm" placeholder="Avg Rate..." name="avgrate_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
-            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
-            hx-include="[name$='_filter'], [name='global_search']" />
-          </td>
-          <td>
-            <input type="number" class="form-control form-control-sm" placeholder="Min Rate..." name="sugrate_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
-            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
-            hx-include="[name$='_filter'], [name='global_search']" />
-          </td>
-          <td>
-            <input type="date" class="form-control form-control-sm" placeholder="Rate Valid..." name="ratevalid_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
-            hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
-            hx-include="[name$='_filter'], [name='global_search']" />
-          </td>
-          <td>
-            <select class="form-select form-select-sm" name="proport_filter" hx-get="{{ url_for('search.search_available_spaces') }}" hx-trigger="change delay:300ms" 
-            hx-target="#results-spaces" hx-indicator="#loading" hx-include="[name$='_filter'], [name='global_search']">
-              <option value="">All</option>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
-          </td>
-        </tr>
+          <tr class="p-2">
+            <td>
+              <input type="text" class="form-control form-control-sm" placeholder="POL..." name="pol_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+              hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+              hx-include="[name$='_filter'], [name='global_search']" />
+              <datalist id="pol-suggestions">
+              </datalist>
+            </td>
+            <td>
+              <input type="text" class="form-control form-control-sm" placeholder="POD..." name="pod_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+              hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+              hx-include="[name$='_filter'], [name='global_search']" />
+            </td>
+            <td>
+              <input type="date" class="form-control form-control-sm" name="etd_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+              hx-trigger="change delay:300ms" hx-target="#results-spaces" hx-indicator="#loading" 
+              hx-include="[name$='_filter'], [name='global_search']" />
+            </td>
+            <td>
+              <input type="text" class="form-control form-control-sm" placeholder="Size..." name="size_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+              hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+              hx-include="[name$='_filter'], [name='global_search']" />
+            </td>
+            <td>
+              <input type="number" class="form-control form-control-sm" placeholder="Avg Rate..." name="avgrate_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+              hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+              hx-include="[name$='_filter'], [name='global_search']" />
+            </td>
+            <td>
+              <input type="number" class="form-control form-control-sm" placeholder="Min Rate..." name="sugrate_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+              hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+              hx-include="[name$='_filter'], [name='global_search']" />
+            </td>
+            <td>
+              <input type="date" class="form-control form-control-sm" placeholder="Rate Valid..." name="ratevalid_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+              hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+              hx-include="[name$='_filter'], [name='global_search']" />
+            </td>
+            <td>
+              <select class="form-select form-select-sm" name="proport_filter" hx-get="{{ url_for('search.search_available_spaces') }}" hx-trigger="change delay:300ms" 
+              hx-target="#results-spaces" hx-indicator="#loading" hx-include="[name$='_filter'], [name='global_search']">
+                <option value="">All</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </td>
+          </tr>
+        {% endif %}
 
         <!-- From results-reserves -> results-spaces?? -->
         <tbody id="results-spaces">
