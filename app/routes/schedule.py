@@ -20,7 +20,7 @@ schedule_routes = Blueprint(
 
 @schedule_routes.route("/add", methods=["GET", "POST"])
 @login_required
-@role_required(["admin"])
+@role_required(["admin", "cs"])
 def schedule_add():
     if request.method == "POST":
         return create_schedule(request.form)
@@ -29,7 +29,7 @@ def schedule_add():
 
 @schedule_routes.route("/edit/<int:sch_id>", methods=["GET", "POST"])
 @login_required
-@role_required(["admin"])
+@role_required(["admin", "cs"])
 def schedule_edit(sch_id: int):
     if request.method == "POST":
         return edit_schedule(sch_id)
@@ -38,7 +38,7 @@ def schedule_edit(sch_id: int):
 
 @schedule_routes.route("/delete/<int:sch_id>", methods=["GET"])
 @login_required
-@role_required(["admin"])
+@role_required(["admin", "cs"])
 def schedule_delete(sch_id: int):
     delete_schedule(sch_id)
     return redirect(url_for("user.user_home"))

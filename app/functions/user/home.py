@@ -10,7 +10,7 @@ def home_page() -> str:
     if current_user.role.rank == "admin":
         return admin_home_page()
     elif current_user.role.rank == "cs":
-        return admin_home_page()
+        return cs_home_page()
     elif current_user.role.rank == "sales":
         return sales_home_page()
     else:
@@ -18,6 +18,13 @@ def home_page() -> str:
 
 
 def admin_home_page() -> str:
+    return render_template(
+        "home_page.html",
+        current_user=current_user,
+        results=get_all_schedules(),
+    )
+    
+def cs_home_page() -> str:
     return render_template(
         "home_page.html",
         current_user=current_user,
