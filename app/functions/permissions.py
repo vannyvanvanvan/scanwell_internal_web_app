@@ -13,7 +13,7 @@ def role_required(ranks:List[str]):
             if current_user.role.rank in ranks:
               return func(*args, **kwargs)
             else:
-               # Forbidden 
+              # Forbidden 
               return abort(403)
         return decorated_view
     return decorator

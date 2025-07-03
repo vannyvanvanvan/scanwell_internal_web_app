@@ -99,6 +99,7 @@ def create_schedule(form: dict) -> int:
         db.session.add(schedule_to_add)
         db.session.commit()
         flash("Schedule added successfully!", "success")
+        # Redirect back to home instead???? 
         return redirect(url_for("schedule.schedule_edit", sch_id=schedule_to_add.sch_id))
     except SQLAlchemyError as e:
         db.session.rollback()
