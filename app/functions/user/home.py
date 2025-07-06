@@ -10,7 +10,7 @@ def home_page() -> str:
 
     highlighted: dict = {}
 
-    if request.args["highlighted_schedule"]:
+    if "highlighted_schedule" in request.args:
         highlighted["schedule"] = int(request.args["highlighted_schedule"])
 
     if current_user.role.rank == "admin":
