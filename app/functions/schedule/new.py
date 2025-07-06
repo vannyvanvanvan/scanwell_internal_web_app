@@ -82,7 +82,7 @@ def create_schedule(form: dict) -> str | Response:
                 "{year} {time}".format(
                     year=form["sicutoff"],
                     time=form["sicutoff_time"],
-                )
+                ),
                 "%Y-%m-%d %H:%M",
             ),
             cycvcls=datetime.strptime(
