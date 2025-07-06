@@ -1,4 +1,4 @@
-from flask import redirect, render_template, flash, url_for
+from flask import Response, redirect, render_template, flash, url_for
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from app.model import Schedule, db
@@ -48,10 +48,8 @@ def new_populated_schedule_page(form: dict) -> str:
             pod=form["pod"],
             routing=form["routing"],
             cyopen=now_or_valid_date(form["cyopen"]),
-            sicutoff=now_or_valid_datetime(
-                form["sicutoff"], form["sicutoff_time"]),
-            cycvcls=now_or_valid_datetime(
-                form["cycvcls"], form["cycvcls_time"]),
+            sicutoff=now_or_valid_datetime(form["sicutoff"], form["sicutoff_time"]),
+            cycvcls=now_or_valid_datetime(form["cycvcls"], form["cycvcls_time"]),
             etd=now_or_valid_date(form["etd"]),
             eta=now_or_valid_date(form["eta"]),
         ),
@@ -59,8 +57,10 @@ def new_populated_schedule_page(form: dict) -> str:
 
 
 # Function to handle adding a new schedule
-# if add successful return sch_id, else return -1
-def create_schedule(form: dict) -> int:
+# if add successful redirect to home with new schedule highlighted,
+# if missing info return new schedule page with previously entered values,
+# if backend error redirect to home with error messages
+def create_schedule(form: dict) -> str | Response:
 
     # check validity of edited information
     if not is_valid_schedule_form(form):
@@ -82,7 +82,7 @@ def create_schedule(form: dict) -> int:
                 "{year} {time}".format(
                     year=form["sicutoff"],
                     time=form["sicutoff_time"],
-                ),
+                )
                 "%Y-%m-%d %H:%M",
             ),
             cycvcls=datetime.strptime(
@@ -99,12 +99,13 @@ def create_schedule(form: dict) -> int:
         db.session.add(schedule_to_add)
         db.session.commit()
         flash("Schedule added successfully!", "success")
-        # Redirect back to home instead???? 
-        return redirect(url_for("schedule.schedule_edit", sch_id=schedule_to_add.sch_id))
+        return redirect(
+            url_for("user.user_home", highlighted_schedule=schedule_to_add.sch_id)
+        )
     except SQLAlchemyError as e:
         db.session.rollback()
         flash(f"Database error: {str(e)}", "danger")
-        return -1
+        return redirect(url_for("user.user_home"))
     except ValueError as e:
         flash(f"Value error: {str(e)}", "danger")
-        return -1
+        return redirect(url_for("user.user_home"))
