@@ -1,6 +1,11 @@
 {% if results %}
 {% for result in results %}
+
+{% if highlighted["schedule"] and highlighted["schedule"]==result.sch_id %}
+<tr class="highlighted-row">
+{% else %}
 <tr>
+{% endif %}
   {% if current_user.role.rank == 'admin' %}
   <td>{{ result.sch_id }}</td>
   {% endif %}

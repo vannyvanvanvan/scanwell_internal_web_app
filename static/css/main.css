@@ -142,6 +142,10 @@ header.cs {
   max-height: 256px;
 }
 
+.highlighted-row > * {
+  background-color: #ffe69b !important;
+}
+
 @media screen and (max-width: 854px) {
   .dish-cards-grid {
     grid-template-columns: 1fr;
