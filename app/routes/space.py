@@ -23,7 +23,7 @@ space_routes = Blueprint(
 
 @space_routes.route("/add/<int:sch_id>", methods=["GET", "POST"])
 @login_required
-@role_required(["admin"])
+@role_required(["admin", "cs"])
 def space_add(sch_id: int):
     if request.method == "POST":
         return create_space(request.form, sch_id)
@@ -32,7 +32,7 @@ def space_add(sch_id: int):
 
 @space_routes.route("/edit/<int:spc_id>", methods=["GET", "POST"])
 @login_required
-@role_required(["admin"])
+@role_required(["admin", "cs"])
 def space_edit(spc_id: int):
     if request.method == "POST":
         return edit_space(spc_id)

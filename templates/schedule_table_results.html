@@ -19,6 +19,8 @@
 
   <td>
     <div class="d-flex justify-content-end gap-2">
+      
+
       <div data-bs-toggle="tooltip" data-bs-title="View schedule details">
         <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse"
           data-bs-target="#collapse-sch-{{ result.sch_id }}" aria-expanded="false"
@@ -26,6 +28,15 @@
           <i class="bi bi-zoom-in"></i>
         </button>
       </div>
+
+      {% if current_user.role.rank in ['admin', 'cs'] %}
+        <div data-bs-toggle="tooltip" data-bs-title="Add space">
+          <a class="btn btn-primary" href="{{ url_for('space.space_add', sch_id=result.sch_id) }}">
+            <i class="bi bi-plus-lg"></i>
+          </a>
+        </div>
+      {% endif %}
+      
       {% if current_user.role.rank == 'admin' or current_user.id == result.owner %}
       <div data-bs-toggle="tooltip" data-bs-title="Edit schedule">
         <a class="btn btn-warning" href="{{ url_for('schedule.schedule_edit', sch_id=result.sch_id) }}">
