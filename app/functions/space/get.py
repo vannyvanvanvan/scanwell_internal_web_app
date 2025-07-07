@@ -26,16 +26,19 @@ def get_space_by_id(spc_id: int) -> Space:
     return Space.query.filter(Space.spc_id == spc_id).first()
 
 def space_auto_invalid():
-    now = datetime.utcnow()
-    # If SICUTOF - nowdate < 24
+    print("test")
+    
+    now = datetime.now()
+    # If SICUTOF - nowdate <= 24
     # Status -> Invalid
     invalid_space_ids = db.session.query(Space.spc_id).join(Schedule).filter(
         Space.spcstatus == "USABLE",
-        Schedule.sicutoff - timedelta(hours=24) < now
+        Schedule.sicutoff - now < timedelta(hours=24)
     ).all()
+    
     invalid_space_ids = [id_tuple[0] for id_tuple in invalid_space_ids]
     if invalid_space_ids:
-        #print(f"Invalid space IDs: {invalid_space_ids}")
+        print(f"Invalid space IDs: {invalid_space_ids}")
         current_app.logger.info(f"Updating id of {len(invalid_space_ids)} spaces to INVALID status.")
         Space.query.filter(Space.spc_id.in_(invalid_space_ids)).update(
             {
