@@ -25,9 +25,7 @@ def space_list_page() -> str:
 def get_space_by_id(spc_id: int) -> Space:
     return Space.query.filter(Space.spc_id == spc_id).first()
 
-def space_auto_invalid():
-    print("test")
-    
+def space_auto_invalid():    
     now = datetime.now()
     # If SICUTOF - nowdate <= 24
     # Status -> Invalid
