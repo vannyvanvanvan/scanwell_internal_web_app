@@ -24,32 +24,47 @@ def space_list_page() -> str:
 
 def get_space_by_id(spc_id: int) -> Space:
     return Space.query.filter(Space.spc_id == spc_id).first()
-
-def space_auto_invalid():    
-    now = datetime.now()
-    # If SICUTOF - nowdate <= 24
+            
+            
+def space_auto_invalid():
+    # If SICUTOF - nowdate < 24
     # Status -> Invalid
-    invalid_space_ids = db.session.query(Space.spc_id).join(Schedule).filter(
-        Space.spcstatus == "USABLE",
-        Schedule.sicutoff - now < timedelta(hours=24)
+    now = datetime.now()
+    usable_spaces_with_schedules = db.session.query(Space, Schedule).join(Schedule).filter(
+        Space.spcstatus == "USABLE"
     ).all()
+    spaces_to_invalidate = [] 
+    for space, schedule in usable_spaces_with_schedules:
+        time_diff = schedule.sicutoff - now
+        hours_remaining = time_diff.total_seconds() / 3600
+        
+        # Could be used for later use?
+        #print(f"Space ID: {space.spc_id}")
+        #print(f"SICUTOFF: {schedule.sicutoff}")
+        #print(f"Current time: {now}")
+        #print(f"Time difference: {time_diff}")
+        #print(f"Hours remaining: {hours_remaining:.2f} hours")
+        #print(f"Should invalidate: {hours_remaining < 24}")
+        
+        if hours_remaining < 24:
+            spaces_to_invalidate.append(space.spc_id)
     
-    invalid_space_ids = [id_tuple[0] for id_tuple in invalid_space_ids]
-    if invalid_space_ids:
-        print(f"Invalid space IDs: {invalid_space_ids}")
-        current_app.logger.info(f"Updating id of {len(invalid_space_ids)} spaces to INVALID status.")
-        Space.query.filter(Space.spc_id.in_(invalid_space_ids)).update(
+    if spaces_to_invalidate:
+        Space.query.filter(Space.spc_id.in_(spaces_to_invalidate)).update(
             {
                 Space.spcstatus: "INVALID",
-                # Added the role "System" for auto update but could use "Admin"
                 Space.last_modified_by: "System",
                 Space.last_modified_at: now
             },
             synchronize_session=False
         )
+        
         try:
             db.session.commit()
         except Exception as e:
             current_app.logger.error(f"Failed to update spaces status to INVALID: {e}")
             db.session.rollback()
+            print(f"Error updating spaces: {e}")
+    else:
+        print("No spaces need to be marked as INVALID at this time.")
     
