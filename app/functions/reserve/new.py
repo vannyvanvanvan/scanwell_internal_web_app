@@ -82,9 +82,12 @@ def create_reserve(form: dict, spc_id: int) -> int:
 def reserve_space(form: dict, spc_id: int) -> bool:
     space_to_reserve = get_space_by_id(spc_id)
     if not space_to_reserve:
-        flash("The space you tried to reserve is not available. Please try again.", "danger")
+        flash(
+            "The space you tried to reserve is not available. Please try again.",
+            "danger",
+        )
         return False
-    
+
     if not is_valid_sales_reserve(form):
         flash("The sales price is invalid. Please try again.", "danger")
         return False
@@ -98,7 +101,7 @@ def reserve_space(form: dict, spc_id: int) -> bool:
             owner=current_user.id,
         )
         db.session.add(new_reserve)
-        space_to_reserve.spcstatus = 'RV_SUBMIT'
+        space_to_reserve.spcstatus = "RV_SUBMIT"
         db.session.commit()
         flash("Reserve created successfully!", "success")
         return True
@@ -110,12 +113,14 @@ def reserve_space(form: dict, spc_id: int) -> bool:
 
 def reserve_space_page(spc_id: int) -> str:
     space = get_space_by_id(spc_id)
-    return (
-        render_template(
+
+    if space:
+        if space.proport:
+            flash("Proport space: You must confirm with CS before quoting sale price!", "danger")
+        return render_template(
             "shipping_reserve_space.html",
             schedule=get_schedule_pol_pod_etd(space.sch_id),
             space=space,
         )
-        if space
-        else redirect("user.user_home")
-    )
+    else:
+        redirect("user.user_home")
