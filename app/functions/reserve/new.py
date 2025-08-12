@@ -98,6 +98,7 @@ def reserve_space(form: dict, spc_id: int) -> bool:
             owner=current_user.id,
         )
         db.session.add(new_reserve)
+        space_to_reserve.spcstatus = 'RV_SUBMIT'
         db.session.commit()
         flash("Reserve created successfully!", "success")
         return True
