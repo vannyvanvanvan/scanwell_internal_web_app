@@ -9,6 +9,7 @@ from datetime import datetime
 from app.functions.validate import (
     is_checked_key,
     is_valid_reserve_form,
+    is_valid_sales_reserve,
     now_or_valid_date,
     zero_or_valid_number,
 )
@@ -78,16 +79,21 @@ def create_reserve(form: dict, spc_id: int) -> int:
         return -1
 
 
-def reserve_space(spc_id: int) -> bool:
+def reserve_space(form: dict, spc_id: int) -> bool:
     space_to_reserve = get_space_by_id(spc_id)
     if not space_to_reserve:
+        flash("The space you tried to reserve is not available. Please try again.", "danger")
+        return False
+    
+    if not is_valid_sales_reserve(form):
+        flash("The sales price is invalid. Please try again.", "danger")
         return False
 
     try:
         new_reserve = Reserve(
             spc_id=spc_id,
             sales=current_user.username,
-            saleprice=space_to_reserve.sugrate,
+            saleprice=form["saleprice"],
             rsv_date=datetime.utcnow(),
             owner=current_user.id,
         )

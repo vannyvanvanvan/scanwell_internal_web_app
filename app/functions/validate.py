@@ -223,6 +223,9 @@ def is_valid_reserve_form(form: dict) -> bool:
         and is_valid_string(form["remark"])
     )
 
+def is_valid_sales_reserve(form: dict) -> bool:
+    return is_valid_number(form["saleprice"])
+
 # Booking
 # =============================================================================
 def is_valid_booking_dict(form: dict) -> bool:

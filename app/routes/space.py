@@ -79,7 +79,7 @@ def space_list():
 @role_required(["admin", "cs", "sales"])
 def space_reserve(spc_id: int):
     if request.method == "POST":
-        success = reserve_space(spc_id)
+        success = reserve_space(form=request.form, spc_id=spc_id)
         return (
             redirect(url_for("user.user_home"))
             if success
