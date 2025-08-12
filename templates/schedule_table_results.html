@@ -164,11 +164,11 @@
                                   </button>
                                 </form>
 
-                              <div data-bs-toggle="tooltip" data-bs-title="Confirm decline">
-                                <a class="btn btn-danger" href="{{ url_for('reserve.reserve_decline', rsv_id=reserve.rsv_id) }}" title="Decline">
-                                    <i class="bi bi-x-circle"></i>
-                                </a>
-                              </div>
+                              <form action="{{ url_for('reserve.reserve_decline', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
+                                  <button type="submit" class="btn btn-danger" title="Decline">
+                                      <i class="bi bi-x-circle"></i>
+                                  </button>
+                              </form>
 
 
 

@@ -27,8 +27,8 @@ def get_space_by_id(spc_id: int) -> Space:
             
             
 def space_auto_invalid():
-    # If SICUTOF - nowdate < 24
-    # Status -> Invalid
+    # if SICUTOF - nowdate < 24
+    # status -> invalid
     now = datetime.now()
     usable_spaces_with_schedules = db.session.query(Space, Schedule).join(Schedule).filter(
         Space.spcstatus == "USABLE"
@@ -38,7 +38,7 @@ def space_auto_invalid():
         time_diff = schedule.sicutoff - now
         hours_remaining = time_diff.total_seconds() / 3600
         
-        # Could be used for later use?
+        # could be used for later use?
         #print(f"Space ID: {space.spc_id}")
         #print(f"SICUTOFF: {schedule.sicutoff}")
         #print(f"Current time: {now}")
