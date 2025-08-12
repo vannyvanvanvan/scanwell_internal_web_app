@@ -56,10 +56,10 @@ def decline_reserve(rsv_id):
         # status -> usable else RV_CANCEL
         if hours_remaining > 24:
             space.spcstatus = 'USABLE'
-            msg = "Reserve declined - Space released for reuse"
+            msg = "Reserve declined, Space released"
         else:
             space.spcstatus = 'RV_CANCEL'
-            msg = "Reserve declined - Space canceled (SICUTOFF <24h)"
+            msg = "Reserve declined, Space canceled (SICUTOFF < 24h)"
             
         db.session.commit()
         flash(msg, "success")
@@ -67,4 +67,30 @@ def decline_reserve(rsv_id):
     
     else:
         flash("Reserve already confirmed, can not decline", "warning")      
+        return redirect(url_for('user.user_home'))
+    
+def unconfirm_reserve(rsv_id):
+    reserve = Reserve.query.get(rsv_id)
+    if not reserve:
+        flash("Reserve not found", "danger")
+        return redirect(url_for('user.user_home'))
+    
+    if reserve.cfm_cs != None:
+        
+        # update reserve status and their RVs
+        reserve.cfm_date = None
+        reserve.cfm_cs = None
+        reserve.void = True
+        
+        space = Space.query.get(reserve.spc_id)
+        if space:
+            space.spcstatus = 'RV_SUBMIT'
+        
+        db.session.commit()
+        
+        flash("Reserve unconfirmed successfully", "success")
+        return redirect(url_for('user.user_home'))
+    
+    else:
+        flash("Reserve not confirmed, can not unconfirm", "warning")
         return redirect(url_for('user.user_home'))

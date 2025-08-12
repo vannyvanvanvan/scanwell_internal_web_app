@@ -158,11 +158,13 @@
                           <td>
                             <div class="d-flex justify-content-end gap-2">
                               
+                              {% if space.spcstatus == 'RV_SUBMIT' %}
                               <form action="{{ url_for('reserve.reserve_confirm', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
                                   <button type="submit" class="btn btn-success" title="Confirm">
                                       <i class="bi bi-check-circle"></i>
                                   </button>
                                 </form>
+                              {% endif %}
 
                               <form action="{{ url_for('reserve.reserve_decline', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
                                   <button type="submit" class="btn btn-danger" title="Decline">
@@ -170,17 +172,14 @@
                                   </button>
                               </form>
 
-
-
-
-
                               <!-- If the reserve is confirmed, allow unconfirming -->
-                              <div data-bs-toggle="tooltip" data-bs-title="Confirm unconfirm">
-                                <a class="btn btn-warning" href="{{ url_for('reserve.reserve_unconfirm', rsv_id=reserve.rsv_id) }}" title="Unconfirm">
-                                  <i class="bi bi-arrow-counterclockwise"></i>
-                              </a>
-                              </div>
-                              
+                              {% if space.spcstatus == 'RV_CONFIRM' %}
+                              <form action="{{ url_for('reserve.reserve_unconfirm', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
+                                  <button type="submit" class="btn btn-warning" title="Unconfirm">
+                                      <i class="bi bi-arrow-counterclockwise"></i>
+                                  </button>
+                              </form>
+                              {% endif %}
                       
 
                             

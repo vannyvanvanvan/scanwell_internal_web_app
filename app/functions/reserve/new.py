@@ -94,7 +94,7 @@ def reserve_space(form: dict, spc_id: int) -> bool:
             spc_id=spc_id,
             sales=current_user.username,
             saleprice=form["saleprice"],
-            rsv_cdate=datetime.utcnow(),
+            rsv_date=datetime.utcnow(),
             owner=current_user.id,
         )
         db.session.add(new_reserve)
