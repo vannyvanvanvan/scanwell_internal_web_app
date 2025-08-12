@@ -69,7 +69,7 @@
             <th>Rate Valid</th>
             <th>Proport</th>
             <th>Status</th>
-            {% if current_user.role.rank == 'admin' %}
+            {% if current_user.role.rank == 'admin', 'CS' %}
             <th>Last Modified</th>
             <th>By</th>
             {% endif %}
@@ -86,7 +86,7 @@
               <td>{{ space.ratevalid.strftime('%Y-%m-%d %H:%M') }}</td>
               <td>{{ space.proport_yesno() }}</td>
               <td>{{ space.spcstatus }}</td>
-              {% if current_user.role.rank == 'admin' %}
+              {% if current_user.role.rank == 'admin', 'CS' %}
               <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
               <td>{{ space.last_modified_by }}</td>
               <td>
@@ -134,7 +134,7 @@
                         <th>Confirmed By</th>
                         <th>Void</th>
                         <th>Remark</th>
-                        {% if current_user.role.rank == 'admin' %}
+                        {% if current_user.role.rank == 'admin', 'CS' %}
                         <th>Owner</th>
                         {% endif %}
                         <th></th>
@@ -157,11 +157,39 @@
                           <td>{{ reserve.owner }}</td>
                           <td>
                             <div class="d-flex justify-content-end gap-2">
+                              
+                              <form action="{{ url_for('reserve.reserve_confirm', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
+                                  <button type="submit" class="btn btn-success" title="Confirm">
+                                      <i class="bi bi-check-circle"></i>
+                                  </button>
+                                </form>
+
+                              <div data-bs-toggle="tooltip" data-bs-title="Confirm decline">
+                                <a class="btn btn-danger" href="{{ url_for('reserve.reserve_decline', rsv_id=reserve.rsv_id) }}" title="Decline">
+                                    <i class="bi bi-x-circle"></i>
+                                </a>
+                              </div>
+
+
+
+
+
+                              <!-- If the reserve is confirmed, allow unconfirming -->
+                              <div data-bs-toggle="tooltip" data-bs-title="Confirm unconfirm">
+                                <a class="btn btn-warning" href="{{ url_for('reserve.reserve_unconfirm', rsv_id=reserve.rsv_id) }}" title="Unconfirm">
+                                  <i class="bi bi-arrow-counterclockwise"></i>
+                              </a>
+                              </div>
+                              
+                      
+
+                            
                               <div data-bs-toggle="tooltip" data-bs-title="Create booking">
                                 <a class="btn btn-primary" href="{{ url_for('booking.booking_add', spc_id=space.spc_id, rsv_id=reserve.rsv_id) }}">
                                   <i class="bi bi-plus-lg"></i>
                                 </a>
                               </div>
+
                               {% if current_user.role.rank == 'admin' or current_user.id == reserve.owner %}
                               <div data-bs-toggle="tooltip" data-bs-title="Edit reserve">
                                 <a class="btn btn-warning" href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">

@@ -21,7 +21,7 @@
         <th>Confirmed By</th>
         <th>Void</th>
         <th>Remark</th>
-        {% if current_user.role.rank == 'admin' %}
+        {% if current_user.role.rank == 'admin', 'CS' %}
         <th>Owner</th>
         {% endif %}
         <th></th>
