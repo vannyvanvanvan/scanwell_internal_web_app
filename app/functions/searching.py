@@ -75,7 +75,7 @@ def find_all_match(query: str) -> list:
 
 def schedule_table_results(schedules: list) -> str:
     return render_template(
-        "schedule_table_results.html", current_user=current_user, results=schedules
+        "schedule_table_results.html", current_user=current_user, results=schedules, highlighted={}
     )
 
 
