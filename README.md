@@ -106,7 +106,7 @@ docker pull redis
 - Name the container as `scanwell_internal_web_app`
 
 #### 2.3 Map a custom port
-- Third, change the port to a suitable one, for example `32768`
+- Third, change the port to a suitable one, for example `32769`
 
 #### 2.4 Run the container
 - Now you can start the container using Docker software (see screeenshot below)![Docker Destop software](docs/project_blueprint/images/docker_redis_setup_start.png)
@@ -193,7 +193,7 @@ For any issues, ensure:
 Restart the container:
 
 ```
-docker start redis-container
+docker start scanwell_internal_web_app
 ```
 
 ### Flask Not Working?
@@ -206,17 +206,15 @@ Check logs for errors and ensure all dependencies are installed.
 
 This project provides a **new**, **efficient** and **real-time shipping management system** for Scanwell Logistics, ensuring accurate user tracking and seamless data handling. With **Flask, Docker, and Redis**, the system is scalable and optimized for performance.
 
-----------
-
-
-### **Developed by:** Ong Man Hei and Shih Wing Hin
-
 ---
+
+
 
   
 
 ## Frontend Notes:
 
-  
-
 base.html contains things such as a header and footer which are automtically added to very webapage.
+
+### **Developed by:** Ong Man Hei and Shih Wing Hin
+---
