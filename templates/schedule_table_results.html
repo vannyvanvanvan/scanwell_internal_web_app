@@ -179,15 +179,15 @@
                                       <i class="bi bi-arrow-counterclockwise"></i>
                                   </button>
                               </form>
-                              {% endif %}
-                      
-
-                            
+                              
+                              
                               <div data-bs-toggle="tooltip" data-bs-title="Create booking">
                                 <a class="btn btn-primary" href="{{ url_for('booking.booking_add', spc_id=space.spc_id, rsv_id=reserve.rsv_id) }}">
                                   <i class="bi bi-plus-lg"></i>
                                 </a>
                               </div>
+
+                              {% endif %}
 
                               {% if current_user.role.rank == 'admin' or current_user.id == reserve.owner %}
                               <div data-bs-toggle="tooltip" data-bs-title="Edit reserve">

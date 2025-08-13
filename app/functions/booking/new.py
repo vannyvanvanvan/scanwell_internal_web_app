@@ -1,3 +1,4 @@
+from app.functions.booking.action import pending_booking
 from flask import render_template, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
@@ -53,6 +54,10 @@ def create_booking(form: dict, spc_id: int) -> int:
         return new_populated_booking_page(form, spc_id)
 
     try:
+        if not pending_booking(spc_id):
+     
+            flash('Failed to update space status', 'danger')
+            return -1
         new_booking = Booking(
             spc_id=spc_id,
             so=form["so"],
@@ -68,6 +73,7 @@ def create_booking(form: dict, spc_id: int) -> int:
             owner=current_user.id,
         )
         db.session.add(new_booking)
+        
         db.session.commit()
         flash("Booking created successfully!", "success")
         return redirect(url_for("booking.booking_edit", bk_id=new_booking.bk_id))

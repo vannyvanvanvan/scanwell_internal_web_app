@@ -1,9 +1,11 @@
+from app.functions.booking.action import pending_booking
 from flask_login import login_required
 from app.functions.booking.delete import delete_booking
 from app.functions.booking.edit import edit_booking, edit_booking_page
 from app.functions.booking.new import create_booking, new_booking_page
 from app.functions.permissions import role_required
 from flask import (
+    flash,
     Blueprint,
     request,
 )
@@ -19,8 +21,9 @@ booking_routes = Blueprint(
 
 @booking_routes.route("/add/<int:spc_id>", methods=["GET", "POST"])
 @login_required
-@role_required(["admin"])
+@role_required(["admin", "cs"])
 def booking_add(spc_id: int):
+
     if request.method == "POST":
         return create_booking(request.form, spc_id)
     return new_booking_page(spc_id)

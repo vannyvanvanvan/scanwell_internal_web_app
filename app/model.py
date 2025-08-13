@@ -170,7 +170,7 @@ class Booking(db.Model):
     spc_id = db.Column(db.Integer, db.ForeignKey("space.spc_id"), nullable=False)
     # Foreign Key to Reserve
     rsv_id = db.Column(db.Integer, db.ForeignKey("reserve.rsv_id"), nullable=True)
-    
+
     so = db.Column(db.String(100), nullable=False)
     findest = db.Column(db.String(100), nullable=False)
     ct_cl = db.Column(db.String(100), nullable=False)
