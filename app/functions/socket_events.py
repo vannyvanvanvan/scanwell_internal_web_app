@@ -2,7 +2,8 @@ from flask_socketio import emit
 from flask_login import current_user
 import redis
 
-redis_client = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
+# update the port if changed
+redis_client = redis.Redis(host="localhost", port=32769, db=0, decode_responses=True)
 
 def register_socket_events(socketio):
     @socketio.on("user_active")
