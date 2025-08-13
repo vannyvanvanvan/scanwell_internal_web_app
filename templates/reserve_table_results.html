@@ -28,7 +28,7 @@
         </a>
       </div>
       {% endif %}
-      {% if current_user.role.rank == 'admin' or current_user.id == reserve.owner %}
+      {% if current_user.role.rank == 'admin'%}
       <div data-bs-toggle="tooltip" data-bs-title="Edit reserve">
         <a class="btn btn-warning" href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">
           <i class="bi bi-pencil-square"></i>

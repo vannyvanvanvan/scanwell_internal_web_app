@@ -1,9 +1,12 @@
 from flask_login import login_required
+from flask_login import current_user
 from app.functions.permissions import role_required
 from app.functions.reserve.action import approve_reserve, decline_reserve, unconfirm_reserve
 from app.functions.reserve.new import create_reserve, new_reserve_page
 from app.functions.reserve.edit import edit_reserve, edit_reserve_page
 from app.functions.reserve.delete import delete_reserve
+
+
 from flask import (
     Blueprint,
     redirect,
