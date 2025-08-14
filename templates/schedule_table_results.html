@@ -3,9 +3,9 @@
 
 {% if highlighted["schedule"] and highlighted["schedule"]==result.sch_id %}
 <tr class="highlighted-row">
-{% else %}
+  {% else %}
 <tr>
-{% endif %}
+  {% endif %}
   {% if current_user.role.rank == 'admin' %}
   <td>{{ result.sch_id }}</td>
   {% endif %}
@@ -24,7 +24,7 @@
 
   <td>
     <div class="d-flex justify-content-end gap-2">
-      
+
 
       <div data-bs-toggle="tooltip" data-bs-title="View schedule details">
         <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse"
@@ -35,13 +35,13 @@
       </div>
 
       {% if current_user.role.rank in ['admin', 'cs'] %}
-        <div data-bs-toggle="tooltip" data-bs-title="Add space">
-          <a class="btn btn-primary" href="{{ url_for('space.space_add', sch_id=result.sch_id) }}">
-            <i class="bi bi-plus-lg"></i>
-          </a>
-        </div>
+      <div data-bs-toggle="tooltip" data-bs-title="Add space">
+        <a class="btn btn-primary" href="{{ url_for('space.space_add', sch_id=result.sch_id) }}">
+          <i class="bi bi-plus-lg"></i>
+        </a>
+      </div>
       {% endif %}
-      
+
       {% if current_user.role.rank == 'admin' or current_user.id == result.owner %}
       <div data-bs-toggle="tooltip" data-bs-title="Edit schedule">
         <a class="btn btn-warning" href="{{ url_for('schedule.schedule_edit', sch_id=result.sch_id) }}">
@@ -79,9 +79,9 @@
             {% if result.spaces %}
             {% for space in result.spaces %}
             {% if highlighted["space"] and highlighted["space"]==space.spc_id %}
-              <tr class="highlighted-row">
+            <tr class="highlighted-row">
               {% else %}
-              <tr>
+            <tr>
               {% endif %}
               <td>{{ space.spc_id }}</td>
               <td>{{ space.size }}</td>
@@ -147,9 +147,9 @@
                         {% if space.reserves %}
                         {% for reserve in space.reserves %}
                         {% if highlighted["reserve"] and highlighted["reserve"]==reserve.rsv_id %}
-                          <tr class="highlighted-row">
+                        <tr class="highlighted-row">
                           {% else %}
-                          <tr>
+                        <tr>
                           {% endif %}
                           {% if current_user.role.rank == 'admin' %}
                           <td>{{ reserve.rsv_id }}</td>
@@ -165,32 +165,39 @@
                           <td>{{ reserve.owner }}</td>
                           <td>
                             <div class="d-flex justify-content-end gap-2">
-                              
+
                               {% if space.spcstatus == 'RV_SUBMIT' %}
-                              <form action="{{ url_for('reserve.reserve_confirm', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
-                                  <button type="submit" class="btn btn-success" title="Confirm">
-                                      <i class="bi bi-check-circle"></i>
-                                  </button>
-                                </form>
+                              <form action="{{ url_for('reserve.reserve_confirm', rsv_id=reserve.rsv_id) }}"
+                                method="POST" class="d-inline">
+                                <button data-bs-toggle="tooltip" data-bs-title="Confirm reserve" type="submit"
+                                  class="btn btn-success" title="Confirm">
+                                  <i class="bi bi-check-circle"></i>
+                                </button>
+                              </form>
                               {% endif %}
 
-                              <form action="{{ url_for('reserve.reserve_decline', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
-                                  <button type="submit" class="btn btn-danger" title="Decline">
-                                      <i class="bi bi-x-circle"></i>
-                                  </button>
+                              <form action="{{ url_for('reserve.reserve_decline', rsv_id=reserve.rsv_id) }}"
+                                method="POST" class="d-inline">
+                                <button data-bs-toggle="tooltip" data-bs-title="Decline reserve" type="submit"
+                                  class="btn btn-danger" title="Decline">
+                                  <i class="bi bi-x-circle"></i>
+                                </button>
                               </form>
 
                               <!-- If the reserve is confirmed, allow unconfirming -->
                               {% if space.spcstatus == 'RV_CONFIRM' %}
-                              <form action="{{ url_for('reserve.reserve_unconfirm', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
-                                  <button type="submit" class="btn btn-warning" title="Unconfirm">
-                                      <i class="bi bi-arrow-counterclockwise"></i>
-                                  </button>
+                              <form action="{{ url_for('reserve.reserve_unconfirm', rsv_id=reserve.rsv_id) }}"
+                                method="POST" class="d-inline">
+                                <button data-bs-toggle="tooltip" data-bs-title="Unconfirm reserve" type="submit"
+                                  class="btn btn-warning" title="Unconfirm">
+                                  <i class="bi bi-arrow-counterclockwise"></i>
+                                </button>
                               </form>
-                              
-                              
+
+
                               <div data-bs-toggle="tooltip" data-bs-title="Create booking">
-                                <a class="btn btn-primary" href="{{ url_for('booking.booking_add', spc_id=space.spc_id, rsv_id=reserve.rsv_id) }}">
+                                <a class="btn btn-primary"
+                                  href="{{ url_for('booking.booking_add', spc_id=space.spc_id, rsv_id=reserve.rsv_id) }}">
                                   <i class="bi bi-plus-lg"></i>
                                 </a>
                               </div>
@@ -199,7 +206,8 @@
 
                               {% if current_user.role.rank == 'admin' or current_user.id == reserve.owner %}
                               <div data-bs-toggle="tooltip" data-bs-title="Edit reserve">
-                                <a class="btn btn-warning" href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">
+                                <a class="btn btn-warning"
+                                  href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">
                                   <i class="bi bi-pencil-square"></i>
                                 </a>
                               </div>
@@ -243,9 +251,9 @@
                         {% if space.bookings %}
                         {% for booking in space.bookings %}
                         {% if highlighted["booking"] and highlighted["booking"]==booking.bk_id %}
-                          <tr class="highlighted-row">
+                        <tr class="highlighted-row">
                           {% else %}
-                          <tr>
+                        <tr>
                           {% endif %}
                           {% if current_user.role.rank == 'admin' %}
                           <td>{{ booking.bk_id }}</td>
@@ -263,7 +271,8 @@
                           <td>
                             {% if current_user.role.rank == 'admin' or current_user.id == booking.owner %}
                             <div data-bs-toggle="tooltip" data-bs-title="Edit booking">
-                              <a class="btn btn-warning" href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}">
+                              <a class="btn btn-warning"
+                                href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}">
                                 <i class="bi bi-pencil-square"></i>
                               </a>
                             </div>
