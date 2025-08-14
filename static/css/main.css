@@ -143,7 +143,7 @@ header.cs {
 }
 
 .highlighted-row > * {
-  background-color: #ffe69b !important;
+  background-color: #80ef807b !important;
 }
 
 @media screen and (max-width: 854px) {

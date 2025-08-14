@@ -2,7 +2,7 @@ from app.functions.booking.action import pending_booking
 from flask import render_template, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
-from app.model import Booking, db
+from app.model import Booking, Space, db
 from app.functions.validate import (
     is_checked_key,
     is_valid_booking_form,
@@ -58,6 +58,9 @@ def create_booking(form: dict, spc_id: int) -> int:
      
             flash('Failed to update space status', 'danger')
             return -1
+        
+        space=Space.query.get(spc_id)
+
         new_booking = Booking(
             spc_id=spc_id,
             so=form["so"],
@@ -76,7 +79,14 @@ def create_booking(form: dict, spc_id: int) -> int:
         
         db.session.commit()
         flash("Booking created successfully!", "success")
-        return redirect(url_for("booking.booking_edit", bk_id=new_booking.bk_id))
+        return redirect(
+            url_for(
+                "user.user_home",
+                highlighted_schedule=space.sch_id,
+                highlighted_space=space.spc_id,
+                highlighted_booking=new_booking.bk_id,
+            )
+        )
     except SQLAlchemyError as e:
         db.session.rollback()
         flash(f"Database error: {str(e)}", "danger")

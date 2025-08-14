@@ -12,6 +12,12 @@ def home_page() -> str:
 
     if "highlighted_schedule" in request.args:
         highlighted["schedule"] = int(request.args["highlighted_schedule"])
+    if "highlighted_space" in request.args:
+        highlighted["space"] = int(request.args["highlighted_space"])
+    if "highlighted_reserve" in request.args:
+        highlighted["reserve"] = int(request.args["highlighted_reserve"])
+    if "highlighted_booking" in request.args:
+        highlighted["booking"] = int(request.args["highlighted_booking"])
 
     if current_user.role.rank == "admin":
         return admin_home_page(highlighted=highlighted)
