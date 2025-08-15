@@ -11,7 +11,6 @@ def register_socket_events(socketio):
     @socketio.on("connect")
     def on_connect():
         if current_user.is_authenticated:
-            # Join a personal room for targeted emits
             join_room(f"user_{current_user.id}")
             redis_client.set(f"online_user:{current_user.id}", "active")
             redis_client.delete(f"away_user:{current_user.id}")
