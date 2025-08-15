@@ -3,9 +3,8 @@ from flask import Blueprint, flash, redirect, url_for
 from app.functions.permissions import role_required
 from app.model import db, LoginStatus
 from app.functions.auth_utils import lock_user, unlock_user
-
 from flask import jsonify
-from app.functions.auth_utils import redis_client
+from app.functions.redis_config import redis_client
 
 
 

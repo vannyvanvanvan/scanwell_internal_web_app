@@ -55,4 +55,7 @@ socket.on("disconnect", function () {
 
 socket.on("update_online_status", function (data) {
     console.log("[DEBUG] User status updated:", data.status);
+    if (data.status === "booted") {
+        window.location.href = "/logout"; 
+    }
 });
