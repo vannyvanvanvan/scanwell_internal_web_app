@@ -1,8 +1,8 @@
 from flask import render_template
 from flask_login import current_user
-from app.functions.booking.get import booking_table_results
-from app.functions.reserve.get import reserve_table_results
-from app.model import Booking, Reserve, Schedule, Space, db
+from app.functions.booking.get import booking_table_results, get_sales_booking
+from app.functions.reserve.get import get_sales_reserve, reserve_table_results
+from app.model import Schedule, Space, db
 
 from datetime import datetime
 
@@ -75,7 +75,10 @@ def find_all_match(query: str) -> list:
 
 def schedule_table_results(schedules: list) -> str:
     return render_template(
-        "schedule_table_results.html", current_user=current_user, results=schedules, highlighted={}
+        "schedule_table_results.html",
+        current_user=current_user,
+        results=schedules,
+        highlighted={},
     )
 
 
@@ -94,8 +97,7 @@ def search_all_results(query: str):
 
 
 def search_sales_reserve_results(query: str):
-    all_reserves = Reserve.query.all()
-    all_reserves.sort()
+    all_reserves = get_sales_reserve(current_user.id)
     results = []
 
     if not query:
@@ -105,7 +107,6 @@ def search_sales_reserve_results(query: str):
             if query_in_list(
                 query,
                 [
-                    reserve.sales,
                     reserve.saleprice,
                     reserve.rsv_date,
                     reserve.cfm_date,
@@ -118,7 +119,7 @@ def search_sales_reserve_results(query: str):
 
 
 def search_sales_booking_results(query: str):
-    all_bookings = Booking.query.all()
+    all_bookings = get_sales_booking(current_user.id)
     all_bookings.sort()
     results = []
 
@@ -129,11 +130,13 @@ def search_sales_booking_results(query: str):
             if query_in_list(
                 query,
                 [
-                    booking.sales,
+                    booking.so,
+                    booking.findest,
+                    booking.ct_cl,
+                    booking.shipper,
+                    booking.consignee,
+                    booking.term,
                     booking.saleprice,
-                    booking.rsv_date,
-                    booking.cfm_date,
-                    booking.cfm_cs,
                     booking.remark,
                 ],
             ):
@@ -143,14 +146,15 @@ def search_sales_booking_results(query: str):
 
 def search_available_spaces_results(filters):
     query = db.session.query(Schedule, Space).join(
-        Space, Schedule.sch_id == Space.sch_id)
+        Space, Schedule.sch_id == Space.sch_id
+    )
     if filters["pol"]:
         query = query.filter(Schedule.pol.ilike(f'%{filters["pol"]}%'))
     if filters["pod"]:
         query = query.filter(Schedule.pod.ilike(f'%{filters["pod"]}%'))
     if filters["etd"]:
         try:
-            etd_date = datetime.strptime(filters["etd"], '%Y-%m-%d').date()
+            etd_date = datetime.strptime(filters["etd"], "%Y-%m-%d").date()
             query = query.filter(db.func.date(Schedule.etd) == etd_date)
         except ValueError:
             pass
@@ -162,8 +166,7 @@ def search_available_spaces_results(filters):
         query = query.filter(Space.sugrate == int(filters["sugrate"]))
     if filters["ratevalid"]:
         try:
-            valid_date = datetime.strptime(
-                filters["ratevalid"], '%Y-%m-%d').date()
+            valid_date = datetime.strptime(filters["ratevalid"], "%Y-%m-%d").date()
             query = query.filter(db.func.date(Space.ratevalid) == valid_date)
         except ValueError:
             pass

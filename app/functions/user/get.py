@@ -1,4 +1,3 @@
-from app.functions.reserve.get import get_sales_reserve
 from app.model import User
 
 
