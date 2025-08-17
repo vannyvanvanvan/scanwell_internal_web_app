@@ -71,7 +71,6 @@
             <th>Status</th>
             {% if current_user.role.rank == 'admin', 'CS' %}
             <th>Last Modified</th>
-            <th>By</th>
             {% endif %}
             <th></th>
           </thead>
@@ -91,8 +90,7 @@
               <td>{{ space.proport_yesno() }}</td>
               <td>{{ space.spcstatus }}</td>
               {% if current_user.role.rank == 'admin', 'CS' %}
-              <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
-              <td>{{ space.last_modified_by }}</td>
+              <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }} by {{ users[space.last_modified_by] | capitalize }}</td>
               <td>
                 <div class="d-flex justify-content-end gap-2">
                   <div data-bs-toggle="tooltip" data-bs-title="View space details">
@@ -138,9 +136,6 @@
                         <th>Confirmed By</th>
                         <th>Void</th>
                         <th>Remark</th>
-                        {% if current_user.role.rank == 'admin', 'CS' %}
-                        <th>Owner</th>
-                        {% endif %}
                         <th></th>
                       </thead>
                       <tbody>
@@ -155,14 +150,13 @@
                           <td>{{ reserve.rsv_id }}</td>
                           {% endif %}
 
-                          <td>{{ reserve.sales }}</td>
+                          <td>{{ users[reserve.owner] | capitalize }}</td>
                           <td>{{ reserve.saleprice }}</td>
                           <td>{{ reserve.rsv_date.strftime('%Y-%m-%d') }}</td>
                           <td>{% if reserve.cfm_date %}{{ reserve.cfm_date.strftime('%Y-%m-%d') }}{% endif %}</td>
-                          <td>{{ reserve.cfm_cs }}</td>
+                          <td>{{ users[reserve.cfm_cs] | capitalize }}</td>
                           <td>{{ reserve.void_yesno() }}</td>
                           <td>{{ reserve.remark }}</td>
-                          <td>{{ reserve.owner }}</td>
                           <td>
                             <div class="d-flex justify-content-end gap-2">
 
@@ -264,7 +258,7 @@
                           <td>{{ booking.shipper }}</td>
                           <td>{{ booking.consignee }}</td>
                           <td>{{ booking.term }}</td>
-                          <td>{{ booking.sales }}</td>
+                          <td>{{ users[booking.sales] | capitalize }}</td>
                           <td>{{ booking.saleprice }}</td>
                           <td>{{ booking.void_yesno() }}</td>
                           <td>{{ booking.remark }}</td>

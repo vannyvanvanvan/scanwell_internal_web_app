@@ -21,7 +21,6 @@ def new_reserve_page(spc_id: int) -> str:
         mode="add",
         data=Reserve(
             spc_id=spc_id,
-            sales="",
             saleprice=0,
             rsv_date=datetime.now(),
             cfm_date=datetime.now(),
@@ -38,7 +37,6 @@ def new_populated_reserve_page(form: dict, spc_id: int) -> str:
         mode="add",
         data=Reserve(
             spc_id=spc_id,
-            sales=form["sales"],
             saleprice=zero_or_valid_number(form["saleprice"]),
             rsv_date=now_or_valid_date(form["rsv_date"]),
             cfm_date=now_or_valid_date(form["cfm_date"]),
@@ -57,7 +55,6 @@ def create_reserve(form: dict, spc_id: int) -> int:
     try:
         new_reserve = Reserve(
             spc_id=spc_id,
-            sales=form["sales"],
             saleprice=int(form["saleprice"]),
             rsv_date=datetime.strptime(form["rsv_date"], "%Y-%m-%d"),
             cfm_date=datetime.strptime(form["cfm_date"], "%Y-%m-%d"),
@@ -95,7 +92,6 @@ def reserve_space(form: dict, spc_id: int) -> bool:
     try:
         new_reserve = Reserve(
             spc_id=spc_id,
-            sales=current_user.id,
             saleprice=form["saleprice"],
             rsv_date=datetime.utcnow(),
             owner=current_user.id,

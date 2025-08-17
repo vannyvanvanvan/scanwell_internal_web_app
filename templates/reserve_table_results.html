@@ -1,19 +1,20 @@
 {% if reserves %}
 {% for reserve in reserves %}
+{% if highlighted["reserve"] and highlighted["reserve"]==reserve.rsv_id %}
+<tr class="highlighted-row">
+{% else %}
 <tr>
+{% endif %}
   {% if current_user.role.rank == 'admin' %}
   <td>{{ reserve.rsv_id }}</td>
   {% endif %}
-  <td>{{ reserve.sales }}</td>
+  <td>{{ users[reserve.owner] | capitalize }}</td>
   <td>{{ reserve.saleprice }}</td>
   <td>{{ reserve.rsv_date.strftime('%Y-%m-%d') }}</td>
   <td>{% if reserve.cfm_date %}{{ reserve.cfm_date.strftime('%Y-%m-%d') }}{% endif %}</td>
-  <td>{{ reserve.cfm_cs }}</td>
+  <td>{{ users[reserve.cfm_cs] | capitalize }}</td>
   <td>{{ reserve.void_yesno() }}</td>
   <td>{{ reserve.remark }}</td>
-  {% if current_user.role.rank == 'admin', 'CS' %}
-  <td>{{ reserve.owner }}</td>
-  {% endif %}
   <td>
     <div class="d-flex justify-content-end gap-2">
 

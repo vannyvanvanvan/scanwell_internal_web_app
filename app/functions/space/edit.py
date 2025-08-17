@@ -1,4 +1,5 @@
 from flask import render_template, request, flash, redirect, url_for
+from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
 from app.model import Space, db
@@ -70,6 +71,7 @@ def edit_space(spc_id: int) -> str:
         )
         space_to_edit.proport = is_checked_key(request.form, "proport")
         space_to_edit.spcstatus = request.form["spcstatus"]
+        space_to_edit.last_modified_by = current_user.id
         db.session.commit()
         flash("Space updated successfully!", "success")
         return redirect(url_for("space.space_edit", spc_id=spc_id))

@@ -4,6 +4,7 @@ from flask_login import current_user
 from app.functions.booking.get import get_sales_booking
 from app.functions.reserve.get import get_sales_reserve
 from app.functions.schedule.get import get_all_schedules
+from app.functions.user.get import get_all_users_names_dict
 
 
 def home_page() -> str:
@@ -35,6 +36,7 @@ def admin_home_page(highlighted: dict) -> str:
         current_user=current_user,
         highlighted=highlighted,
         results=get_all_schedules(),
+        users=get_all_users_names_dict()
     )
 
 
@@ -44,6 +46,7 @@ def cs_home_page(highlighted: dict) -> str:
         current_user=current_user,
         highlighted=highlighted,
         results=get_all_schedules(),
+        users=get_all_users_names_dict()
     )
 
 
@@ -56,4 +59,5 @@ def sales_home_page(highlighted: dict) -> str:
         highlighted=highlighted,
         reserves=sales_reserves,
         bookings=sales_bookings,
+        users=get_all_users_names_dict()
     )

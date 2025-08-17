@@ -144,7 +144,6 @@ class Reserve(db.Model):
 
     rsv_id = db.Column(db.Integer, primary_key=True)
     spc_id = db.Column(db.Integer, db.ForeignKey("space.spc_id"), nullable=False)
-    sales = db.Column(db.String(100), nullable=False)
     saleprice = db.Column(db.Integer, nullable=False)
     rsv_date = db.Column(db.DateTime, default=datetime.utcnow())
     cfm_date = db.Column(db.DateTime, nullable=True)

@@ -202,7 +202,6 @@ def is_valid_reserve_dict(form: dict) -> bool:
     return all(
         item in form 
         for item in [
-            "sales", 
             "saleprice", 
             "rsv_date", 
             "cfm_cs", 
@@ -215,7 +214,6 @@ def is_valid_reserve_form(form: dict) -> bool:
     # Return True/False if all key values are valid
     return (
         is_valid_reserve_dict(form)
-        and is_valid_number(form["sales"])
         and is_valid_number(form["saleprice"])
         and is_valid_date(form["rsv_date"])
         and is_valid_date(form["cfm_date"])

@@ -90,7 +90,7 @@ with app.app_context():
 
     # Reserve
     reserve1 = Reserve(
-        rsv_id=1, spc_id=1, sales=5, saleprice=8000, rsv_date=to_date('2024-07-01'),
+        rsv_id=1, spc_id=1, saleprice=8000, rsv_date=to_date('2024-07-01'),
         cfm_date=to_date('2024-07-01'), cfm_cs=4, void=False, remark='TEST', owner=5
     )
 
