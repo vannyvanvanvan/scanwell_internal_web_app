@@ -90,8 +90,8 @@ with app.app_context():
 
     # Reserve
     reserve1 = Reserve(
-        rsv_id=1, spc_id=1, sales='ERIC', saleprice=8000, rsv_date=to_date('2024-07-01'),
-        cfm_date=to_date('2024-07-01'), cfm_cs='FANNY', void=False, remark='TEST', owner=1
+        rsv_id=1, spc_id=1, sales=5, saleprice=8000, rsv_date=to_date('2024-07-01'),
+        cfm_date=to_date('2024-07-01'), cfm_cs=4, void=False, remark='TEST', owner=5
     )
 
     db.session.add(reserve1)
@@ -100,23 +100,23 @@ with app.app_context():
     booking1 = Booking(
         bk_id=1, spc_id=1, so='SZPEJ4609700', findest='HOUSTON,TX',
         ct_cl='Contract', shipper='CMECH', consignee='DZN CONCEPTS INC.',
-        term='CIF', sales='ERIC', saleprice=8000, void=False, remark='取消', owner=1
+        term='CIF', sales=5, saleprice=8000, void=False, remark='取消', owner=1
     )
     booking2 = Booking(
         bk_id=2, spc_id=2, so='SZPEL0126600', findest='CINCINNATI,OH',
         ct_cl='Contract', shipper='EXPRESS SOLUTIONS',
         consignee='BOOKING UNION (USA) INC', term='FOB',
-        sales='CHI-CHRIS', saleprice=8184, void=False, remark='', owner=1
+        sales=6, saleprice=8184, void=False, remark='', owner=1
     )
     booking3 = Booking(
         bk_id=3, spc_id=3, so='SZPEL0138900', findest='HOUSTON,TX',
         ct_cl='Contract', shipper='', consignee='',
-        term='', sales='', saleprice='', void=False, remark='', owner=1
+        term='', sales=None, saleprice='', void=False, remark='', owner=1
     )
     booking4 = Booking(
         bk_id=4, spc_id=4, so='181AY0245399880D1', findest='',
         ct_cl='CO-LOAD', shipper='CHEUNG HING PLASTIC', consignee='GOODCO',
-        term='FOB', sales='CHI-CHRIS', saleprice=8184, void=True, remark='', owner=1
+        term='FOB', sales=6, saleprice=8184, void=True, remark='', owner=1
     )
 
     db.session.add_all([booking1, booking2, booking3, booking4])

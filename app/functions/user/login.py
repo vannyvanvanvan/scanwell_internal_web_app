@@ -16,11 +16,11 @@ class LoginForm(FlaskForm):
         "Username",
         validators=[
             InputRequired("A username is required!"),
-            Length(min=5, max=30, message="Must be between 5 and 30 characters."),
+            Length(min=1, max=30, message="Username must not be empty."),
         ],
     )
     request_password = PasswordField(
-        "Password", validators=[InputRequired("Password is required!")]
+        "Password", validators=[InputRequired("Password must not be empty.")]
     )
     remember_me = BooleanField("Remember me")
 

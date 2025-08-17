@@ -61,7 +61,7 @@ def create_reserve(form: dict, spc_id: int) -> int:
             saleprice=int(form["saleprice"]),
             rsv_date=datetime.strptime(form["rsv_date"], "%Y-%m-%d"),
             cfm_date=datetime.strptime(form["cfm_date"], "%Y-%m-%d"),
-            cfm_cs=form["cfm_cs"],
+            cfm_cs=int(form["cfm_cs"]),
             void=is_checked_key(form, "void"),
             remark=form["remark"],
             owner=current_user.id,
@@ -95,7 +95,7 @@ def reserve_space(form: dict, spc_id: int) -> bool:
     try:
         new_reserve = Reserve(
             spc_id=spc_id,
-            sales=current_user.username,
+            sales=current_user.id,
             saleprice=form["saleprice"],
             rsv_date=datetime.utcnow(),
             owner=current_user.id,

@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(200), nullable=False, unique=True)
     password = db.Column(db.String(200), nullable=False)
+    friendly_name = db.Column(db.String(200))
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     role = db.relationship(
@@ -147,7 +148,7 @@ class Reserve(db.Model):
     saleprice = db.Column(db.Integer, nullable=False)
     rsv_date = db.Column(db.DateTime, default=datetime.utcnow())
     cfm_date = db.Column(db.DateTime, nullable=True)
-    cfm_cs = db.Column(db.String(100), nullable=True)
+    cfm_cs = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     void = db.Column(db.Boolean, nullable=False, default=False)
     remark = db.Column(db.String(300), nullable=True)
 
@@ -177,7 +178,7 @@ class Booking(db.Model):
     shipper = db.Column(db.String(100), nullable=False)
     consignee = db.Column(db.String(200), nullable=False)
     term = db.Column(db.String(100), nullable=False)
-    sales = db.Column(db.String(100), nullable=False)
+    sales = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     saleprice = db.Column(db.Integer, nullable=False)
     void = db.Column(db.Boolean, nullable=False, default=False)
     remark = db.Column(db.String(300), nullable=True)

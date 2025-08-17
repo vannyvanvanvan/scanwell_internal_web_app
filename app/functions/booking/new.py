@@ -69,7 +69,7 @@ def create_booking(form: dict, spc_id: int) -> int:
             shipper=form["shipper"],
             consignee=form["consignee"],
             term=form["term"],
-            sales=form["sales"],
+            sales=int(form["sales"]),
             saleprice=int(form["saleprice"]),
             void=is_checked_key(form, "void"),
             remark=form["remark"],

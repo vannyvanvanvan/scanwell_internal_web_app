@@ -5,8 +5,7 @@ from app.model import Booking
 
 
 def get_sales_booking(userid: int) -> list:
-    sales_rsv_ids = [reserve.rsv_id for reserve in get_sales_reserve(userid)]
-    return Booking.query.filter(Booking.rsv_id.in_(sales_rsv_ids)).all()
+    return Booking.query.filter(Booking.sales == userid).all()
 
 
 def booking_table_results(reserves: list) -> str:
