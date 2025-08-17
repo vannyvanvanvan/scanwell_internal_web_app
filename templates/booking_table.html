@@ -1,20 +1,26 @@
-<section class="container p-4">
+{% if current_user.role.rank == 'sales' %}
+<div class="container p-4">
   <h3>Your Bookings</h3>
   <div class="border rounded">
-
     <div class="p-2">
       <input type="text" class="form-control" placeholder="Search..." name="q"
-        hx-get="{{ url_for('search.search_sales_reserve') }}" hx-trigger="keyup changed delay:500ms"
+        hx-get="{{ url_for('search.search_sales_booking') }}" hx-trigger="keyup changed delay:500ms"
         hx-target="#results-booking" hx-indicator="#loading" />
       <div id="loading" style="display: none;">Loading...</div>
-
     </div>
+{% endif %}
+{% if current_user.role.rank in ['admin', 'cs'] %}
+<div class="container p-0">
+  <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
+    <h5>Bookings</h5>
+  </div>
+  <div class="border rounded overflow-hidden mt-2 mb-2">
+{% endif %}
     <table class="table align-middle m-0">
       <thead>
         {% if current_user.role.rank == 'admin' %}
         <th>ID</th>
         {% endif %}
-
         <th>SO</th>
         <th>Final Destination</th>
         <th>Contract/Coloader</th>
@@ -32,4 +38,4 @@
       </tbody>
     </table>
   </div>
-</section>
+</div>

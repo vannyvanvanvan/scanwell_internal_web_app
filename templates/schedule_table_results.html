@@ -119,169 +119,15 @@
             <tr>
               <td colspan="11" class="bg-body-tertiary ps-4 pe-4 pt-0 pb-0">
                 <div class="collapse" id="collapse-spc-{{ space.spc_id }}">
-                  <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
-                    <h5>Reserve</h5>
-                  </div>
-                  <div class="border rounded overflow-hidden mt-2 mb-4">
-                    <table class="table align-middle m-0">
-                      <thead>
-                        {% if current_user.role.rank == 'admin' %}
-                        <th>ID</th>
-                        {% endif %}
+                  
+                  {% with reserves=space.reserves %}
+                  {% include 'reserve_table.html' %}
+                  {% endwith %}
 
-                        <th>Sales</th>
-                        <th>Sale Price</th>
-                        <th>Reserve Date</th>
-                        <th>Confirm Date</th>
-                        <th>Confirmed By</th>
-                        <th>Void</th>
-                        <th>Remark</th>
-                        <th></th>
-                      </thead>
-                      <tbody>
-                        {% if space.reserves %}
-                        {% for reserve in space.reserves %}
-                        {% if highlighted["reserve"] and highlighted["reserve"]==reserve.rsv_id %}
-                        <tr class="highlighted-row">
-                          {% else %}
-                        <tr>
-                          {% endif %}
-                          {% if current_user.role.rank == 'admin' %}
-                          <td>{{ reserve.rsv_id }}</td>
-                          {% endif %}
+                  {% with bookings=space.bookings %}
+                  {% include 'booking_table.html' %}
+                  {% endwith %}
 
-                          <td>{{ users[reserve.owner] | capitalize }}</td>
-                          <td>{{ reserve.saleprice }}</td>
-                          <td>{{ reserve.rsv_date.strftime('%Y-%m-%d') }}</td>
-                          <td>{% if reserve.cfm_date %}{{ reserve.cfm_date.strftime('%Y-%m-%d') }}{% endif %}</td>
-                          <td>{{ users[reserve.cfm_cs] | capitalize }}</td>
-                          <td>{{ reserve.void_yesno() }}</td>
-                          <td>{{ reserve.remark }}</td>
-                          <td>
-                            <div class="d-flex justify-content-end gap-2">
-
-                              {% if space.spcstatus == 'RV_SUBMIT' %}
-                              <form action="{{ url_for('reserve.reserve_confirm', rsv_id=reserve.rsv_id) }}"
-                                method="POST" class="d-inline">
-                                <button data-bs-toggle="tooltip" data-bs-title="Confirm reserve" type="submit"
-                                  class="btn btn-success" title="Confirm">
-                                  <i class="bi bi-check-circle"></i>
-                                </button>
-                              </form>
-                              {% endif %}
-
-                              <form action="{{ url_for('reserve.reserve_decline', rsv_id=reserve.rsv_id) }}"
-                                method="POST" class="d-inline">
-                                <button data-bs-toggle="tooltip" data-bs-title="Decline reserve" type="submit"
-                                  class="btn btn-danger" title="Decline">
-                                  <i class="bi bi-x-circle"></i>
-                                </button>
-                              </form>
-
-                              <!-- If the reserve is confirmed, allow unconfirming -->
-                              {% if space.spcstatus == 'RV_CONFIRM' %}
-                              <form action="{{ url_for('reserve.reserve_unconfirm', rsv_id=reserve.rsv_id) }}"
-                                method="POST" class="d-inline">
-                                <button data-bs-toggle="tooltip" data-bs-title="Unconfirm reserve" type="submit"
-                                  class="btn btn-warning" title="Unconfirm">
-                                  <i class="bi bi-arrow-counterclockwise"></i>
-                                </button>
-                              </form>
-
-
-                              <div data-bs-toggle="tooltip" data-bs-title="Create booking">
-                                <a class="btn btn-primary"
-                                  href="{{ url_for('booking.booking_add', spc_id=space.spc_id, rsv_id=reserve.rsv_id) }}">
-                                  <i class="bi bi-plus-lg"></i>
-                                </a>
-                              </div>
-
-                              {% endif %}
-
-                              {% if current_user.role.rank == 'admin' or current_user.id == reserve.owner %}
-                              <div data-bs-toggle="tooltip" data-bs-title="Edit reserve">
-                                <a class="btn btn-warning"
-                                  href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">
-                                  <i class="bi bi-pencil-square"></i>
-                                </a>
-                              </div>
-                              {% endif %}
-                            </div>
-                          </td>
-                        </tr>
-                        {% endfor %}
-                        {% else %}
-                        <tr>
-                          <td colspan="14">No reserves found.</td>
-                        </tr>
-                        {% endif %}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
-                    <h5>Bookings</h5>
-                  </div>
-                  <div class="border rounded overflow-hidden mt-2 mb-2">
-                    <table class="table align-middle m-0">
-                      <thead>
-                        {% if current_user.role.rank == 'admin' %}
-                        <th>ID</th>
-                        {% endif %}
-
-                        <th>SO</th>
-                        <th>Final Destination</th>
-                        <th>Contract/Coloader</th>
-                        <th>Shipper</th>
-                        <th>Consignee</th>
-                        <th>Term</th>
-                        <th>Sales</th>
-                        <th>Sale Price</th>
-                        <th>Void</th>
-                        <th>Remark</th>
-                        <th></th>
-                      </thead>
-                      <tbody>
-                        {% if space.bookings %}
-                        {% for booking in space.bookings %}
-                        {% if highlighted["booking"] and highlighted["booking"]==booking.bk_id %}
-                        <tr class="highlighted-row">
-                          {% else %}
-                        <tr>
-                          {% endif %}
-                          {% if current_user.role.rank == 'admin' %}
-                          <td>{{ booking.bk_id }}</td>
-                          {% endif %}
-                          <td>{{ booking.so }}</td>
-                          <td>{{ booking.findest }}</td>
-                          <td>{{ booking.ct_cl }}</td>
-                          <td>{{ booking.shipper }}</td>
-                          <td>{{ booking.consignee }}</td>
-                          <td>{{ booking.term }}</td>
-                          <td>{{ users[booking.sales] | capitalize }}</td>
-                          <td>{{ booking.saleprice }}</td>
-                          <td>{{ booking.void_yesno() }}</td>
-                          <td>{{ booking.remark }}</td>
-                          <td>
-                            {% if current_user.role.rank == 'admin' or current_user.id == booking.owner %}
-                            <div data-bs-toggle="tooltip" data-bs-title="Edit booking">
-                              <a class="btn btn-warning"
-                                href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}">
-                                <i class="bi bi-pencil-square"></i>
-                              </a>
-                            </div>
-                            {% endif %}
-                          </td>
-                        </tr>
-                        {% endfor %}
-                        {% else %}
-                        <tr>
-                          <td colspan="14">No bookings found.</td>
-                        </tr>
-                        {% endif %}
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
               </td>
             </tr>
@@ -294,11 +140,6 @@
           </tbody>
         </table>
       </div>
-
-
-
-
-
 
     </div>
   </td>

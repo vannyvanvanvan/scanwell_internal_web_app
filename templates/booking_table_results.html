@@ -1,6 +1,6 @@
 {% if bookings %}
 {% for booking in bookings %}
-{% if highlighted["booking"] and highlighted["booking"]==booking.bk_id %}
+{% if highlighted and highlighted["booking"] and highlighted["booking"]==booking.bk_id %}
 <tr class="highlighted-row">
 {% else %}
 <tr>
