@@ -19,13 +19,37 @@
   <td>{{ booking.void_yesno() }}</td>
   <td>{{ booking.remark }}</td>
   <td>
+
+
     {% if current_user.role.rank == 'admin' or current_user.id == booking.owner %}
-    <div data-bs-toggle="tooltip" data-bs-title="Edit booking">
-      <a class="btn btn-warning" href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}">
-        <i class="bi bi-pencil-square"></i>
-      </a>
-    </div>
+      <div data-bs-toggle="tooltip" data-bs-title="Edit booking">
+        <a class="btn btn-warning" href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}">
+          <i class="bi bi-pencil-square"></i>
+        </a>
+      
+
+        {% if space.spcstatus == 'BK_PENDING' %}
+            <a data-bs-toggle="tooltip" data-bs-title="Confirm booking" class="btn btn-success" 
+                href="{{ url_for('booking.booking_confirm', bk_id=booking.bk_id) }}" title="Confirm">
+              <i class="bi bi-check-circle"></i>
+            </a>
+
+            <a data-bs-toggle="tooltip" data-bs-title="Confirm booking" class="btn btn-danger" 
+                href="{{ url_for('booking.booking_decline', bk_id=booking.bk_id) }}" title="Decline">
+              <i class="bi bi-check-circle"></i>
+              </a>
+          {% endif %}
+        </form>
+      </div>
     {% endif %}
+
+
+
+
+
+
+
+
   </td>
 </tr>
 {% endfor %}

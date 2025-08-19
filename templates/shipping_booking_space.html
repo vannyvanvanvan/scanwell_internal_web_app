@@ -2,17 +2,17 @@
 {% from '_render_input.html' import render_input_text, render_input_number, render_input_date, render_input_checkbox %}
 
 {% block head %}
-<title>Booking Confirm</title>
+<title> {{ page_title }} </title>
 {% endblock %}
 
 {% block body %}
-{% with title="Booking Confirm" %}
+{% with title=page_title %}
 {% include 'header.html' %}
 {% endwith %}
 
 <div class="mt-4">{% include 'flash.html' %}</div>
 <section class="container p-4">
-  <h3>Space Details</h3>
+  <h3>Booking Details</h3>
 
   <table class="table align-middle m-0">
     <thead>
@@ -28,7 +28,6 @@
       <th>Sales</th>
       <th>Sale Price</th>
       <th>Void</th>
-      <th>Remark</th>
       {% if current_user.role.rank == 'admin' %}
       <th>Status</th>
       <th>Last Modified</th>
@@ -38,21 +37,21 @@
     <tbody id="results-booking">
       <tr>
         {% if current_user.role.rank == 'admin' %}
-        <td>{{ space.spc_id }}</td>
+            <td>{{ space.spc_id }}</td>
         {% endif %}
-        <td>{{ booking.so }}</td>
-        <td>{{ booking.findest }}</td>
-        <td>{{ booking.ct_cl }}</td>
-        <td>{{ booking.shipper }}</td>
-        <td>{{ booking.consignee }}</td>
-        <td>{{ booking.term }}</td>
-        <td>{{ booking.saleprice }}</td>
-        <td>{{ booking.void_yesno() }}</td>
-        <td>{{ booking.remark }}</td>
+            <td>{{ booking.so }}</td>
+            <td>{{ booking.findest }}</td>
+            <td>{{ booking.ct_cl }}</td>
+            <td>{{ booking.shipper }}</td>
+            <td>{{ booking.consignee }}</td>
+            <td>{{ booking.term }}</td>
+            <td>{{ users[booking.sales] | capitalize }}</td>
+            <td>{{ booking.saleprice }}</td>
+            <td>{{ booking.void_yesno() }}</td>
         {% if current_user.role.rank == 'admin' %}
-        <td>{{ space.spcstatus }}</td>
-        <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
-        <td>{{ space.last_modified_by }}</td>
+            <td>{{ space.spcstatus }}</td>
+            <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ space.last_modified_by }}</td>
         {% endif %}
       </tr>
     </tbody>
@@ -62,11 +61,11 @@
   <h3>Booking Details</h3>
 
   <form method="POST" class="mt-4">
-    {{ render_input_number(name='Sale Price', id='saleprice', required=True) }}
+    {{ render_input_text(name='Remark', id='remark', value=data.remark) }}
 
     <div class="d-inline-flex gap-2 mt-3">
       <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
-      <input class="btn btn-primary" type="submit" value="Reserve Space" />
+      <input class="btn btn-primary" type="submit" value="Confirm action" />
     </div>
   </form>
 </section>
