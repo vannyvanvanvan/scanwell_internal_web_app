@@ -1,7 +1,7 @@
 from flask_login import login_required
 from flask_login import current_user
 from app.functions.permissions import role_required
-from app.functions.reserve.action import approve_reserve, decline_reserve, unconfirm_reserve
+from app.functions.reserve.action import confirm_reserve, decline_reserve, unconfirm_reserve
 from app.functions.reserve.new import create_reserve, new_reserve_page
 from app.functions.reserve.edit import edit_reserve, edit_reserve_page
 from app.functions.reserve.delete import delete_reserve
@@ -53,7 +53,7 @@ def reserve_delete(rsv_id: int):
 @role_required(["admin", "cs"])
 def reserve_confirm(rsv_id: int):
     if request.method == "POST":
-        return approve_reserve(rsv_id)
+        return confirm_reserve(rsv_id)
 
 
 @reserve_routes.route("/decline/<int:rsv_id>", methods=["GET", "POST"])

@@ -4,7 +4,7 @@ from flask_login import current_user
 from app.model import Reserve, Schedule, Space, db
 
 
-def approve_reserve(rsv_id):
+def confirm_reserve(rsv_id):
     try:
         reserve = Reserve.query.get(rsv_id)
         if not reserve:

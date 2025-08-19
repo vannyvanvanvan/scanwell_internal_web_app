@@ -12,10 +12,13 @@
 {% endwith %}
 
 <div class="mt-4">{% include 'flash.html' %}</div>
+
 <section class="container p-4">
+
   <h3>Booking Details</h3>
 
   <form method="POST" class="mt-4">
+
     {{ render_input_text(name='SO', id='so', required=True, value=data.so) }}
     {{ render_input_text(name='Final Destination', id='findest', required=True, value=data.findest) }}
     {{ render_input_text(name='Container Class', id='ct_cl', required=True, value=data.ct_cl) }}
@@ -31,7 +34,9 @@
       <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
       <input class="btn btn-primary" type="submit" value="Save Changes" />
     </div>
+
   </form>
+  
 </section>
 
 {% endblock %}

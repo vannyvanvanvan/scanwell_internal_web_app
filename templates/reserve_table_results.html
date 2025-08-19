@@ -26,8 +26,6 @@
                 <i class="bi bi-check-circle"></i>
               </button>
             </form>
-          {% endif %}
-          
           
           <form action="{{ url_for('reserve.reserve_decline', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
             <button data-bs-toggle="tooltip" data-bs-title="Decline reserve" type="submit" class="btn btn-danger"
@@ -35,6 +33,7 @@
               <i class="bi bi-x-circle"></i>
             </button>
           </form>
+          {% endif %}
 
           <!-- If the reserve is confirmed, allow unconfirming -->
           {% if space.spcstatus == 'RV_CONFIRM' %}
