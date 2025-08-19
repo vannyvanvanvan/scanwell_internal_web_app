@@ -14,7 +14,7 @@ def approve_reserve(rsv_id):
         elif reserve.cfm_cs == None:
             # update reserve status and their RVs
             reserve.cfm_date = datetime.utcnow()
-            reserve.cfm_cs = current_user.username
+            reserve.cfm_cs = current_user.id
             reserve.void = False
 
             space = Space.query.get(reserve.spc_id)
@@ -116,7 +116,7 @@ def unconfirm_reserve(rsv_id):
             # update reserve status and their RVs
             reserve.cfm_date = None
             reserve.cfm_cs = None
-            reserve.void = True
+            reserve.void = False
 
             space = Space.query.get(reserve.spc_id)
             if space:

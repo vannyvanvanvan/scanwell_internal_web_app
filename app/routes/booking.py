@@ -23,8 +23,8 @@ booking_routes = Blueprint(
 @login_required
 @role_required(["admin", "cs"])
 def booking_add(spc_id: int):
-
     if request.method == "POST":
+        
         return create_booking(request.form, spc_id)
     return new_booking_page(spc_id)
 

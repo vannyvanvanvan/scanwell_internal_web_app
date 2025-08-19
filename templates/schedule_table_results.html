@@ -14,8 +14,8 @@
   <td>{{ result.service }}</td>
   <td>{{ result.routing }}</td>
   <td>{{ result.mv }}</td>
-  <td>{{ result.rol }}</td>
-  <td>{{ result.pord }}</td>
+  <td>{{ result.pol }}</td>
+  <td>{{ result.pod }}</td>
   <td>{{ result.cyopen.strftime('%Y-%m-%d') }}</td>
   <td>{{ result.sicutoff.strftime('%Y-%m-%d %H:%M') }}</td>
   <td>{{ result.cycvcls.strftime('%Y-%m-%d %H:%M') }}</td>
@@ -100,11 +100,13 @@
                       <i class="bi bi-zoom-in"></i>
                     </button>
                   </div>
+                  {% if current_user.role.rank in ['admin', 'sales'] %}
                   <div data-bs-toggle="tooltip" data-bs-title="Create reserve">
                     <a class="btn btn-primary" href="{{ url_for('reserve.reserve_add', spc_id=space.spc_id) }}">
                       <i class="bi bi-plus-lg"></i>
                     </a>
                   </div>
+                  {% endif %}
                   {% if current_user.role.rank in ['admin', 'cs'] or current_user.id == space.owner %}
                   <div data-bs-toggle="tooltip" data-bs-title="Edit space">
                     <a class="btn btn-warning" href="{{ url_for('space.space_edit', spc_id=space.spc_id) }}">

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% from '_render_input.html' import render_input_text, render_input_number, render_input_date, render_input_checkbox %}
+
+{% block head %}
+<title>Booking Confirm</title>
+{% endblock %}
+
+{% block body %}
+{% with title="Booking Confirm" %}
+{% include 'header.html' %}
+{% endwith %}
+
+<div class="mt-4">{% include 'flash.html' %}</div>
+<section class="container p-4">
+  <h3>Space Details</h3>
+
+  <table class="table align-middle m-0">
+    <thead>
+      {% if current_user.role.rank == 'admin' %}
+      <th>ID</th>
+      {% endif %}
+      <th>SO</th>
+      <th>Final Destination</th>
+      <th>Contract/Coloader</th>
+      <th>Shipper</th>
+      <th>Consignee</th>
+      <th>Term</th>
+      <th>Sales</th>
+      <th>Sale Price</th>
+      <th>Void</th>
+      <th>Remark</th>
+      {% if current_user.role.rank == 'admin' %}
+      <th>Status</th>
+      <th>Last Modified</th>
+      <th>By</th>
+      {% endif %}
+    </thead>
+    <tbody id="results-booking">
+      <tr>
+        {% if current_user.role.rank == 'admin' %}
+        <td>{{ space.spc_id }}</td>
+        {% endif %}
+        <td>{{ booking.so }}</td>
+        <td>{{ booking.findest }}</td>
+        <td>{{ booking.ct_cl }}</td>
+        <td>{{ booking.shipper }}</td>
+        <td>{{ booking.consignee }}</td>
+        <td>{{ booking.term }}</td>
+        <td>{{ booking.saleprice }}</td>
+        <td>{{ booking.void_yesno() }}</td>
+        <td>{{ booking.remark }}</td>
+        {% if current_user.role.rank == 'admin' %}
+        <td>{{ space.spcstatus }}</td>
+        <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>{{ space.last_modified_by }}</td>
+        {% endif %}
+      </tr>
+    </tbody>
+  </table>
+</section>
+<section class="container p-4">
+  <h3>Booking Details</h3>
+
+  <form method="POST" class="mt-4">
+    {{ render_input_number(name='Sale Price', id='saleprice', required=True) }}
+
+    <div class="d-inline-flex gap-2 mt-3">
+      <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+      <input class="btn btn-primary" type="submit" value="Reserve Space" />
+    </div>
+  </form>
+</section>
+{% endblock %}
