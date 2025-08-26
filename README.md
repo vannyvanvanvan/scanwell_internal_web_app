@@ -200,6 +200,11 @@ docker start scanwell_internal_web_app
 
 Check logs for errors and ensure all dependencies are installed.
 
+Remember to use a virtal environment!
+```
+.venv/Scripts/Activate.ps1
+```
+
 ----------
 
 ## **Conclusion**
