@@ -2,6 +2,7 @@ from app.functions.booking.action import pending_booking
 from flask import render_template, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
+from app.functions.user.get import get_all_users_tuple_list
 from app.model import Booking, Space, db
 from app.functions.validate import (
     is_checked_key,
@@ -27,6 +28,7 @@ def new_booking_page(spc_id: int) -> str:
             void=False,
             remark="",
         ),
+        users_tuple_list=get_all_users_tuple_list()
     )
     
 def new_populated_booking_page(form: dict, spc_id: int) -> str:
@@ -46,6 +48,7 @@ def new_populated_booking_page(form: dict, spc_id: int) -> str:
             void=form.get("void", ""),
             remark=form["remark"],
         ),
+        users_tuple_list=get_all_users_tuple_list()
     )
     
 def create_booking(form: dict, spc_id: int) -> int:

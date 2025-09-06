@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect, request, url_for
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
+from app.functions.user.get import get_all_users_tuple_list
 from app.model import Booking, db
 
 from app.functions.validate import (
@@ -9,16 +10,23 @@ from app.functions.validate import (
     is_valid_booking_form,
 )
 
+
 def edit_booking_page(bk_id: int) -> str:
     try:
         booking = Booking.query.get_or_404(bk_id)
-        return render_template("shipping_booking.html", mode="edit", data=booking)
+        return render_template(
+            "shipping_booking.html",
+            mode="edit",
+            data=booking,
+            users_tuple_list=get_all_users_tuple_list(),
+        )
     except NotFound:
         flash(
             "Booking not found, please try again. No changes were made to the database.",
             "primary",
         )
         return redirect(url_for("user.user_home"))
+
 
 def invalid_booking_page(bk_id: int, form: dict) -> str:
     try:
@@ -35,7 +43,9 @@ def invalid_booking_page(bk_id: int, form: dict) -> str:
                 consignee=form["consignee"],
                 term=form["term"],
                 sales=form["sales"],
-                saleprice=default_or_valid_number(original_booking.saleprice, form["saleprice"]),
+                saleprice=default_or_valid_number(
+                    original_booking.saleprice, form["saleprice"]
+                ),
                 void=is_checked_key(form["void"]),
                 remark=form["remark"],
             ),
@@ -47,7 +57,8 @@ def invalid_booking_page(bk_id: int, form: dict) -> str:
             "primary",
         )
         return redirect(url_for("user.user_home"))
-    
+
+
 def edit_booking(bk_id: int) -> str:
     if not is_valid_booking_form(request.form):
         return invalid_booking_page(bk_id, request.form)
@@ -66,7 +77,7 @@ def edit_booking(bk_id: int) -> str:
         db.session.commit()
         flash("Booking updated successfully!", "success")
         return redirect(url_for("booking.booking_edit", bk_id=bk_id))
-    
+
     except NotFound:
         flash(
             "Booking not found, please try again. No changes were made to the database.",
@@ -80,5 +91,3 @@ def edit_booking(bk_id: int) -> str:
     except ValueError as e:
         flash(f"Value error: {str(e)}", "danger")
         return redirect(url_for("user.user_home"))
-    
-       
