@@ -2,9 +2,9 @@
 {% for booking in bookings %}
 {% if highlighted and highlighted["booking"] and highlighted["booking"]==booking.bk_id %}
 <tr class="highlighted-row">
-{% else %}
+  {% else %}
 <tr>
-{% endif %}
+  {% endif %}
   {% if current_user.role.rank == 'admin' %}
   <td>{{ booking.bk_id }}</td>
   {% endif %}
@@ -19,37 +19,29 @@
   <td>{{ booking.void_yesno() }}</td>
   <td>{{ booking.remark }}</td>
   <td>
-
-
-    {% if current_user.role.rank == 'admin' or current_user.id == booking.owner %}
+    <div class="d-flex justify-content-end gap-2">
+      {% if current_user.role.rank == 'admin' or current_user.id == booking.owner %}
       <div data-bs-toggle="tooltip" data-bs-title="Edit booking">
-        <a class="btn btn-warning" href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}">
+        <a class="btn btn-warning" href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}" title="Edit">
           <i class="bi bi-pencil-square"></i>
         </a>
-      
-
-        {% if space.spcstatus == 'BK_PENDING' %}
-            <a data-bs-toggle="tooltip" data-bs-title="Confirm booking" class="btn btn-success" 
-                href="{{ url_for('booking.booking_confirm', bk_id=booking.bk_id) }}" title="Confirm">
-              <i class="bi bi-check-circle"></i>
-            </a>
-
-            <a data-bs-toggle="tooltip" data-bs-title="Confirm booking" class="btn btn-danger" 
-                href="{{ url_for('booking.booking_decline', bk_id=booking.bk_id) }}" title="Decline">
-              <i class="bi bi-check-circle"></i>
-              </a>
-          {% endif %}
-        </form>
       </div>
-    {% endif %}
 
+      {% if space.spcstatus == 'BK_PENDING' %}
+      <div data-bs-toggle="tooltip" data-bs-title="Confirm booking">
+        <a class="btn btn-success" href="{{ url_for('booking.booking_confirm', bk_id=booking.bk_id) }}" title="Confirm">
+          <i class="bi bi-check-circle"></i>
+        </a>
+      </div>
 
-
-
-
-
-
-
+      <div data-bs-toggle="tooltip" data-bs-title="Decline booking">
+        <a class="btn btn-danger" href="{{ url_for('booking.booking_decline', bk_id=booking.bk_id) }}" title="Decline">
+          <i class="bi bi-x-circle"></i>
+        </a>
+      </div>
+      {% endif %}
+      {% endif %}
+    </div>
   </td>
 </tr>
 {% endfor %}
