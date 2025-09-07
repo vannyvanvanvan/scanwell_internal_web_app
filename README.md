@@ -113,7 +113,7 @@ docker pull redis
 
 - or run it from the command line:
 ```
-docker run --name scanwell_internal_web_app -d -p 32768:6379 redis:6
+docker run --name scanwell_internal_web_app -d -p 32769:6379 redis:6
 ```
 
 #### 2.5 Verify Redis is running:

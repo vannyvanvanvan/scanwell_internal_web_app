@@ -36,7 +36,7 @@ def update_user_detail(
     if new_friendly_name is not None and new_friendly_name.strip() != "":
         user.friendly_name = new_friendly_name.strip()
 
-    # Role rank
+    # For Role rank
     if new_rank is not None and new_rank.strip() != "":
         requested_rank = new_rank.strip().lower()
         if requested_rank not in EXISTING_RANKS:
