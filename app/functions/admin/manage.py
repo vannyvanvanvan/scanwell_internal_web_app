@@ -21,7 +21,7 @@ def update_user_detail(
     if user is None:
         return False, "User not found"
 
-    # For Username
+    # Changing username
     if new_username is not None and new_username.strip() != "":
         requested_username = new_username.strip()
         username_taken = (
@@ -32,11 +32,11 @@ def update_user_detail(
             return False, "Username already exists"
         user.username = requested_username
 
-    # For Friendly name
+    # Changing friendly name
     if new_friendly_name is not None and new_friendly_name.strip() != "":
         user.friendly_name = new_friendly_name.strip()
 
-    # For Role rank
+    # Selecting new role rank
     if new_rank is not None and new_rank.strip() != "":
         requested_rank = new_rank.strip().lower()
         if requested_rank not in EXISTING_RANKS:
@@ -46,7 +46,7 @@ def update_user_detail(
         else:
             user.role.rank = requested_rank
 
-    # Password
+    # Resetting password
     if new_password is not None and new_password != "":
         user.password = hash_string(new_password)
 
