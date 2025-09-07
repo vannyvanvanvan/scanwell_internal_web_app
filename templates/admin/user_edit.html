@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Edit User</title>
+{% endblock %}
+
+{% block body %}
+{% with title='Admin - Edit User' %}
+{% include 'header.html' %}
+{% endwith %}
+
+<div class="container mt-4">
+  <h1>Edit User ID: {{ user.id }}</h1>
+  {% include 'flash.html' %}
+  <form method="post">
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      <input class="form-control" type="text" name="username" value="{{ user.username }}" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input class="form-control" type="text" name="friendly_name" value="{{ user.friendly_name or '' }}" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Role</label>
+      <select class="form-select" name="rank">
+        {% set current_rank = user.role.rank if user.role else '' %}
+        <option value="admin" {{ 'selected' if current_rank=='admin' else '' }}>admin</option>
+        <option value="cs" {{ 'selected' if current_rank=='cs' else '' }}>cs</option>
+        <option value="sales" {{ 'selected' if current_rank=='sales' else '' }}>sales</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">New Password (leave it blank to keep the old password)</label>
+      <input class="form-control" type="password" name="password" autocomplete="new-password" />
+    </div>
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-secondary" href="{{ url_for('admin.admin_user_view', user_id=user.id) }}">Cancel</a>
+  </form>
+</div>
+{% endblock %}
+
+

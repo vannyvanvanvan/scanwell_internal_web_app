@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Online Users</title>
+{% endblock %}
+
+{% block body %}
+{% with title='Admin - Online Users' %}
+{% include 'header.html' %}
+{% endwith %}
+
+<div id="online-users" class="container mt-4">
+  <h1>Online Users</h1>
+  {% include 'flash.html' %}
+
+  <div class="row">
+    <div class="col-md-6">
+      <h3>Online</h3>
+      {% if data.online_users %}
+      <ul>
+        {% for user in data.online_users %}
+        <li>User ID: {{ user.id }} | Username: {{ user.username }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No users online.</p>
+      {% endif %}
+    </div>
+    <div class="col-md-6">
+      <h3>Away</h3>
+      {% if data.away_users %}
+      <ul>
+        {% for u in data.away_users %}
+        <li>User ID: {{ user.id }} | Username: {{ user.username }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No users away.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <hr/>
+  <h4>Raw JSON</h4>
+  <pre class="bg-light p-3 border rounded">{{ data | tojson(indent=2) }}</pre>
+
+  <a class="btn btn-secondary" href="{{ url_for('admin.admin_home') }}">Back</a>
+</div>
+{% endblock %}
+
+

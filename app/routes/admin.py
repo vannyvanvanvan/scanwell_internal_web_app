@@ -115,17 +115,17 @@ def get_online_users():
     away_user_ids = [key.split(":")[-1] for key in away_users]
 
     # Convert to ints value for db query
-    def to_int_safe(value):
+    def to_int(value):
         try:
             return int(value)
-        except Exception:
+        except (ValueError, TypeError):
             return None
 
-    online_ids_int = [to_int_safe(v) for v in online_user_ids]
-    away_ids_int = [to_int_safe(v) for v in away_user_ids]
+    online_ids_int = [to_int(value) for value in online_user_ids]
+    away_ids_int = [to_int(value) for value in away_user_ids]
 
-    online_ids_int_filtered = [v for v in online_ids_int if v is not None]
-    away_ids_int_filtered = [v for v in away_ids_int if v is not None]
+    online_ids_int_filtered = [value for value in online_ids_int if value is not None]
+    away_ids_int_filtered = [value for value in away_ids_int if value is not None]
 
     # Fetch users
     users_online = User.query.filter(User.id.in_(online_ids_int_filtered)).all() if online_ids_int_filtered else []

@@ -12,6 +12,10 @@
         <a href="{{ url_for('schedule.schedule_add') }}">Create Schedule</a>
       {% endif %}
 
+      {% if current_user.role.rank in ['admin'] %}
+        <a href="{{ url_for('admin.admin_home') }}">User management</a>
+      {% endif %}
+
       <a href="{{ url_for('user.user_logout') }}">Logout ({{ current_user.friendly_name }})</a>
     </nav>
   </div>

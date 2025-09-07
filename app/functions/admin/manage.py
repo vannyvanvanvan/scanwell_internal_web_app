@@ -1,10 +1,8 @@
-from typing import Optional, Tuple
-
 from app.model import db, User, Role
 from app.functions.hashing import hash_string
 
 
-def get_user(user_id: int) -> Optional[User]:
+def get_user(user_id: int):
     return User.query.get(user_id)
 
 # Could be extended to check for other roles in the future
@@ -13,13 +11,13 @@ EXISTING_RANKS = {"admin", "cs", "sales"}
 
 def update_user_detail(
     user_id: int,
-    new_username: Optional[str] = None,
-    new_friendly_name: Optional[str] = None,
-    new_rank: Optional[str] = None,
-    new_password: Optional[str] = None,
-) -> Tuple[bool, str]:
+    new_username=None,
+    new_friendly_name=None,
+    new_rank=None,
+    new_password=None,
+):
 
-    user: Optional[User] = User.query.get(user_id)
+    user = User.query.get(user_id)
     if user is None:
         return False, "User not found"
 

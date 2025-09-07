@@ -1,7 +1,7 @@
 from datetime import timedelta
 from flask import Flask
 from flask_socketio import SocketIO
-from app.model import db, User, Schedule, Space, Reserve, Booking
+from app.model import db, User
 from flask_login import LoginManager
 import os
 

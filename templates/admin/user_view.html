@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>View User</title>
+{% endblock %}
+
+{% block body %}
+{% with title='Admin - View User' %}
+{% include 'header.html' %}
+{% endwith %}
+
+<div class="container mt-4">
+  <h1>User ID: {{ user.id }}</h1>
+  {% include 'flash.html' %}
+  <dl class="row">
+    <dt class="col-sm-3">Username</dt>
+    <dd class="col-sm-9">{{ user.username }}</dd>
+    <dt class="col-sm-3">Name</dt>
+    <dd class="col-sm-9">{{ user.friendly_name or '' }}</dd>
+    <dt class="col-sm-3">Role</dt>
+    <dd class="col-sm-9">{{ user.role.rank if user.role else '—' }}</dd>
+    <dt class="col-sm-3">Created</dt>
+    <dd class="col-sm-9">{{ user.date_created.strftime('%Y-%m-%d %H:%M') if user.date_created else '' }}</dd>
+    <dt class="col-sm-3">Login status</dt>
+    <dd class="col-sm-9">{{ user.login_status.lock_status if user.login_status else '—' }}</dd>
+  </dl>
+  <a class="btn btn-primary" href="{{ url_for('admin.admin_user_edit', user_id=user.id) }}">Edit</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin.admin_users_list') }}">Back</a>
+</div>
+{% endblock %}
+
+

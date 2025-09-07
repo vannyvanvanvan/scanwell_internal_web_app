@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Users</title>
+{% endblock %}
+
+{% block body %}
+{% with title='Admin - Users' %}
+{% include 'header.html' %}
+{% endwith %}
+
+<div class="container mt-4">
+  <h1>Users</h1>
+  {% include 'flash.html' %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Created</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.friendly_name or '' }}</td>
+        <td>{{ user.role.rank if user.role else '—' }}</td>
+        <td>{{ user.date_created.strftime('%Y-%m-%d %H:%M') if user.date_created else '' }}</td>
+        <td>
+          <a class="btn btn-sm btn-primary" href="{{ url_for('admin.admin_user_view', user_id=user.id) }}">View</a>
+          <a class="btn btn-sm btn-secondary" href="{{ url_for('admin.admin_user_edit', user_id=user.id) }}">Edit</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a class="btn btn-secondary" href="{{ url_for('admin.admin_home') }}">Back</a>
+</div>
+{% endblock %}
+
+

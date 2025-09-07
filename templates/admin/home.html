@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Admin Panel</title>
+{% endblock %}
+
+{% block body %}
+{% with title='Admin Panel' %}
+{% include 'header.html' %}
+{% endwith %}
+
+<div class="container mt-4">
+  <h1>Admin Panel</h1>
+  <p>Welcome to the admin panel, please choose an option to continue.</p>
+  <ul>
+    <li><a href="{{ url_for('admin.admin_users_list') }}">Manage Users</a></li>
+    <li><a href="{{ url_for('admin.get_online_users') }}">View Online Users</a></li>
+  </ul>
+  
+  {% include 'flash.html' %}
+  <a class="btn btn-secondary" href="{{ url_for('user.user_home') }}">Back to Home</a>
+{% endblock %}
