@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
-from driver import *
+from app.model import db, Schedule, Space, User
 from sqlalchemy.orm import joinedload
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Thisisasecret!'
