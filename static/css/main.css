@@ -1,3 +1,11 @@
+:root {
+  --color-disabled: #e9ecef;
+  --color-disabled-text: #6c757d;
+  --color-warning-bg: #fff3cd;
+  --color-success-bg: #d1e7dd;
+  --color-danger-bg: #f8d7da;
+}
+
 html {
   scroll-padding-top: 60px;
 }
@@ -144,6 +152,15 @@ header.cs {
 
 .highlighted-row > * {
   background-color: #80ef807b !important;
+}
+
+.status-disabled {
+  background-color: var(--color-disabled) !important;
+  color: var(--color-disabled-text) !important;
+}
+
+.status-warning {
+  background-color: var(--color-warning-bg) !important;
 }
 
 @media screen and (max-width: 854px) {

@@ -2,7 +2,7 @@ from flask import render_template, request, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
-from app.model import Space, db
+from app.model import Space, Booking, db
 from datetime import datetime
 
 from app.functions.validate import (
@@ -13,9 +13,28 @@ from app.functions.validate import (
 )
 
 
+def has_confirmed_booking(spc_id: int) -> bool:
+    # Check if space has any confirmed booking that is not void
+    confirmed_bookings = Booking.query.filter_by(
+        spc_id=spc_id, 
+        void=False
+    ).join(Space).filter(
+        Space.spcstatus == 'BK_CONFIRM'
+    ).all()
+    return len(confirmed_bookings) > 0
+
 def edit_space_page(spc_id: int) -> str:
     try:
         space = Space.query.get_or_404(spc_id)
+        
+        # Check if space has confirmed booking
+        if has_confirmed_booking(spc_id):
+            flash(
+                "Cannot edit space with confirmed booking. Please void the booking first through Edit Booking.",
+                "warning",
+            )
+            return redirect(url_for("user.user_home"))
+            
         return render_template("shipping_space.html", mode="edit", data=space)
     except NotFound:
         flash(
@@ -63,6 +82,14 @@ def edit_space(spc_id: int) -> str:
 
     try:
         space_to_edit = Space.query.get_or_404(spc_id)
+        
+        # Check if space has confirmed booking
+        if has_confirmed_booking(spc_id):
+            flash(
+                "Cannot edit space with confirmed booking, please void the booking first through Edit Booking.",
+                "warning",
+            )
+            return redirect(url_for("user.user_home"))
         space_to_edit.size = request.form["size"]
         space_to_edit.avgrate = int(request.form["avgrate"])
         space_to_edit.sugrate = int(request.form["sugrate"])

@@ -1,8 +1,10 @@
 from flask import render_template, flash, redirect, request, url_for
+from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
 from app.functions.user.get import get_all_users_tuple_list
-from app.model import Booking, db
+from app.model import Booking, Space, db
+from datetime import datetime
 
 from app.functions.validate import (
     default_or_valid_number,
@@ -14,6 +16,7 @@ from app.functions.validate import (
 def edit_booking_page(bk_id: int) -> str:
     try:
         booking = Booking.query.get_or_404(bk_id)
+        
         return render_template(
             "shipping_booking.html",
             mode="edit",
@@ -64,6 +67,27 @@ def edit_booking(bk_id: int) -> str:
         return invalid_booking_page(bk_id, request.form)
     try:
         booking_to_edit = Booking.query.get_or_404(bk_id)
+        space = booking_to_edit.space
+        is_confirmed = space.spcstatus == 'BK_CONFIRM'
+        
+        # Handle void for confirmed bookings
+        if is_confirmed and is_checked_key(request.form, "void"):
+            new_space_status = request.form.get("void_space_status", "BK_CANCEL")
+            if new_space_status not in ["BK_CANCEL", "USABLE"]:
+                flash("Invalid space status for void operation. Please select BK_CANCEL or USABLE.", "danger")
+                return redirect(url_for("booking.booking_edit", bk_id=bk_id))
+            
+            # Update space status based on void
+            space.spcstatus = new_space_status
+            space.last_modified_by = current_user.id
+            space.last_modified_at = datetime.utcnow() 
+            # Check if space should marked as INVALID
+            if new_space_status == "USABLE":
+                # Check if space is still within the rate validity
+                if space.ratevalid < datetime.utcnow():
+                    space.spcstatus = "INVALID"
+                    flash("Space marked as INVALID due to expired rate validity.")
+        
         booking_to_edit.so = request.form["so"]
         booking_to_edit.findest = request.form["findest"]
         booking_to_edit.ct_cl = request.form["ct_cl"]
@@ -72,7 +96,9 @@ def edit_booking(bk_id: int) -> str:
         booking_to_edit.term = request.form["term"]
         booking_to_edit.sales = request.form["sales"]
         booking_to_edit.saleprice = int(request.form["saleprice"])
-        booking_to_edit.void = is_checked_key(request.form, "void")
+        # Only update void field if it exists in the form
+        if "void" in request.form:
+            booking_to_edit.void = is_checked_key(request.form, "void")
         booking_to_edit.remark = request.form["remark"]
         db.session.commit()
         flash("Booking updated successfully!", "success")

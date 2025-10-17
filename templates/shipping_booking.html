@@ -3,6 +3,9 @@
 
 {% block head %}
 <title>{{ mode|capitalize }} Booking</title>
+{% if mode == 'edit' %}
+<script src="{{ url_for('static', filename='js/booking_void.js') }}" defer></script>
+{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -29,7 +32,29 @@
     {{ render_input_select(name='Sales', id='sales', required=True, value=data.sales, options=users_tuple_list ) }}
 
     {{ render_input_number(name='Sale Price', id='saleprice', required=True, value=data.saleprice) }}
-    {{ render_input_checkbox(name='Void', id='void', required=True, checked=data.void) }}
+    
+    {% if mode == 'edit' and data.space.spcstatus == 'BK_CONFIRM' %}
+        <!-- Show current space status and void option for confirmed bookings -->
+        <div class="mb-3 row">
+            <label for="current_space_status" class="col-sm-2 col-form-label">Current Space Status</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control status-disabled" id="current_space_status" value="BK_CONFIRM" disabled>
+            </div>
+        </div>
+        
+        {{ render_input_checkbox(name='Void', id='void', required=False, checked=data.void) }}
+        
+        <div id="void_space_status_div" style="display: none;" class="mb-3 row">
+            <label for="void_space_status" class="col-sm-2 col-form-label">Space Status After Void</label>
+            <div class="col-sm-10">
+                <select class="form-select" id="void_space_status" name="void_space_status">
+                    <option value="BK_CANCEL">BK_CANCEL - Space becomes invalid</option>
+                    <option value="USABLE">USABLE - Space becomes available(within validity period)</option>
+                </select>
+            </div>
+        </div>
+    {% endif %}
+    
     {{ render_input_text(name='Remark', id='remark', value=data.remark) }}
 
     <div class="d-inline-flex gap-2 mt-3">

@@ -16,6 +16,4 @@ def get_all_users_tuple_list() -> list:
     tuple_list = []
     for user in get_all_users():
         tuple_list.append((user.id, user.friendly_name))
-    print("dude")
-    print(tuple_list)
     return tuple_list
