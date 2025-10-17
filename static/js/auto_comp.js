@@ -1,3 +1,5 @@
+// Auto-complete for input fields
+
 document.addEventListener('DOMContentLoaded', function () {
     function autocomplete(inp, arr) {
         var currentFocus;
