@@ -20,7 +20,7 @@
   <td>{{ booking.remark }}</td>
   <td>
     <div class="d-flex justify-content-end gap-2">
-      {% if current_user.role.rank == 'admin' or current_user.id == booking.owner %}
+      {% if (current_user.role.rank == 'admin' or current_user.id == booking.owner) and not booking.void %}
       <div data-bs-toggle="tooltip" data-bs-title="Edit booking">
         <a class="btn btn-warning" href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id) }}" title="Edit">
           <i class="bi bi-pencil-square"></i>
