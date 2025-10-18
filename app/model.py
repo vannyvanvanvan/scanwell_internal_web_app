@@ -154,7 +154,7 @@ class Reserve(db.Model):
     owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def __repr__(self):
-        return f"<Reserve: id={self.rsv_id}, space={self.spc_id}, sales={self.sales}, void={self.void}>"
+        return f"<Reserve: id={self.rsv_id}, space={self.spc_id}, owner={self.owner}, void={self.void}>"
 
     def __lt__(self, other):
         return self.rsv_id < other.rsv_id
