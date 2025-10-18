@@ -3,7 +3,7 @@ from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
 from app.functions.user.get import get_all_users_tuple_list
-from app.model import Booking, Space, db
+from app.model import Booking, Reserve, Space, db
 from datetime import datetime
 
 from app.functions.validate import (
@@ -98,7 +98,15 @@ def edit_booking(bk_id: int) -> str:
         booking_to_edit.saleprice = int(request.form["saleprice"])
         # Only update void field if it exists in the form
         if "void" in request.form:
-            booking_to_edit.void = is_checked_key(request.form, "void")
+            booking_void = is_checked_key(request.form, "void")
+            booking_to_edit.void = booking_void
+            # If booking is set to void also set reserves on the same space to void
+            if booking_void:
+                reserves = Reserve.query.filter_by(spc_id=booking_to_edit.spc_id).all()
+                for reserve in reserves:
+                    print("test")
+                    reserve.void = True
+                    
         booking_to_edit.remark = request.form["remark"]
         db.session.commit()
         flash("Booking updated successfully!", "success")

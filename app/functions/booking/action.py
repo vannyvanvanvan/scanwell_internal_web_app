@@ -3,7 +3,7 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user
 from app.functions.user.get import get_all_users_names_dict
 from sqlalchemy.exc import SQLAlchemyError
-from app.model import Booking, Space, db
+from app.model import Booking, Reserve, Space, db
 
 def pending_booking(spc_id: int) -> bool:
     try:
@@ -87,6 +87,13 @@ def decline_booking(bk_id: int):
             booking.remark = request.form['remark']
 
         booking.void = True
+        
+        # Set all reserves on the same space to void
+        reserves = Reserve.query.filter_by(spc_id=booking.spc_id).all()
+        for reserve in reserves:
+            print("test")
+            reserve.void = True
+        
         space = Space.query.get(booking.spc_id)
         space.spcstatus = 'USABLE'
         space.last_modified_by = current_user.id
