@@ -112,19 +112,29 @@ def unconfirm_reserve(rsv_id):
             return redirect(url_for("user.user_home"))
 
         elif reserve.cfm_cs != None:
-
-            # update reserve status and their RVs
-            reserve.cfm_date = None
-            reserve.cfm_cs = None
-            reserve.void = False
-
             space = Space.query.get(reserve.spc_id)
-            if space:
-                space.spcstatus = "RV_SUBMIT"
+            schedule = Schedule.query.get(space.sch_id)
+            
+            # calculate time SICUTOF - nowdate
+            now = datetime.utcnow()
+            time_diff = schedule.sicutoff - now
+            hours_remaining = time_diff.total_seconds() / 3600
+
+            # update reserve status and set void to True
+            reserve.void = True
+
+            # if SICUTOF - nowdate > 24
+            # status -> usable else INVALID
+            if hours_remaining > 24:
+                space.spcstatus = "USABLE"
+                msg = "Reserve unconfirmed, space released to USABLE"
+            else:
+                space.spcstatus = "RV_CANCEL"
+                msg = "Reserve unconfirmed, space set to RV_CANCEL (SICUTOFF < 24h)"
 
             db.session.commit()
 
-            flash("Reserve unconfirmed successfully", "success")
+            flash(msg, "success")
             return redirect(
                 url_for(
                     "user.user_home",
@@ -136,6 +146,7 @@ def unconfirm_reserve(rsv_id):
 
         else:
             flash("Reserve not confirmed, can not unconfirm", "warning")
+            space = Space.query.get(reserve.spc_id)
             return redirect(
                 url_for(
                     "user.user_home",
@@ -147,5 +158,5 @@ def unconfirm_reserve(rsv_id):
 
     except Exception as e:
         db.session.rollback()
-        flash(f"Error updating booking status: {str(e)}", "error")
+        flash(f"Error updating reserve status: {str(e)}", "error")
         return redirect(url_for("user.user_home"))
