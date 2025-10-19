@@ -34,7 +34,7 @@
         </button>
       </div>
 
-      {% if current_user.role.rank in ['admin', 'cs'] %}
+      {% if current_user.role.rank == 'admin' or current_user.id == result.owner %}
       <div data-bs-toggle="tooltip" data-bs-title="Add space">
         <a class="btn btn-primary" href="{{ url_for('space.space_add', sch_id=result.sch_id) }}">
           <i class="bi bi-plus-lg"></i>
@@ -107,7 +107,7 @@
                     </a>
                   </div>
                   {% endif %}
-                  {% if current_user.role.rank in ['admin', 'cs'] or current_user.id == space.owner %}
+                  {% if current_user.role.rank == 'admin' or current_user.id == result.owner %}
                   <div data-bs-toggle="tooltip" data-bs-title="Edit space">
                     <a class="btn btn-warning" href="{{ url_for('space.space_edit', spc_id=space.spc_id) }}">
                       <i class="bi bi-pencil-square"></i>

@@ -17,7 +17,7 @@
   <td>{{ reserve.remark }}</td>
   <td>
     <div class="d-flex justify-content-end gap-2">
-      {% if current_user.role.rank in ['admin', 'cs'] %}
+      {% if current_user.role.rank == 'admin' or (current_user.role.rank == 'cs' and current_user.id == result.owner) %}
         {% if not reserve.void %}
           {% if space.spcstatus == 'RV_SUBMIT' %}
             <form action="{{ url_for('reserve.reserve_confirm', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
