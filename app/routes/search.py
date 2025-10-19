@@ -12,33 +12,33 @@ from app.functions.searching import (
 search_routes = Blueprint("search", __name__)
 
 
-@search_routes.route("/search/all", methods=["GET"])
+@search_routes.route("/all", methods=["GET"])
 @login_required
-@role_required("admin")
+@role_required(["admin", "cs"])
 def search_all():
     query = request.args.get("q", "").strip().lower()
     return search_all_results(query)
 
 
-@search_routes.route("/search/sales_reserve", methods=["GET"])
+@search_routes.route("/sales_reserve", methods=["GET"])
 @login_required
-@role_required("sales")
+@role_required(["sales"])
 def search_sales_reserve():
     query = request.args.get("q", "").strip().lower()
     return search_sales_reserve_results(query)
 
 
-@search_routes.route("/search/sales_booking", methods=["GET"])
+@search_routes.route("/sales_booking", methods=["GET"])
 @login_required
-@role_required("sales")
+@role_required(["sales"])
 def search_sales_booking():
     query = request.args.get("q", "").strip().lower()
     return search_sales_booking_results(query)
 
 
-@search_routes.route("/search/search_available_spaces", methods=["GET"])
+@search_routes.route("/search_available_spaces", methods=["GET"])
 @login_required
-@role_required("sales")
+@role_required(["sales"])
 def search_available_spaces():
     filters = {
         "pol": request.args.get("pol_filter", "").strip(),

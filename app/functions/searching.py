@@ -2,7 +2,7 @@ from flask import render_template
 from flask_login import current_user
 from app.functions.booking.get import booking_table_results, get_sales_booking
 from app.functions.reserve.get import get_sales_reserve, reserve_table_results
-from app.model import Schedule, Space, db
+from app.model import Schedule, Space, db, User
 
 from datetime import datetime
 
@@ -20,7 +20,6 @@ def query_in_list(query: str, match_list: list) -> bool:
 
 
 def find_all_match(query: str) -> list:
-
     all_schedules = Schedule.query.all()
     results = []
 
@@ -46,7 +45,7 @@ def find_all_match(query: str) -> list:
             for reserve in space.reserves:
                 if query_in_list(
                     query,
-                    [reserve.sales, reserve.cfm_cs, reserve.remark],
+                    [reserve.owner, reserve.cfm_cs, reserve.remark],
                 ):
                     results.append(schedule)
                     match_found = True
@@ -74,11 +73,13 @@ def find_all_match(query: str) -> list:
 
 
 def schedule_table_results(schedules: list) -> str:
+    users = {user.id: user.username for user in User.query.all()}
     return render_template(
         "schedule_table_results.html",
         current_user=current_user,
         results=schedules,
         highlighted={},
+        users=users,
     )
 
 
