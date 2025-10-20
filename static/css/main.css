@@ -182,6 +182,16 @@ header.cs {
   color: #dc3545;
 }
 
+/* Date Restriction */
+input[type="date"][min],
+input[type="date"][max] {
+  cursor: pointer;
+}
+
+input[type="date"]:invalid {
+  border-color: #ffc107;
+}
+
 @media screen and (max-width: 854px) {
   .dish-cards-grid {
     grid-template-columns: 1fr;
