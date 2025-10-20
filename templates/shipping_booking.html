@@ -22,9 +22,9 @@
 
   <form method="POST" class="mt-4">
 
-    {{ render_input_text(name='SO', id='so', required=True, value=data.so) }}
+    {{ render_input_text(name='SO', id='so', required=False, value=data.so) }}
     {{ render_input_text(name='Final Destination', id='findest', required=True, value=data.findest) }}
-    {{ render_input_text(name='Container Class', id='ct_cl', required=True, value=data.ct_cl) }}
+    {{ render_input_text(name='Contract', id='ct_cl', required=True, value=data.ct_cl) }}
     {{ render_input_text(name='Shipper', id='shipper', required=True, value=data.shipper) }}
     {{ render_input_text(name='Consignee', id='consignee', required=True, value=data.consignee) }}
     {{ render_input_text(name='Term', id='term', required=True, value=data.term) }}
