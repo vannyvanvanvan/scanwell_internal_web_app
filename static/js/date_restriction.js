@@ -22,6 +22,14 @@ class DateRestriction {
         this.updateAllRestrictions();
     }
 
+    getTodayDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
     getFieldValue(fieldId) {
         const field = document.getElementById(fieldId);
         return field ? field.value : null;
@@ -57,19 +65,21 @@ class DateRestriction {
     }
 
     updateAllRestrictions() {
+        const today = this.getTodayDate();
         const cyopen = this.getFieldValue(this.dateFields.cyopen);
         const sicutoff = this.getFieldValue(this.dateFields.sicutoff);
         const cycvcls = this.getFieldValue(this.dateFields.cycvcls);
         const etd = this.getFieldValue(this.dateFields.etd);
         const eta = this.getFieldValue(this.dateFields.eta);
 
-        // CY OPEN restrictions
+        // CYOPEN restrictions
         this.clearRestrictions(this.dateFields.cyopen);
+        this.setMinDate(this.dateFields.cyopen, today);
         if (sicutoff) {
             this.setMaxDate(this.dateFields.cyopen, this.addDays(sicutoff, -1));
         }
 
-        // SI CUTOFF restrictions
+        // SICUTOFF restrictions
         this.clearRestrictions(this.dateFields.sicutoff);
         if (cyopen) {
             this.setMinDate(this.dateFields.sicutoff, this.addDays(cyopen, 1));
@@ -78,7 +88,7 @@ class DateRestriction {
             this.setMaxDate(this.dateFields.sicutoff, cycvcls);
         }
 
-        // CY CV CLOSING restrictions
+        // CYCVCLOSING restrictions
         this.clearRestrictions(this.dateFields.cycvcls);
         if (sicutoff) {
             this.setMinDate(this.dateFields.cycvcls, sicutoff);
