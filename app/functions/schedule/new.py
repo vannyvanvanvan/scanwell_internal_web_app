@@ -6,6 +6,7 @@ from datetime import datetime
 
 from app.functions.validate import (
     is_valid_schedule_form,
+    validate_schedule_date_sequence,
     now_or_valid_date,
     now_or_valid_datetime,
     now_or_valid_week,
@@ -55,8 +56,6 @@ def new_populated_schedule_page(form: dict) -> str:
         ),
     )
 
-
-# Function to handle adding a new schedule
 # if add successful redirect to home with new schedule highlighted,
 # if missing info return new schedule page with previously entered values,
 # if backend error redirect to home with error messages
@@ -65,6 +64,12 @@ def create_schedule(form: dict) -> str | Response:
     # check validity of edited information
     if not is_valid_schedule_form(form):
         flash("Some of your changes are invalid. Please try again.", "danger")
+        return new_populated_schedule_page(form)
+    
+    # check date sequence validation
+    is_valid_sequence, date_error_message = validate_schedule_date_sequence(form)
+    if not is_valid_sequence:
+        flash(f"Date sequence error: {date_error_message}", "danger")
         return new_populated_schedule_page(form)
 
     try:

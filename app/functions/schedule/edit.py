@@ -10,6 +10,7 @@ from app.functions.validate import (
     default_or_valid_datetime,
     default_or_valid_week,
     is_valid_schedule_form,
+    validate_schedule_date_sequence,
 )
 
 
@@ -76,6 +77,12 @@ def edit_schedule(sch_id: int):
 
     # check validity of edited information
     if not is_valid_schedule_form(request.form):
+        return invalid_schedule_page(sch_id, request.form)
+    
+    # check date sequence validation
+    is_valid_sequence, date_error_message = validate_schedule_date_sequence(request.form)
+    if not is_valid_sequence:
+        flash(f"Date sequence error: {date_error_message}", "danger")
         return invalid_schedule_page(sch_id, request.form)
 
     # If input valid, find original schedule and update

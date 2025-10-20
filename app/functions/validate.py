@@ -147,6 +147,37 @@ def is_valid_schedule_dict(form: dict) -> bool:
     )
 
 
+def validate_schedule_date_sequence(form: dict) -> tuple[bool, str]:
+
+    # Validate the date sequence logic ETA >= ETD > CY CV CLOSING >= SI CUTOFF > CY OPEN
+    try:
+        cyopen = datetime.strptime(form["cyopen"], "%Y-%m-%d")
+        sicutoff = datetime.strptime(f"{form['sicutoff']} {form['sicutoff_time']}", "%Y-%m-%d %H:%M")
+        cycvcls = datetime.strptime(f"{form['cycvcls']} {form['cycvcls_time']}", "%Y-%m-%d %H:%M")
+        etd = datetime.strptime(form["etd"], "%Y-%m-%d")
+        eta = datetime.strptime(form["eta"], "%Y-%m-%d")
+        
+        if eta < etd:
+            return False, "ETA must be greater than or equal to ETD"
+        
+        if etd <= cycvcls:
+            return False, "ETD must be greater than CY CV CLOSING"
+        
+        if cycvcls < sicutoff:
+            return False, "CY CV CLOSING must be greater than or equal to SI CUTOFF"
+        
+        # Solved the problem where CYOPEN can not be the same day with SICUTOFF
+        # SICUTOFF(datetime) against CY OPEN(date)
+        cyopen_datetime = datetime.combine(cyopen.date(), datetime.max.time())
+        if sicutoff <= cyopen_datetime:
+            return False, "SI CUTOFF must be greater than CY OPEN"
+        
+        return True, ""
+        
+    except ValueError as e:
+        return False, f"Date parsing error: {str(e)}"
+
+
 def is_valid_schedule_form(form: dict) -> bool:
     # Return True/False if all key values are valid
     return (
