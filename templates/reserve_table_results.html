@@ -19,7 +19,7 @@
     <div class="d-flex justify-content-end gap-2">
       {% if current_user.role.rank == 'admin' or (current_user.role.rank == 'cs' and current_user.id == result.owner) %}
         {% if not reserve.void %}
-          {% if space.spcstatus == 'RV_SUBMIT' %}
+          {% if reserve.space.spcstatus == 'RV_SUBMIT' %}
             <form action="{{ url_for('reserve.reserve_confirm', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
               <button data-bs-toggle="tooltip" data-bs-title="Confirm reserve" type="submit" class="btn btn-success"
                 title="Confirm">
@@ -36,7 +36,7 @@
           {% endif %}
 
           <!-- If the reserve is confirmed, allow unconfirming -->
-          {% if space.spcstatus == 'RV_CONFIRM' %}
+          {% if reserve.space.spcstatus == 'RV_CONFIRM' %}
             <form action="{{ url_for('reserve.reserve_unconfirm', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
               <button data-bs-toggle="tooltip" data-bs-title="Unconfirm reserve" type="submit" class="btn btn-warning"
                 title="Unconfirm">
@@ -47,7 +47,7 @@
 
             <div data-bs-toggle="tooltip" data-bs-title="Create booking">
               <a class="btn btn-primary"
-                href="{{ url_for('booking.booking_add', spc_id=space.spc_id, rsv_id=reserve.rsv_id) }}">
+                href="{{ url_for('booking.booking_add', spc_id=reserve.space.spc_id, rsv_id=reserve.rsv_id) }}">
                 <i class="bi bi-plus-lg"></i>
               </a>
             </div>
@@ -55,6 +55,18 @@
           {% endif %}
         {% endif %}
       {% endif %}
+      
+      {% if (current_user.role.rank == 'sales' or current_user.role.rank == 'admin') and current_user.id == reserve.owner %}
+        {% if reserve.space.spcstatus == 'RV_SUBMIT' and not reserve.cfm_cs and not reserve.void %}
+        <form action="{{ url_for('reserve.reserve_cancel', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
+          <button data-bs-toggle="tooltip" data-bs-title="Cancel reserve" type="submit" class="btn btn-secondary"
+            onclick="return confirm('Are you sure you want to cancel this reserve?')" title="Cancel">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </form>
+        {% endif %}
+      {% endif %}
+      
       {% if current_user.role.rank == 'admin' or current_user.id == reserve.owner %}
       <div data-bs-toggle="tooltip" data-bs-title="Edit reserve">
         <a class="btn btn-warning" href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">

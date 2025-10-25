@@ -28,7 +28,7 @@
       </div>
       {% endif %}
 
-      {% if (current_user.role.rank == 'admin' or (current_user.role.rank == 'cs' and current_user.id == result.owner)) and space.spcstatus == 'BK_PENDING' %}
+      {% if (current_user.role.rank == 'admin' or (current_user.role.rank == 'cs' and current_user.id == result.owner)) and booking.space.spcstatus == 'BK_PENDING' %}
       <div data-bs-toggle="tooltip" data-bs-title="Confirm booking">
         <a class="btn btn-success" href="{{ url_for('booking.booking_confirm', bk_id=booking.bk_id) }}" title="Confirm">
           <i class="bi bi-check-circle"></i>

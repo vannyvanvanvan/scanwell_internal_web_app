@@ -44,6 +44,10 @@ def confirm_booking(bk_id: int):
     try:
         booking = Booking.query.get_or_404(bk_id)
         
+        if booking.void:
+            flash('Cannot confirm booking, it has already been voided', 'warning')
+            return redirect(url_for('user.user_home'))
+        
         if not booking.so or booking.so.strip() == "":
             flash('Cannot confirm booking, SO must be filled in before confirmation.', 'danger')
             return redirect(url_for('booking.booking_confirm', bk_id=bk_id))
@@ -88,6 +92,11 @@ def decline_booking_page(bk_id: int) -> str:
 def decline_booking(bk_id: int):
     try:
         booking = Booking.query.get_or_404(bk_id)
+        
+        if booking.void:
+            flash('Booking has already been voided', 'warning')
+            return redirect(url_for('user.user_home'))
+        
         if 'remark' in request.form:
             booking.remark = request.form['remark']
 

@@ -11,6 +11,10 @@ def confirm_reserve(rsv_id):
             flash("Reserve not found", "danger")
             return redirect(url_for("user.user_home"))
 
+        if reserve.void:
+            flash("Reserve has been cancelled and cannot be confirmed", "warning")
+            return redirect(url_for("user.user_home"))
+
         elif reserve.cfm_cs == None:
             # update reserve status and their RVs
             reserve.cfm_date = datetime.utcnow()
@@ -57,6 +61,10 @@ def decline_reserve(rsv_id):
         reserve = Reserve.query.get(rsv_id)
         if not reserve:
             flash("Reserve not found", "danger")
+            return redirect(url_for("user.user_home"))
+
+        if reserve.void:
+            flash("Reserve has already been cancelled", "warning")
             return redirect(url_for("user.user_home"))
 
         elif reserve.cfm_cs == None:
@@ -159,4 +167,52 @@ def unconfirm_reserve(rsv_id):
     except Exception as e:
         db.session.rollback()
         flash(f"Error updating reserve status: {str(e)}", "error")
+        return redirect(url_for("user.user_home"))
+
+
+def cancel_reserve(rsv_id):
+    try:
+        reserve = Reserve.query.get(rsv_id)
+        if not reserve:
+            flash("Reserve not found", "danger")
+            return redirect(url_for("user.user_home"))
+
+        if reserve.cfm_cs is not None:
+            flash("Reserve already confirmed by CS, cannot cancel", "warning")
+            return redirect(url_for("user.user_home"))
+
+        space = Space.query.get(reserve.spc_id)
+        schedule = Schedule.query.get(space.sch_id)
+        
+        # calculate time difference
+        now = datetime.utcnow()
+        time_diff = schedule.sicutoff - now
+        hours_remaining = time_diff.total_seconds() / 3600
+
+        # set reserve to void
+        reserve.void = True
+        reserve.cfm_date = datetime.utcnow()
+        
+        # if SICUTOFF - nowdate > 24
+        # status -> usable else RV_CANCEL
+        if hours_remaining > 24:
+            space.spcstatus = "USABLE"
+            msg = "Reserve cancelled successfully, space released to USABLE"
+        else:
+            space.spcstatus = "RV_CANCEL"
+            msg = "Reserve cancelled, space set to RV_CANCEL (SICUTOFF < 24h)"
+
+        db.session.commit()
+        flash(msg, "success")
+        return redirect(
+            url_for(
+                "user.user_home",
+                highlighted_schedule=space.sch_id,
+                highlighted_space=space.spc_id,
+            )
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error cancelling reserve: {str(e)}", "error")
         return redirect(url_for("user.user_home"))
