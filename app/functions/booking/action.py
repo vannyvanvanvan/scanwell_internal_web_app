@@ -43,6 +43,11 @@ def confirm_booking_page(bk_id: int) -> str:
 def confirm_booking(bk_id: int):
     try:
         booking = Booking.query.get_or_404(bk_id)
+        
+        if not booking.so or booking.so.strip() == "":
+            flash('Cannot confirm booking, SO must be filled in before confirmation.', 'danger')
+            return redirect(url_for('booking.booking_confirm', bk_id=bk_id))
+        
         if 'remark' in request.form:
             booking.remark = request.form['remark']
 

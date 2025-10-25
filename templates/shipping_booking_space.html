@@ -11,6 +11,16 @@
 {% endwith %}
 
 <div class="mt-4">{% include 'flash.html' %}</div>
+
+{% if page_title == 'Booking Confirm' and (not booking.so or booking.so.strip() == '') %}
+<div class="container p-4">
+  <div class="alert alert-warning" role="alert">
+    <strong>Warning:</strong> Please add a valid SO before confirming the booking.
+    <a href="{{ url_for('booking.booking_edit', bk_id=booking.bk_id, return_to_confirm=1) }}" class="btn btn-sm btn-warning ms-3">Edit Booking</a>
+  </div>
+</div>
+{% endif %}
+
 <section class="container p-4">
   <h3>Booking Details</h3>
 
@@ -39,7 +49,9 @@
         {% if current_user.role.rank == 'admin' %}
             <td>{{ space.spc_id }}</td>
         {% endif %}
-            <td>{{ booking.so }}</td>
+            <td {% if page_title == 'Booking Confirm' and (not booking.so or booking.so.strip() == '') %}class="table-warning fw-bold"{% endif %}>
+              {{ booking.so if booking.so else '(Empty)' }}
+            </td>
             <td>{{ booking.findest }}</td>
             <td>{{ booking.ct_cl }}</td>
             <td>{{ booking.shipper }}</td>
@@ -65,7 +77,11 @@
 
     <div class="d-inline-flex gap-2 mt-3">
       <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
-      <input class="btn btn-primary" type="submit" value="Confirm action" />
+      {% if page_title == 'Booking Confirm' and (not booking.so or booking.so.strip() == '') %}
+        <button class="btn btn-primary" type="button" disabled title="SO must be filled before confirming">Confirm action (SO Required)</button>
+      {% else %}
+        <input class="btn btn-primary" type="submit" value="Confirm action" />
+      {% endif %}
     </div>
   </form>
 </section>

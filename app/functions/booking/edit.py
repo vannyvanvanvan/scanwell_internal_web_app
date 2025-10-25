@@ -16,12 +16,14 @@ from app.functions.validate import (
 def edit_booking_page(bk_id: int) -> str:
     try:
         booking = Booking.query.get_or_404(bk_id)
+        return_to_confirm = request.args.get('return_to_confirm', '0')
         
         return render_template(
             "shipping_booking.html",
             mode="edit",
             data=booking,
             users_tuple_list=get_all_users_tuple_list(),
+            return_to_confirm=return_to_confirm,
         )
     except NotFound:
         flash(
@@ -35,6 +37,8 @@ def invalid_booking_page(bk_id: int, form: dict) -> str:
     try:
         original_booking = Booking.query.get_or_404(bk_id)
         flash("Some of your changes are invalid. Please try again.", "danger")
+        return_to_confirm = form.get('return_to_confirm', '0')
+        
         return render_template(
             "shipping_booking.html",
             mode="edit",
@@ -52,6 +56,8 @@ def invalid_booking_page(bk_id: int, form: dict) -> str:
                 void=is_checked_key(form["void"]),
                 remark=form["remark"],
             ),
+            users_tuple_list=get_all_users_tuple_list(),
+            return_to_confirm=return_to_confirm,
         )
 
     except NotFound:
@@ -110,6 +116,10 @@ def edit_booking(bk_id: int) -> str:
         booking_to_edit.remark = request.form["remark"]
         db.session.commit()
         flash("Booking updated successfully!", "success")
+        
+        if request.form.get('return_to_confirm') == '1':
+            return redirect(url_for("booking.booking_confirm", bk_id=bk_id))
+        
         return redirect(url_for("booking.booking_edit", bk_id=bk_id))
 
     except NotFound:
