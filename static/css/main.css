@@ -89,9 +89,7 @@ header.cs {
   padding: 8px 12px;
 }
 
-/* 
-    Header Styling
-*/
+/* Header Styling */
 
 .search-bar {
   background: rgb(255, 255, 255);
@@ -200,6 +198,41 @@ input[type="date"]:invalid {
   .menu-filter-grid {
     grid-template-columns: 1fr 1fr 1fr;
   }
+}
+
+/* Table */
+.schedule-row {
+  background-color: #e3f2fd !important;
+}
+
+.space-row:nth-child(4n+1),
+.space-row:nth-child(4n+2) {
+  background-color: #f5f5f5 !important;
+}
+
+/* Table Heading */
+.heading-shipping-schedules {
+  font-size: 30px;
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+.heading-space {
+  font-size: 28px;
+  font-weight: bold;
+  color: #9c27b0;
+}
+
+.heading-reserves {
+  font-size: 25px;
+  font-weight: bold;
+  color: #4fc3f7;
+}
+
+.heading-bookings {
+  font-size: 25px;
+  font-weight: bold;
+  color: #81c784;
 }
 
 @media screen and (max-width: 480px) {

@@ -2,9 +2,9 @@
 {% for result in results %}
 
 {% if highlighted["schedule"] and highlighted["schedule"]==result.sch_id %}
-<tr class="highlighted-row">
+<tr class="highlighted-row schedule-row">
   {% else %}
-<tr>
+<tr class="schedule-row">
   {% endif %}
   {% if current_user.role.rank == 'admin' %}
   <td>{{ result.sch_id }}</td>
@@ -57,7 +57,7 @@
     <div class="collapse" id="collapse-sch-{{ result.sch_id }}">
 
       <div class="d-flex justify-content-between align-items-baseline gap-2 mt-4 mb-2">
-        <h5>Space</h5>
+        <h5 class="heading-space">Space</h5>
       </div>
       <div class="border rounded overflow-hidden mt-2 mb-4">
         <table class="table align-middle m-0">
@@ -78,9 +78,9 @@
             {% if result.spaces %}
             {% for space in result.spaces %}
             {% if highlighted["space"] and highlighted["space"]==space.spc_id %}
-            <tr class="highlighted-row">
+            <tr class="highlighted-row space-row">
               {% else %}
-            <tr>
+            <tr class="space-row">
               {% endif %}
               <td>{{ space.spc_id }}</td>
               <td>{{ space.size }}</td>
