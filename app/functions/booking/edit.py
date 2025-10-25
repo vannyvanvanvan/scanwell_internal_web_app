@@ -94,7 +94,7 @@ def edit_booking(bk_id: int) -> str:
         booking_to_edit.shipper = request.form["shipper"]
         booking_to_edit.consignee = request.form["consignee"]
         booking_to_edit.term = request.form["term"]
-        booking_to_edit.sales = request.form["sales"]
+        booking_to_edit.sales = int(request.form["sales"])
         booking_to_edit.saleprice = int(request.form["saleprice"])
         # Only update void field if it exists in the form
         if "void" in request.form:

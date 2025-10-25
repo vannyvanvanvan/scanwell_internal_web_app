@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from app.functions.user.get import get_all_users_tuple_list
-from app.model import Booking, Space, db
+from app.model import Booking, Space, Reserve, db
 from app.functions.validate import (
     is_checked_key,
     is_valid_booking_form,
@@ -12,6 +12,17 @@ from app.functions.validate import (
 
 
 def new_booking_page(spc_id: int) -> str:
+    
+    space = Space.query.get(spc_id)
+    default_sales = ""
+    
+    if space:
+        reserve = Reserve.query.filter_by(spc_id=spc_id, void=False).first()
+        if reserve:
+            default_sales = reserve.owner
+        else:
+            default_sales = ""
+    
     return render_template(
         "shipping_booking.html",
         mode="add",
@@ -23,7 +34,7 @@ def new_booking_page(spc_id: int) -> str:
             shipper="",
             consignee="",
             term="",
-            sales="",
+            sales=default_sales,
             saleprice=0,
             void=False,
             remark="",
