@@ -194,13 +194,13 @@ def cancel_reserve(rsv_id):
         reserve.cfm_date = datetime.utcnow()
         
         # if SICUTOFF - nowdate > 24
-        # status -> usable else RV_CANCEL
+        # status -> usable else INVALID
         if hours_remaining > 24:
             space.spcstatus = "USABLE"
             msg = "Reserve cancelled successfully, space released to USABLE"
         else:
-            space.spcstatus = "RV_CANCEL"
-            msg = "Reserve cancelled, space set to RV_CANCEL (SICUTOFF < 24h)"
+            space.spcstatus = "INVALID"
+            msg = "Reserve cancelled, space set to INVALID (SICUTOFF < 24h)"
 
         db.session.commit()
         flash(msg, "success")
