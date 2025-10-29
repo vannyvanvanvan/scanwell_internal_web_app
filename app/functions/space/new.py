@@ -56,13 +56,24 @@ def create_space(form: dict, sch_id: int) -> int:
         flash("New spaces can only have USABLE or BK_RESERVED status.", "danger")
         return new_populated_space_page(form, sch_id)
 
+    # Validate Sugrate must be >= Avgrate
+    try:
+        avgrate = int(form["avgrate"])
+        sugrate = int(form["sugrate"])
+        if sugrate < avgrate:
+            flash("Sugrate must be greater than or equal to Avgrate.", "danger")
+            return new_populated_space_page(form, sch_id)
+    except (ValueError, KeyError):
+        flash("Invalid rate values. please enter valid numbers.", "danger")
+        return new_populated_space_page(form, sch_id)
+
     try:
         print("add space")
         new_space = Space(
             sch_id=sch_id,
             size=form["size"],
-            avgrate=int(form["avgrate"]),
-            sugrate=int(form["sugrate"]),
+            avgrate=avgrate,
+            sugrate=sugrate,
             ratevalid=datetime.strptime(form["ratevalid"], "%Y-%m-%d"),
             proport=is_checked_key(form, "proport"),
             spcstatus=default_or_valid_spcstatus(form["spcstatus"]),

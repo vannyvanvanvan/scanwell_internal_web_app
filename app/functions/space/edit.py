@@ -146,9 +146,20 @@ def edit_space(spc_id: int) -> str:
             flash("New spaces can only have USABLE, BK_RESERVED, or INVALID status.", "danger")
             return invalid_space_page(spc_id, request.form)
         
+        # Validate Sugrate must be >= Avgrate
+        try:
+            avgrate = int(request.form["avgrate"])
+            sugrate = int(request.form["sugrate"])
+            if sugrate < avgrate:
+                flash("Sugrate must be greater than or equal to Avgrate.", "danger")
+                return invalid_space_page(spc_id, request.form)
+        except (ValueError, KeyError):
+            flash("Invalid rate values, please enter valid numbers.", "danger")
+            return invalid_space_page(spc_id, request.form)
+        
         space_to_edit.size = request.form["size"]
-        space_to_edit.avgrate = int(request.form["avgrate"])
-        space_to_edit.sugrate = int(request.form["sugrate"])
+        space_to_edit.avgrate = avgrate
+        space_to_edit.sugrate = sugrate
         space_to_edit.ratevalid = datetime.strptime(
             request.form["ratevalid"], "%Y-%m-%d"
         )
