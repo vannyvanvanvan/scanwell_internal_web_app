@@ -60,6 +60,7 @@
 
   <form method="POST" class="mt-4">
     {{ render_input_number(name='Sale Price', id='saleprice', required=True) }}
+    {{ render_input_text(name='Remark', id='remark', value='') }}
 
     <div class="d-inline-flex gap-2 mt-3">
       <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>

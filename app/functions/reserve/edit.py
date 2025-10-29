@@ -1,4 +1,5 @@
 from flask import render_template, request, flash, redirect, url_for
+from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
 from app.model import Reserve, db
@@ -15,7 +16,16 @@ from app.functions.validate import (
 def edit_reserve_page(rsv_id: int) -> str:
     try:
         reserve = Reserve.query.get_or_404(rsv_id)
-        return render_template("shipping_reserve.html", mode="edit", data=reserve)
+        
+        # Pass user role to template to control field editing
+        is_sales_user = current_user.role.rank == "sales"
+        
+        return render_template(
+            "shipping_reserve.html", 
+            mode="edit", 
+            data=reserve,
+            is_sales_user=is_sales_user
+        )
     except NotFound:
         flash(
             "Space not found, please try again. No changes were made to the database.",
@@ -28,6 +38,10 @@ def invalid_reserve_page(rsv_id: int, form: dict) -> str:
     try:
         original_reserve = Reserve.query.get_or_404(rsv_id)
         flash("Some of your changes are invalid. Please try again.", "danger")
+        
+        # Pass user role to template to control field editing
+        is_sales_user = current_user.role.rank == "sales"
+        
         return render_template(
             "shipping_reserve.html",
             mode="edit",
@@ -46,6 +60,7 @@ def invalid_reserve_page(rsv_id: int, form: dict) -> str:
                 void=is_checked_key(form["void"]),
                 remark=form["remark"],
             ),
+            is_sales_user=is_sales_user,
         )
 
     except NotFound:
@@ -61,20 +76,28 @@ def edit_reserve(rsv_id: int) -> str:
         return invalid_reserve_page(rsv_id, request.form)
     try:
         reserve_to_edit = Reserve.query.get_or_404(rsv_id)
-        reserve_to_edit.sales = request.form["sales"]
-        reserve_to_edit.saleprice = int(request.form["saleprice"])
-        reserve_to_edit.rsv_date = datetime.strptime(
-            request.form["rsv_date"], "%Y-%m-%d"
-        )
-        reserve_to_edit.cfm_date = datetime.strptime(
-            request.form["cfm_date"], "%Y-%m-%d"
-        )
-        reserve_to_edit.cfm_cs = request.form["cfm_cs"]
-        reserve_to_edit.void = is_checked_key(request.form, "void")
-        reserve_to_edit.remark = request.form["remark"]
+        
+        if current_user.role.rank == "sales":
+            # Sales can only edit saleprice and remark
+            reserve_to_edit.saleprice = int(request.form["saleprice"])
+            reserve_to_edit.remark = request.form["remark"]
+        else:
+            # Admin can edit all fields
+            reserve_to_edit.sales = request.form["sales"]
+            reserve_to_edit.saleprice = int(request.form["saleprice"])
+            reserve_to_edit.rsv_date = datetime.strptime(
+                request.form["rsv_date"], "%Y-%m-%d"
+            )
+            reserve_to_edit.cfm_date = datetime.strptime(
+                request.form["cfm_date"], "%Y-%m-%d"
+            )
+            reserve_to_edit.cfm_cs = request.form["cfm_cs"]
+            reserve_to_edit.void = is_checked_key(request.form, "void")
+            reserve_to_edit.remark = request.form["remark"]
+        
         db.session.commit()
         flash("Reserve updated successfully!", "success")
-        return redirect(url_for("reserve.reserve_edit", rsv_id=rsv_id))
+        return redirect(url_for("user.user_home"))
 
     except NotFound:
         flash(

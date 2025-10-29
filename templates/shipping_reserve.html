@@ -15,13 +15,27 @@
   <h3>Reserve Details</h3>
 
   <form method="POST" class="mt-4">
-    {{ render_input_text(name='Sales', id='sales', required=True, value=data.sales) }}
-    {{ render_input_number(name='Sale Price', id='saleprice', required=True, value=data.saleprice) }}
-    {{ render_input_date(name='Reserve Date', id='rsv_date', required=True, value=data.rsv_date) }}
-    {{ render_input_date(name='Confirm Date', id='cfm_date', required=True, value=data.cfm_date) }}
-    {{ render_input_text(name='Confirm CS', id='cfm_cs', value=data.cfm_cs) }}
-    {{ render_input_checkbox(name='Void', id='void', required=True, checked=data.void) }}
-    {{ render_input_text(name='Remark', id='remark', value=data.remark) }}
+    {% if mode == 'edit' and is_sales_user %}
+      <!-- Sales can only edit saleprice and remark -->
+      <input type="hidden" name="sales" value="{{ data.sales }}">
+      <input type="hidden" name="rsv_date" value="{{ data.rsv_date.strftime('%Y-%m-%d') }}">
+      <input type="hidden" name="cfm_date" value="{% if data.cfm_date %}{{ data.cfm_date.strftime('%Y-%m-%d') }}{% else %}{{ data.rsv_date.strftime('%Y-%m-%d') }}{% endif %}">
+      <input type="hidden" name="cfm_cs" value="{{ data.cfm_cs if data.cfm_cs else '' }}">
+      <input type="hidden" name="void" value="">
+      
+      {{ render_input_number(name='Sale Price', id='saleprice', required=True, value=data.saleprice) }}
+      {{ render_input_text(name='Remark', id='remark', value=data.remark) }}
+      
+    {% else %}
+      <!-- Admin can edit all fields -->
+      {{ render_input_text(name='Sales', id='sales', required=True, value=data.sales) }}
+      {{ render_input_number(name='Sale Price', id='saleprice', required=True, value=data.saleprice) }}
+      {{ render_input_date(name='Reserve Date', id='rsv_date', required=True, value=data.rsv_date) }}
+      {{ render_input_date(name='Confirm Date', id='cfm_date', required=True, value=data.cfm_date) }}
+      {{ render_input_text(name='Confirm CS', id='cfm_cs', value=data.cfm_cs) }}
+      {{ render_input_checkbox(name='Void', id='void', required=True, checked=data.void) }}
+      {{ render_input_text(name='Remark', id='remark', value=data.remark) }}
+    {% endif %}
 
     <div class="d-inline-flex gap-2 mt-3">
       <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>

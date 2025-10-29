@@ -33,7 +33,7 @@ def reserve_add(spc_id: int):
 
 @reserve_routes.route("/edit/<int:rsv_id>", methods=["GET", "POST"])
 @login_required
-@role_required(["admin"])
+@role_required(["admin", "sales"])
 def reserve_edit(rsv_id: int):
     if request.method == "POST":
         return edit_reserve(rsv_id)

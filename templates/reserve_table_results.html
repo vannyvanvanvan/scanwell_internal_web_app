@@ -58,21 +58,27 @@
       
       {% if (current_user.role.rank == 'sales' or current_user.role.rank == 'admin') and current_user.id == reserve.owner %}
         {% if reserve.space.spcstatus == 'RV_SUBMIT' and not reserve.cfm_cs and not reserve.void %}
-        <form action="{{ url_for('reserve.reserve_cancel', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
-          <button data-bs-toggle="tooltip" data-bs-title="Cancel reserve" type="submit" class="btn btn-secondary"
-            onclick="return confirm('Are you sure you want to cancel this reserve?')" title="Cancel">
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </form>
+          <form action="{{ url_for('reserve.reserve_cancel', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
+            <button data-bs-toggle="tooltip" data-bs-title="Cancel reserve" type="submit" class="btn btn-secondary"
+              onclick="return confirm('Are you sure you want to cancel this reserve?')" title="Cancel">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </form>
+          
+          <div data-bs-toggle="tooltip" data-bs-title="Edit reserve">
+            <a class="btn btn-warning" href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">
+              <i class="bi bi-pencil-square"></i>
+            </a>
+          </div>
         {% endif %}
       {% endif %}
       
-      {% if current_user.role.rank == 'admin' or current_user.id == reserve.owner %}
-      <div data-bs-toggle="tooltip" data-bs-title="Edit reserve">
-        <a class="btn btn-warning" href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">
-          <i class="bi bi-pencil-square"></i>
-        </a>
-      </div>
+      {% if current_user.role.rank == 'admin' %}
+        <div data-bs-toggle="tooltip" data-bs-title="Edit reserve (Admin)">
+          <a class="btn btn-warning" href="{{ url_for('reserve.reserve_edit', rsv_id=reserve.rsv_id) }}">
+            <i class="bi bi-pencil-square"></i>
+          </a>
+        </div>
       {% endif %}
     </div>
   </td>
