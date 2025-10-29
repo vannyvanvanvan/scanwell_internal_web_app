@@ -38,6 +38,26 @@ render_input_select %}
           )
             }}
 
+    {% elif mode == 'edit' and is_status_readonly %}
+      <!-- Read only statues when changed to RV_SUBMIT, RV_CONFIRM, BK_PENDING, BK_CONFIRM -->
+      <div class="mb-3 row align-items-baseline">
+        <label class="col-sm-2" for="spcstatus">Space status</label>
+        <div class="col-sm-10">
+          <select class="form-control status-disabled" id="spcstatus" name="spcstatus" disabled>
+            {% set readonly_status_display = {
+              'RV_SUBMIT': 'RV_SUBMIT',
+              'RV_CONFIRM': 'RV_CONFIRM',
+              'BK_PENDING': 'BK_PENDING',
+              'BK_CONFIRM': 'BK_CONFIRM'
+            } %}
+            <option value="{{ data.spcstatus }}" selected>
+              {{ readonly_status_display.get(data.spcstatus, data.spcstatus) }}
+            </option>
+          </select>
+          <input type="hidden" name="spcstatus" value="{{ data.spcstatus }}">
+        </div>
+      </div>
+
     {% elif mode == 'edit' and is_new_space %}
       <!-- space editing only allows USABLE, BK_RESERVED, INVALID -->
       {{ render_input_select(name='Space status', id='spcstatus', required=True, value=data.spcstatus,
