@@ -12,9 +12,13 @@ render_input_select %}
 {% endwith %}
 
 <div class="mt-4">
+
   {% include 'flash.html' %}
+
 </div>
+
 <section class="container p-4">
+
   <h3>Space Details</h3>
 
   <form method="POST" class="mt-4">
@@ -24,18 +28,43 @@ render_input_select %}
     {{ render_input_date(name='Rate valid', id='ratevalid', required=True, value=data.ratevalid) }}
     {{ render_input_checkbox(name='Proport', id='proport', required=True, checked=data.proport) }}
 
-    {{ render_input_select(name='Space status', id='spcstatus', required=True, value=data.spcstatus,
-    options=[('USABLE', 'USABLE'),
-    ('RV_SUBMIT', 'RV_SUBMIT'),
-    ('RV_CONFIRM', 'RV_CONFIRM'),
-    ('RV_CANCEL', 'RV_CANCEL'),
-    ('BK_CONFIRM', 'BK_CONFIRM'),
-    ('BK_RESERVED', 'BK_RESERVED'),
-    ('BK_PENDING', 'BK_PENDING'),
-    ('BK_CANCEL', 'BK_CANCEL'),
-    ('INVALID', 'INVALID')
-    ]
-    ) }}
+    <!-- New spaces only allows USABLE or BK_RESERVED status -->
+    {% if mode == 'add' %}
+
+      {{ render_input_select(name='Space status', id='spcstatus', required=True, value=data.spcstatus,
+      options=[('USABLE', 'USABLE'),
+      ('BK_RESERVED', 'BK_RESERVED')
+        ]
+          )
+            }}
+
+    {% elif mode == 'edit' and is_new_space %}
+      <!-- space editing only allows USABLE, BK_RESERVED, INVALID -->
+      {{ render_input_select(name='Space status', id='spcstatus', required=True, value=data.spcstatus,
+      options=[('USABLE', 'USABLE'),
+      ('BK_RESERVED', 'BK_RESERVED'),
+      ('INVALID', 'INVALID')
+        ]
+          )
+            }}  
+
+    {% else %}
+      <!-- Regular space editing: all statuses available -->
+      {{ render_input_select(name='Space status', id='spcstatus', required=True, value=data.spcstatus,
+      options=[('USABLE', 'USABLE'),
+      ('RV_SUBMIT', 'RV_SUBMIT'),
+      ('RV_CONFIRM', 'RV_CONFIRM'),
+      ('RV_CANCEL', 'RV_CANCEL'),
+      ('BK_CONFIRM', 'BK_CONFIRM'),
+      ('BK_RESERVED', 'BK_RESERVED'),
+      ('BK_PENDING', 'BK_PENDING'),
+      ('BK_CANCEL', 'BK_CANCEL'),
+      ('INVALID', 'INVALID')
+        ]
+          )
+            }}
+
+    {% endif %}
 
     <div class="d-inline-flex gap-2 mt-3">
       <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>

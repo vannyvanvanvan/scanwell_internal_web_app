@@ -50,6 +50,12 @@ def create_space(form: dict, sch_id: int) -> int:
         flash("Some of your changes are invalid. Please try again.", "danger")
         return new_populated_space_page(form, sch_id)
 
+    # check new spaces can only have USABLE or BK_RESERVED
+    requested_status = form.get("spcstatus", "USABLE")
+    if requested_status not in ["USABLE", "BK_RESERVED"]:
+        flash("New spaces can only have USABLE or BK_RESERVED status.", "danger")
+        return new_populated_space_page(form, sch_id)
+
     try:
         print("add space")
         new_space = Space(
