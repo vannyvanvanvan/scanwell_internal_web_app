@@ -132,7 +132,8 @@ def is_valid_schedule_dict(form: dict) -> bool:
             "week",
             "carrier",
             "service",
-            "mv",
+            "vessel_name",
+            "voyage",
             "pol",
             "pod",
             "routing",
@@ -186,7 +187,8 @@ def is_valid_schedule_form(form: dict) -> bool:
         and is_valid_week(form["week"])
         and is_valid_string(form["carrier"])
         and is_valid_string(form["service"])
-        and is_valid_string(form["mv"])
+        and is_valid_string(form["vessel_name"])
+        and is_valid_string(form["voyage"])
         and is_valid_string(form["pol"])
         and is_valid_string(form["pod"])
         and is_valid_string(form["routing"])

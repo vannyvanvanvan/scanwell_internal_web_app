@@ -23,7 +23,8 @@ def new_schedule_page() -> str:
             week=datetime.now().isocalendar().week,
             carrier="",
             service="",
-            mv="",
+            vessel_name="",
+            voyage="",
             pol="",
             pod="",
             routing="",
@@ -45,7 +46,8 @@ def new_populated_schedule_page(form: dict) -> str:
             week=now_or_valid_week(form["week"]),
             carrier=form["carrier"],
             service=form["service"],
-            mv=form["mv"],
+            vessel_name=form.get("vessel_name", ""),
+            voyage=form.get("voyage", ""),
             pol=form["pol"],
             pod=form["pod"],
             routing=form["routing"],
@@ -79,7 +81,8 @@ def create_schedule(form: dict) -> str | Response:
             week=int(form["week"]),
             carrier=form["carrier"],
             service=form["service"],
-            mv=form["mv"],
+            vessel_name=form["vessel_name"],
+            voyage=form["voyage"],
             pol=form["pol"],
             pod=form["pod"],
             routing=form["routing"],
@@ -102,6 +105,17 @@ def create_schedule(form: dict) -> str | Response:
             eta=datetime.strptime(form["eta"], "%Y-%m-%d"),
             owner=current_user.id,
         )
+        # vesselname AND voyage must be unique
+        duplicate = (
+            Schedule.query.filter(
+                Schedule.vessel_name == schedule_to_add.vessel_name,
+                Schedule.voyage == schedule_to_add.voyage,
+            ).first()
+        )
+        if duplicate:
+            flash("Schedule already exists (duplicate Vessel/Voyage).", "danger")
+            return new_populated_schedule_page(form)
+
         db.session.add(schedule_to_add)
         db.session.commit()
         flash("Schedule added successfully!", "success")

@@ -96,7 +96,8 @@ def edit_schedule(sch_id: int):
         schedule_to_edit.week = int(request.form["week"])
         schedule_to_edit.carrier = request.form["carrier"]
         schedule_to_edit.service = request.form["service"]
-        schedule_to_edit.mv = request.form["mv"]
+        schedule_to_edit.vessel_name = request.form["vessel_name"]
+        schedule_to_edit.voyage = request.form["voyage"]
         schedule_to_edit.pol = request.form["pol"]
         schedule_to_edit.pod = request.form["pod"]
         schedule_to_edit.routing = request.form["routing"]
@@ -117,6 +118,18 @@ def edit_schedule(sch_id: int):
         )
         schedule_to_edit.etd = datetime.strptime(request.form["etd"], "%Y-%m-%d")
         schedule_to_edit.eta = datetime.strptime(request.form["eta"], "%Y-%m-%d")
+        # Enforce uniqueness: vessel_name + voyage (excluding this record)
+        duplicate = (
+            Schedule.query.filter(
+                Schedule.vessel_name == schedule_to_edit.vessel_name,
+                Schedule.voyage == schedule_to_edit.voyage,
+                Schedule.sch_id != sch_id,
+            ).first()
+        )
+        if duplicate:
+            flash("Schedule already exists (duplicate Vessel/Voyage).", "danger")
+            return invalid_schedule_page(sch_id, request.form)
+
         db.session.commit()
         flash("Schedule updated successfully!", "success")
         publish_update("schedule_changed", {"sch_id": sch_id}, actor_id=current_user.id)
