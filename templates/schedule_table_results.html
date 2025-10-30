@@ -6,10 +6,8 @@
   {% else %}
 <tr class="schedule-row">
   {% endif %}
-  {% if current_user.role.rank == 'admin' %}
   <td>{{ result.sch_id }}</td>
-  {% endif %}
-
+  <td>{{ result.week }}</td>
   <td>{{ result.carrier }}</td>
   <td>{{ result.service }}</td>
   <td>{{ result.routing }}</td>
