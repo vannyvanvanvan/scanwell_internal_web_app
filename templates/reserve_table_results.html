@@ -8,6 +8,14 @@
   {% if current_user.role.rank == 'admin' %}
   <td>{{ reserve.rsv_id }}</td>
   {% endif %}
+  {% if current_user.role.rank == 'sales' %}
+  <td>{{ reserve.space.schedule.service }}</td>
+  <td>{{ reserve.space.schedule.vessel_name or '-' }}</td>
+  <td>{{ reserve.space.schedule.voyage or '-' }}</td>
+  <td>{{ reserve.space.schedule.pol }}</td>
+  <td>{{ reserve.space.schedule.pod }}</td>
+  <td>{{ reserve.space.schedule.etd.strftime('%Y-%m-%d') }}</td>
+  {% endif %}
   {% if current_user.role.rank != 'sales' %}
   <td>{{ users.get(reserve.owner, '') | capitalize }}</td>
   {% endif %}

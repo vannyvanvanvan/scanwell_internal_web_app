@@ -21,6 +21,14 @@
         {% if current_user.role.rank == 'admin' %}
         <th>ID</th>
         {% endif %}
+        {% if current_user.role.rank == 'sales' %}
+        <th>Service</th>
+        <th>Vessel Name</th>
+        <th>Voyage</th>
+        <th>POL</th>
+        <th>POD</th>
+        <th>ETD</th>
+        {% endif %}
         {% if current_user.role.rank != 'sales' %}
         <th>Sales</th>
         {% endif %}
