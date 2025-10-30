@@ -44,7 +44,8 @@
           window.scrollTo(0, prevScrollTop);
         }
       })
-      .catch(function () { /* best-effort */ });
+      .catch(function () { /*
+         */ });
   }
 
   var lastRefreshAt = {
@@ -52,7 +53,7 @@
     reserve: 0,
     booking: 0,
   };
-  var REFRESH_COOLDOWN_MS = 2000; // throttle per table (reduced)
+  var REFRESH_COOLDOWN_MS = 2000;
 
   function shouldRefresh(kind) {
     var now = Date.now();
@@ -70,7 +71,7 @@
       var hasReserve = !!document.querySelector("#results-reserve");
       var hasBooking = !!document.querySelector("#results-booking");
 
-      if (document.visibilityState !== "visible") return; // only refresh visible tab
+      if (document.visibilityState !== "visible") return; 
 
       // Admin/CS schedule table shows nested spaces/reserves/bookings, so refresh on all related changes
       if (hasSchedule && (type === "schedule_changed" || type === "space_changed" || type === "reserve_changed" || type === "booking_changed")) {
