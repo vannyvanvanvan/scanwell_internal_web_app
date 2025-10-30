@@ -69,7 +69,7 @@
             <th>Rate Valid</th>
             <th>Proport</th>
             <th>Status</th>
-            {% if current_user.role.rank == 'admin', 'CS' %}
+            {% if current_user.role.rank in ['admin', 'cs'] %}
             <th>Last Modified</th>
             {% endif %}
             <th></th>
@@ -89,8 +89,8 @@
               <td>{{ space.ratevalid.strftime('%Y-%m-%d %H:%M') }}</td>
               <td>{{ space.proport_yesno() }}</td>
               <td>{{ space.spcstatus }}</td>
-              {% if current_user.role.rank == 'admin', 'CS' %}
-              <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }} by {{ users[space.last_modified_by] | capitalize }}</td>
+              {% if current_user.role.rank in ['admin', 'cs'] %}
+              <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }} by {{ users.get(space.last_modified_by, '') | capitalize }}</td>
               <td>
                 <div class="d-flex justify-content-end gap-2">
                   <div data-bs-toggle="tooltip" data-bs-title="View space details">

@@ -2,6 +2,7 @@ from flask import Response, redirect, render_template, flash, url_for
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from app.model import Schedule, db
+from app.functions.events import publish_update
 from datetime import datetime
 
 from app.functions.validate import (
@@ -104,6 +105,7 @@ def create_schedule(form: dict) -> str | Response:
         db.session.add(schedule_to_add)
         db.session.commit()
         flash("Schedule added successfully!", "success")
+        publish_update("schedule_changed", {"sch_id": schedule_to_add.sch_id}, actor_id=current_user.id)
         return redirect(
             url_for("user.user_home", highlighted_schedule=schedule_to_add.sch_id)
         )

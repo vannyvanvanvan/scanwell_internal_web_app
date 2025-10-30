@@ -3,6 +3,7 @@ from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
 from app.model import Space, Booking, db
+from app.functions.events import publish_update
 from datetime import datetime
 
 from app.functions.validate import (
@@ -168,6 +169,7 @@ def edit_space(spc_id: int) -> str:
         space_to_edit.last_modified_by = current_user.id
         db.session.commit()
         flash("Space updated successfully!", "success")
+        publish_update("space_changed", {"spc_id": spc_id, "sch_id": space_to_edit.sch_id}, actor_id=current_user.id)
         return redirect(url_for("space.space_edit", spc_id=spc_id))
     except NotFound:
         flash(

@@ -47,26 +47,6 @@ def space_delete(spc_id: int):
     return redirect(url_for("user.user_home"))
 
 
-@space_routes.route("/update/<int:spc_id>", methods=["GET", "POST"])
-@login_required
-@role_required(["admin", "cs"])
-def space_update(spc_id: int):
-    if request.method == "POST":
-        pass
-    else:
-        pass
-
-
-@space_routes.route("/search/<int:spc_id>", methods=["GET", "POST"])
-@login_required
-@role_required(["admin", "cs", "sales"])
-def space_search(query: dict):
-    if request.method == "POST":
-        pass
-    else:
-        pass
-
-
 @space_routes.route("/list", methods=["GET"])
 @login_required
 @role_required(["admin", "cs", "sales"])

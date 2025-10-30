@@ -3,6 +3,8 @@ from datetime import datetime
 from werkzeug.exceptions import NotFound
 from app.functions.schedule.new import new_populated_schedule_page
 from app.model import Schedule, db
+from app.functions.events import publish_update
+from flask_login import current_user
 
 from sqlalchemy.exc import SQLAlchemyError
 from app.functions.validate import (
@@ -117,6 +119,7 @@ def edit_schedule(sch_id: int):
         schedule_to_edit.eta = datetime.strptime(request.form["eta"], "%Y-%m-%d")
         db.session.commit()
         flash("Schedule updated successfully!", "success")
+        publish_update("schedule_changed", {"sch_id": sch_id}, actor_id=current_user.id)
         return edit_schedule_page(sch_id)
     except NotFound:
         flash(

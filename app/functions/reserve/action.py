@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import flash, redirect, url_for
 from flask_login import current_user
 from app.model import Reserve, Schedule, Space, db
+from app.functions.events import publish_update
 
 
 def confirm_reserve(rsv_id):
@@ -28,6 +29,9 @@ def confirm_reserve(rsv_id):
             db.session.commit()
 
             flash("Reserve approved successfully", "success")
+            publish_update("reserve_changed", {"rsv_id": reserve.rsv_id, "spc_id": reserve.spc_id}, actor_id=current_user.id)
+            if space:
+                publish_update("space_changed", {"spc_id": space.spc_id, "sch_id": space.sch_id}, actor_id=current_user.id)
 
             return redirect(
                 url_for(
@@ -80,7 +84,7 @@ def decline_reserve(rsv_id):
             # update reserve
             reserve.void = True
             reserve.cfm_date = datetime.utcnow()
-            reserve.cfm_cs = current_user.username
+            reserve.cfm_cs = current_user.id
 
             # if SICUTOF - nowdate > 24
             # status -> usable else RV_CANCEL
@@ -93,6 +97,9 @@ def decline_reserve(rsv_id):
 
             db.session.commit()
             flash(msg, "success")
+            publish_update("reserve_changed", {"rsv_id": reserve.rsv_id, "spc_id": reserve.spc_id}, actor_id=current_user.id)
+            if space:
+                publish_update("space_changed", {"spc_id": space.spc_id, "sch_id": space.sch_id}, actor_id=current_user.id)
             return redirect(url_for("user.user_home"))
 
         else:
@@ -143,6 +150,9 @@ def unconfirm_reserve(rsv_id):
             db.session.commit()
 
             flash(msg, "success")
+            publish_update("reserve_changed", {"rsv_id": reserve.rsv_id, "spc_id": reserve.spc_id}, actor_id=current_user.id)
+            if space:
+                publish_update("space_changed", {"spc_id": space.spc_id, "sch_id": space.sch_id}, actor_id=current_user.id)
             return redirect(
                 url_for(
                     "user.user_home",
@@ -204,6 +214,9 @@ def cancel_reserve(rsv_id):
 
         db.session.commit()
         flash(msg, "success")
+        publish_update("reserve_changed", {"rsv_id": reserve.rsv_id, "spc_id": reserve.spc_id}, actor_id=current_user.id)
+        if space:
+            publish_update("space_changed", {"spc_id": space.spc_id, "sch_id": space.sch_id}, actor_id=current_user.id)
         return redirect(
             url_for(
                 "user.user_home",

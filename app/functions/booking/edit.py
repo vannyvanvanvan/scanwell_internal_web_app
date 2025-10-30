@@ -4,6 +4,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
 from app.functions.user.get import get_all_users_tuple_list
 from app.model import Booking, Reserve, Space, db
+from app.functions.events import publish_update
+from flask_login import current_user
 from datetime import datetime
 
 from app.functions.validate import (
@@ -110,12 +112,12 @@ def edit_booking(bk_id: int) -> str:
             if booking_void:
                 reserves = Reserve.query.filter_by(spc_id=booking_to_edit.spc_id).all()
                 for reserve in reserves:
-                    print("test")
                     reserve.void = True
                     
         booking_to_edit.remark = request.form["remark"]
         db.session.commit()
         flash("Booking updated successfully!", "success")
+        publish_update("booking_changed", {"bk_id": bk_id, "spc_id": booking_to_edit.spc_id}, actor_id=current_user.id)
         
         if request.form.get('return_to_confirm') == '1':
             return redirect(url_for("booking.booking_confirm", bk_id=bk_id))

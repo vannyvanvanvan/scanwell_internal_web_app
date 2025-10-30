@@ -4,6 +4,7 @@ from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from app.functions.user.get import get_all_users_tuple_list
 from app.model import Booking, Space, Reserve, db
+from app.functions.events import publish_update
 from app.functions.validate import (
     is_checked_key,
     is_valid_booking_form,
@@ -93,6 +94,7 @@ def create_booking(form: dict, spc_id: int) -> int:
         
         db.session.commit()
         flash("Booking created successfully!", "success")
+        publish_update("booking_changed", {"bk_id": new_booking.bk_id, "spc_id": spc_id}, actor_id=current_user.id)
         return redirect(
             url_for(
                 "user.user_home",

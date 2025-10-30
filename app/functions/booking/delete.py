@@ -2,13 +2,16 @@ from flask import flash
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
 from app.model import Booking, db
+from app.functions.events import publish_update
+from flask_login import current_user
 
-def delete_booking(sch_id: int) -> None:
+def delete_booking(bk_id: int) -> None:
     try:
-        booking = Booking.query.get_or_404(sch_id)
+        booking = Booking.query.get_or_404(bk_id)
         db.session.delete(booking)
         db.session.commit()
         flash("Booking deleted successfully!", "success")
+        publish_update("booking_changed", {"bk_id": bk_id}, actor_id=current_user.id)
     except NotFound:
         flash(
             "Booking not found, please try again. No changes were made to the database."

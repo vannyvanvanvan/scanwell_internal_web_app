@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from app.model import Space, db
+from app.functions.events import publish_update
 from datetime import datetime
 from app.functions.validate import (
     default_or_valid_spcstatus,
@@ -86,6 +87,7 @@ def create_space(form: dict, sch_id: int) -> int:
         db.session.commit()
         flash("Space created successfully!", "success")
         print("added space")
+        publish_update("space_changed", {"spc_id": new_space.spc_id, "sch_id": sch_id}, actor_id=current_user.id)
         return redirect(url_for("space.space_edit", spc_id=new_space.spc_id))
     except SQLAlchemyError as e:
         db.session.rollback()

@@ -40,6 +40,8 @@ from app.routes.space import space_routes
 from app.routes.reserve import reserve_routes
 from app.routes.booking import booking_routes
 from app.routes.search import search_routes
+from app.routes.sse import sse_routes
+from app.routes.refresh import refresh_routes
 from app.routes.admin import admin_routes
 
 app.register_blueprint(user_routes)
@@ -49,6 +51,8 @@ app.register_blueprint(reserve_routes, url_prefix="/reserve")
 app.register_blueprint(booking_routes, url_prefix="/booking")
 app.register_blueprint(search_routes, url_prefix="/search")
 app.register_blueprint(admin_routes, url_prefix="/admin")
+app.register_blueprint(sse_routes, url_prefix="/sse")
+app.register_blueprint(refresh_routes, url_prefix="/refresh")
 
 # Import socket events
 from app.functions.socket_events import register_socket_events

@@ -3,6 +3,7 @@ from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import NotFound
 from app.model import Reserve, db
+from app.functions.events import publish_update
 from datetime import datetime
 
 from app.functions.validate import (
@@ -46,7 +47,6 @@ def invalid_reserve_page(rsv_id: int, form: dict) -> str:
             "shipping_reserve.html",
             mode="edit",
             data=Reserve(
-                sales=form["sales"],
                 saleprice=default_or_valid_number(
                     original_reserve.saleprice, form["saleprice"]
                 ),
@@ -82,8 +82,7 @@ def edit_reserve(rsv_id: int) -> str:
             reserve_to_edit.saleprice = int(request.form["saleprice"])
             reserve_to_edit.remark = request.form["remark"]
         else:
-            # Admin can edit all fields
-            reserve_to_edit.sales = request.form["sales"]
+            # Admin can edit all fields (no 'sales' field on Reserve)
             reserve_to_edit.saleprice = int(request.form["saleprice"])
             reserve_to_edit.rsv_date = datetime.strptime(
                 request.form["rsv_date"], "%Y-%m-%d"
@@ -97,6 +96,9 @@ def edit_reserve(rsv_id: int) -> str:
         
         db.session.commit()
         flash("Reserve updated successfully!", "success")
+        # Notify clients to refresh reserves and nested schedule views
+        publish_update("reserve_changed", {"rsv_id": rsv_id, "spc_id": reserve_to_edit.spc_id}, actor_id=current_user.id)
+        publish_update("space_changed", {"spc_id": reserve_to_edit.spc_id}, actor_id=current_user.id)
         return redirect(url_for("user.user_home"))
 
     except NotFound:

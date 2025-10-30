@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.functions.schedule.get import get_schedule_pol_pod_etd
 from app.functions.space.get import get_space_by_id
 from app.model import Reserve, db
+from app.functions.events import publish_update
 from datetime import datetime
 
 from app.functions.validate import (
@@ -66,6 +67,7 @@ def create_reserve(form: dict, spc_id: int) -> int:
         db.session.add(new_reserve)
         db.session.commit()
         flash("Reserve created successfully!", "success")
+        publish_update("reserve_changed", {"rsv_id": new_reserve.rsv_id, "spc_id": spc_id}, actor_id=current_user.id)
         return redirect(url_for("reserve.reserve_edit", rsv_id=new_reserve.rsv_id))
     except SQLAlchemyError as e:
         db.session.rollback()
@@ -101,6 +103,7 @@ def reserve_space(form: dict, spc_id: int) -> bool:
         space_to_reserve.spcstatus = "RV_SUBMIT"
         db.session.commit()
         flash("Reserve created successfully!", "success")
+        publish_update("reserve_changed", {"spc_id": spc_id}, actor_id=current_user.id)
         return True
     except SQLAlchemyError as e:
         db.session.rollback()
