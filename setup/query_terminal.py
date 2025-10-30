@@ -52,7 +52,8 @@ def get_data():
                 'carrier': schedule.carrier,
                 'service': schedule.service,
                 'routing': schedule.routing,
-                'MV': schedule.mv,
+                'vessel_name': getattr(schedule, 'vessel_name', None),
+                'voyage': getattr(schedule, 'voyage', None),
                 'POL': schedule.pol,
                 'POD': schedule.pod,
                 'CY_Open': schedule.cyopen.strftime('%Y-%m-%d %H:%M:%S'),
@@ -72,7 +73,7 @@ def get_data():
                         'reserve': [
                             {
                                 'reserve_id': reserve.rsv_id,
-                                'sales': reserve.sales,
+                                'sales': reserve.owner,
                                 'sale_price': reserve.saleprice,
                                 'reservation_date': reserve.rsv_date.strftime('%Y-%m-%d %H:%M:%S'),
                                 'confirmation_date': reserve.cfm_date.strftime('%Y-%m-%d %H:%M:%S') if reserve.cfm_date else None,

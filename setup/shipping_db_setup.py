@@ -23,28 +23,28 @@ with app.app_context():
 
     schedule1 = Schedule(
         sch_id=1, cs='Fanny', week=29, carrier='ONE', service='PN2',
-        mv='NAVIOS UNISON V.020E', pol='YANTIAN', pod='TACOMA,WA',
+        vessel_name='NAVIOS UNISON', voyage='V.020E', pol='YANTIAN', pod='TACOMA,WA',
         routing='ALL WATER', cyopen=to_date('2024-07-09'), sicutoff=to_datetime('2024-07-15 10:00'),
         cycvcls=to_datetime('2024-07-15 10:00'), etd=to_date('2024-07-19'), eta=to_date('2024-08-03'),
         owner=1
     )
     schedule2 = Schedule(
         sch_id=2, cs='Fanny', week=29, carrier='ONE', service='PS4',
-        mv='YM MUTUALITY V.102E', pol='YANTIAN', pod='LOS ANGELES,CA',
+        vessel_name='YM MUTUALITY', voyage='V.102E', pol='YANTIAN', pod='LOS ANGELES,CA',
         routing='ALL WATER', cyopen=to_date('2024-07-13'), sicutoff=to_datetime('2024-07-17 16:00'),
         cycvcls=to_datetime('2024-07-18 09:00'), etd=to_date('2024-07-19'), eta=to_date('2024-08-09'),
         owner=1
     )
     schedule3 = Schedule(
         sch_id=3, cs='Fanny', week=29, carrier='ONE', service='PN2',
-        mv='SEASPAN FALCON V.009E', pol='YANTIAN', pod='TACOMA,WA',
+        vessel_name='SEASPAN FALCON', voyage='V.009E', pol='YANTIAN', pod='TACOMA,WA',
         routing='ALL WATER', cyopen=to_date('2024-07-17'), sicutoff=to_datetime('2024-07-23 10:00'),
         cycvcls=to_datetime('2024-07-23 10:00'), etd=to_date('2024-07-24'), eta=to_date('2024-08-16'),
         owner=1
     )
     schedule4 = Schedule(
         sch_id=4, cs='Fanny', week=29, carrier='MSC', service='CHINOOK',
-        mv='MSC MARINA UK429A', pol='YANTIAN', pod='PORTLAND,OR',
+        vessel_name='MSC MARINA', voyage='UK429A', pol='YANTIAN', pod='PORTLAND,OR',
         routing='ALL WATER', cyopen=to_date('2024-07-13'), sicutoff=to_datetime('2024-07-18 12:00'),
         cycvcls=to_datetime('2024-07-19 12:00'), etd=to_date('2024-07-21'), eta=to_date('2024-08-21'),
         owner=1
@@ -52,7 +52,7 @@ with app.app_context():
 
     schedule5 = Schedule(
         sch_id=5, cs='Fanny', week=29, carrier='ONE', service='PS4',
-        mv='YM UBIQUITY V.065E', pol='YANTIAN', pod='LOS ANGELES,CA',
+        vessel_name='YM UBIQUITY', voyage='V.065E', pol='YANTIAN', pod='LOS ANGELES,CA',
         routing='ALL WATER', cyopen=to_date('2024-07-16'), sicutoff=to_datetime('2024-07-21 18:00'),
         cycvcls=to_datetime('2024-07-22 9:00'), etd=to_date('2024-07-26'), eta=to_date('2024-08-15'),
         owner=1
