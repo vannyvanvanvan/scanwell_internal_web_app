@@ -8,7 +8,9 @@
   {% if current_user.role.rank == 'admin' %}
   <td>{{ reserve.rsv_id }}</td>
   {% endif %}
-  <td>{{ users[reserve.owner] | capitalize }}</td>
+  {% if current_user.role.rank != 'sales' %}
+  <td>{{ users.get(reserve.owner, '') | capitalize }}</td>
+  {% endif %}
   <td>{{ reserve.saleprice }}</td>
   <td>{{ reserve.rsv_date.strftime('%Y-%m-%d') }}</td>
   <td>{% if reserve.cfm_date %}{{ reserve.cfm_date.strftime('%Y-%m-%d') }}{% endif %}</td>

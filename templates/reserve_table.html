@@ -21,7 +21,9 @@
         {% if current_user.role.rank == 'admin' %}
         <th>ID</th>
         {% endif %}
+        {% if current_user.role.rank != 'sales' %}
         <th>Sales</th>
+        {% endif %}
         <th>Sale Price</th>
         <th>Reserve Date</th>
         <th>Confirm Date</th>
