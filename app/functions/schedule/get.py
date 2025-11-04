@@ -15,6 +15,9 @@ def get_schedule_by_id(sch_id: int) -> Schedule:
 def get_schedule_pol_pod_etd(sch_id: int) -> dict:
     schedule = get_schedule_by_id(sch_id)
     return {
+        "service": schedule.service,
+        "vessel_name": schedule.vessel_name,
+        "voyage": schedule.voyage,
         "pol": schedule.pol,
         "pod": schedule.pod,
         "etd": schedule.etd,

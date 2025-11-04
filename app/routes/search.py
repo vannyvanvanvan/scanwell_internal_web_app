@@ -41,6 +41,9 @@ def search_sales_booking():
 @role_required(["sales"])
 def search_available_spaces():
     filters = {
+        "service": request.args.get("service_filter", "").strip(),
+        "vessel_name": request.args.get("vessel_name_filter", "").strip(),
+        "voyage": request.args.get("voyage_filter", "").strip(),
         "pol": request.args.get("pol_filter", "").strip(),
         "pod": request.args.get("pod_filter", "").strip(),
         "etd": request.args.get("etd_filter", "").strip(),

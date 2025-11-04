@@ -150,6 +150,12 @@ def search_available_spaces_results(filters):
     query = db.session.query(Schedule, Space).join(
         Space, Schedule.sch_id == Space.sch_id
     )
+    if filters["service"]:
+        query = query.filter(Schedule.service.ilike(f'%{filters["service"]}%'))
+    if filters["vessel_name"]:
+        query = query.filter(Schedule.vessel_name.ilike(f'%{filters["vessel_name"]}%'))
+    if filters["voyage"]:
+        query = query.filter(Schedule.voyage.ilike(f'%{filters["voyage"]}%'))
     if filters["pol"]:
         query = query.filter(Schedule.pol.ilike(f'%{filters["pol"]}%'))
     if filters["pod"]:
