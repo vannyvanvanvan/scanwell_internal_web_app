@@ -45,7 +45,10 @@
       {% endif %}
     </thead>
     <tbody id="results-booking">
-      <tr>
+      {% set is_sales = (current_user.role.rank == 'sales') %}
+      {% set is_red = booking.void or space.spcstatus in ['BK_CANCEL','INVALID'] %}
+      {% set is_green = (space.spcstatus == 'BK_CONFIRM' and not booking.void) %}
+      <tr class="{% if is_sales %}{% if is_red %}row-soft-red{% elif is_green %}row-soft-green text-lighter{% endif %}{% endif %}">
         {% if current_user.role.rank == 'admin' %}
             <td>{{ space.spc_id }}</td>
         {% endif %}

@@ -118,6 +118,8 @@ def edit_booking(bk_id: int) -> str:
         db.session.commit()
         flash("Booking updated successfully!", "success")
         publish_update("booking_changed", {"bk_id": bk_id, "spc_id": booking_to_edit.spc_id}, actor_id=current_user.id)
+        if space:
+            publish_update("space_changed", {"spc_id": space.spc_id, "sch_id": space.sch_id}, actor_id=current_user.id)
         
         if request.form.get('return_to_confirm') == '1':
             return redirect(url_for("booking.booking_confirm", bk_id=bk_id))

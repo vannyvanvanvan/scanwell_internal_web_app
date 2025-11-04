@@ -244,3 +244,17 @@ input[type="date"]:invalid {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* Sales row coloring */
+
+/* light green */
+.row-soft-green > * {
+    background-color: #e8f5e9 !important; 
+}
+/* light red */
+.row-soft-red > * {
+  background-color: #fdecea !important; 
+}
+.text-lighter {
+  opacity: 0.85;
+}

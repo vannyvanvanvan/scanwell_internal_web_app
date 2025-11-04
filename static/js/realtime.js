@@ -87,7 +87,7 @@
         fetchAndSwap("/refresh/space", "#results-spaces");
       }
 
-      if (hasReserve && (type === "reserve_changed" || type === "space_changed")) {
+      if (hasReserve && (type === "reserve_changed" || type === "space_changed" || type === "booking_changed")) {
         // immediate refresh for reserves
         fetchAndSwap("/refresh/reserve", "#results-reserve");
       }

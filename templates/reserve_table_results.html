@@ -1,9 +1,12 @@
 {% if reserves %}
 {% for reserve in reserves %}
+{% set is_sales = (current_user.role.rank == 'sales') %}
+{% set is_red = reserve.void or reserve.space.spcstatus in ['BK_CANCEL','RV_CANCEL','INVALID'] %}
+{% set is_green = (not reserve.void and reserve.space.spcstatus in ['RV_CONFIRM','BK_CONFIRM','BK_PENDING']) %}
 {% if highlighted and highlighted["reserve"] and highlighted["reserve"]==reserve.rsv_id %}
 <tr class="highlighted-row">
   {% else %}
-<tr>
+<tr class="{% if is_sales %}{% if is_red %}row-soft-red{% elif is_green %}row-soft-green text-lighter{% endif %}{% endif %}">
   {% endif %}
   {% if current_user.role.rank == 'admin' %}
   <td>{{ reserve.rsv_id }}</td>
