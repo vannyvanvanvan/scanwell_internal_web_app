@@ -26,6 +26,9 @@
           {% if current_user.role.rank == 'admin' %}
             <th>ID</th>
           {% endif %}
+          <th>Service</th>
+          <th>Vessel Name</th>
+          <th>Voyage</th>
           <th>POL</th>
           <th>POD</th>
           <th>ETD</th>
@@ -45,6 +48,21 @@
         {% if current_user.role.rank == 'sales' %}
         <!-- Added this -->
           <tr class="p-2">
+            <td>
+                <input type="text" class="form-control form-control-sm" placeholder="Service..." name="service_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+              hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+              hx-include="[name$='_filter'], [name='global_search']" />
+            </td>
+            <td>
+              <input type="text" class="form-control form-control-sm" placeholder="Vessel Name..." name="vessel_name_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+              hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+              hx-include="[name$='_filter'], [name='global_search']" />
+            </td>
+            <td>
+              <input type="text" class="form-control form-control-sm" placeholder="Voyage..." name="voyage_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
+              hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
+              hx-include="[name$='_filter'], [name='global_search']" />
+            </td>
             <td>
               <input type="text" class="form-control form-control-sm" placeholder="POL..." name="pol_filter" hx-get="{{ url_for('search.search_available_spaces') }}" 
               hx-trigger="keyup changed delay:500ms" hx-target="#results-spaces" hx-indicator="#loading" 
@@ -106,6 +124,9 @@
                 {% if current_user.role.rank == 'admin' %}
                   <td>{{ space.spc_id }}</td>
                 {% endif %}
+                <td>{{ schedule.service }}</td>
+                <td>{{ schedule.vessel_name }}</td>
+                <td>{{ schedule.voyage }}</td>
                 <td>{{ schedule.pol }}</td>
                 <td>{{ schedule.pod }}</td>
                 <td>{{ schedule.etd.strftime('%Y-%m-%d') }}</td>
@@ -139,7 +160,7 @@
             {% endfor %}
           {% else %}
             <tr>
-              <td colspan="14">There are currently no available space. Please try again later.</td>
+              <td colspan="20">There are currently no available space. Please try again later.</td>
             </tr>
           {% endif %}
         </tbody>

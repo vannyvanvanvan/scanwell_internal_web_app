@@ -1,5 +1,8 @@
 {% for schedule, space in spaces %}
   <tr>
+    <td>{{ schedule.service }}</td>
+    <td>{{ schedule.vessel_name }}</td>
+    <td>{{ schedule.voyage }}</td>
     <td>{{ schedule.pol }}</td>
     <td>{{ schedule.pod }}</td>
     <td>{{ schedule.etd.strftime('%Y-%m-%d') }}</td>
@@ -11,6 +14,6 @@
   </tr>
 {% else %}
   <tr>
-    <td colspan="14">No matching spaces found</td>
+    <td colspan="20">No matching spaces found</td>
   </tr>
 {% endfor %}
