@@ -1,5 +1,8 @@
 {% for schedule, space in spaces %}
   <tr>
+    {% if current_user.role.rank == 'admin' %}
+      <td>{{ space.spc_id }}</td>
+    {% endif %}
     <td>{{ schedule.service }}</td>
     <td>{{ schedule.vessel_name }}</td>
     <td>{{ schedule.voyage }}</td>
@@ -11,6 +14,27 @@
     <td>{{ space.sugrate }}</td>
     <td>{{ space.ratevalid.strftime('%Y-%m-%d %H:%M') }}</td>
     <td>{{ space.proport_yesno() }}</td>
+    {% if current_user.role.rank == 'admin' %}
+      <td>{{ space.spcstatus }}</td>
+      <td>{{ space.last_modified_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      <td>{{ space.last_modified_by }}</td>
+    {% endif %}
+    <td>
+      <div class="d-flex justify-content-end gap-2">
+        {% if current_user.role.rank == 'admin' or current_user.id == space.owner %}
+          <div data-bs-toggle="tooltip" data-bs-title="Create reserve">
+            <a class="btn btn-primary" href="{{ url_for('reserve.reserve_add', spc_id=space.spc_id) }}"><i class="bi bi-plus-lg"></i></a>
+          </div>
+          <div data-bs-toggle="tooltip" data-bs-title="Edit space">
+            <a class="btn btn-warning" href="{{ url_for('space.space_edit', spc_id=space.spc_id) }}"><i class="bi bi-pencil-square"></i></a>
+          </div>
+        {% else %}
+          <div>
+            <a class="btn btn-primary" href="{{ url_for('space.space_reserve', spc_id=space.spc_id) }}">Reserve</a>
+          </div>
+        {% endif %}
+      </div>
+    </td>
   </tr>
 {% else %}
   <tr>

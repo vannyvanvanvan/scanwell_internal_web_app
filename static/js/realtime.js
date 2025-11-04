@@ -49,9 +49,11 @@
   }
 
   var lastRefreshAt = {
-    schedule: 0,
+    schedule: 0,    
+    space: 0,
     reserve: 0,
     booking: 0,
+
   };
   var REFRESH_COOLDOWN_MS = 2000;
 
@@ -68,8 +70,10 @@
       var type = data.type;
 
       var hasSchedule = !!document.querySelector("#results");
+      var hasSpaces = !!document.querySelector("#results-spaces");
       var hasReserve = !!document.querySelector("#results-reserve");
       var hasBooking = !!document.querySelector("#results-booking");
+
 
       if (document.visibilityState !== "visible") return; 
 
@@ -77,6 +81,10 @@
       if (hasSchedule && (type === "schedule_changed" || type === "space_changed" || type === "reserve_changed" || type === "booking_changed")) {
         // Always refresh schedule immediately to reflect nested changes
         fetchAndSwap("/refresh/schedule", "#results");
+      }
+
+      if (hasSpaces && (type === "space_changed" || type === "schedule_changed")) {
+        fetchAndSwap("/refresh/space", "#results-spaces");
       }
 
       if (hasReserve && (type === "reserve_changed" || type === "space_changed")) {
@@ -87,6 +95,7 @@
       if (hasBooking && (type === "booking_changed" || type === "space_changed")) {
         fetchAndSwap("/refresh/booking", "#results-booking");
       }
+
     } catch (_) {
     }
   }
