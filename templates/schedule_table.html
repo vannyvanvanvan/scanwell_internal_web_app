@@ -3,12 +3,52 @@
   <div class="border rounded">
     
     <div class="p-2">
+      <div class="row g-2 mb-2">
+        <div class="col-md-3">
+          <label for="etd_start" class="form-label">ETD Start Date</label>
+          <input type="date" class="form-control" id="etd_start" name="etd_start" 
+                 value="{% if etd_start %}{{ etd_start.strftime('%Y-%m-%d') }}{% endif %}"
+                 onchange="applyFilters()" />
+        </div>
+        <div class="col-md-3">
+          <label for="etd_end" class="form-label">ETD End Date</label>
+          <input type="date" class="form-control" id="etd_end" name="etd_end" 
+                 value="{% if etd_end %}{{ etd_end.strftime('%Y-%m-%d') }}{% endif %}"
+                 onchange="applyFilters()" />
+        </div>
+        {% if current_user.role.rank == 'cs' %}
+        <div class="col-md-2">
+          <label for="space_status_filter" class="form-label">Space Status</label>
+          <select class="form-control" id="space_status_filter" name="space_status_filter" onchange="applyFilters()">
+            <option value="">All</option>
+            <option value="USABLE" {% if request.args.get('space_status') == 'USABLE' %}selected{% endif %}>USABLE</option>
+            <option value="RV_SUBMIT" {% if request.args.get('space_status') == 'RV_SUBMIT' %}selected{% endif %}>RV_SUBMIT</option>
+            <option value="RV_CONFIRM" {% if request.args.get('space_status') == 'RV_CONFIRM' %}selected{% endif %}>RV_CONFIRM</option>
+            <option value="RV_CANCEL" {% if request.args.get('space_status') == 'RV_CANCEL' %}selected{% endif %}>RV_CANCEL</option>
+            <option value="BK_PENDING" {% if request.args.get('space_status') == 'BK_PENDING' %}selected{% endif %}>BK_PENDING</option>
+            <option value="BK_CONFIRM" {% if request.args.get('space_status') == 'BK_CONFIRM' %}selected{% endif %}>BK_CONFIRM</option>
+            <option value="BK_CANCEL" {% if request.args.get('space_status') == 'BK_CANCEL' %}selected{% endif %}>BK_CANCEL</option>
+            <option value="INVALID" {% if request.args.get('space_status') == 'INVALID' %}selected{% endif %}>INVALID</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="sales_filter" class="form-label">Sales Person</label>
+          <select class="form-control" id="sales_filter" name="sales_filter" onchange="applyFilters()">
+            <option value="">All</option>
+            {% for user_id, username in users.items() %}
+            <option value="{{ user_id }}" {% if request.args.get('sales_filter') == user_id|string %}selected{% endif %}>{{ username | capitalize }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        {% endif %}
+      </div>
       <input type="text" class="form-control" placeholder="Search..." name="q" 
              hx-get="{{ url_for('search.search_all') }}" 
              hx-trigger="keyup changed delay:500ms" 
              hx-target="#results" 
              hx-indicator="#loading"
-             hx-swap="innerHTML" />
+             hx-swap="innerHTML"
+             hx-include="[name='etd_start'], [name='etd_end'], [name='space_status_filter'], [name='sales_filter']" />
       <div id="loading" style="display: none;">Loading...</div>
       
     </div>

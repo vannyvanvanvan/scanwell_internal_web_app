@@ -2,6 +2,44 @@
 
 {% block head %}
 <title>{{ current_user.pretty_rank() }} Dashboard</title>
+<script>
+function applyFilters() {
+    const etdStart = document.getElementById('etd_start')?.value || '';
+    const etdEnd = document.getElementById('etd_end')?.value || '';
+    const spaceStatus = document.getElementById('space_status_filter')?.value || '';
+    const salesFilter = document.getElementById('sales_filter')?.value || '';
+    
+    const params = new URLSearchParams();
+    if (etdStart) params.append('etd_start', etdStart);
+    if (etdEnd) params.append('etd_end', etdEnd);
+    if (spaceStatus) params.append('space_status', spaceStatus);
+    if (salesFilter) params.append('sales_filter', salesFilter);
+    
+    window.location.href = window.location.pathname + '?' + params.toString();
+}
+
+function applyReserveFilters() {
+    const etdStart = document.getElementById('etd_start_reserve')?.value || '';
+    const etdEnd = document.getElementById('etd_end_reserve')?.value || '';
+    
+    const params = new URLSearchParams();
+    if (etdStart) params.append('etd_start', etdStart);
+    if (etdEnd) params.append('etd_end', etdEnd);
+    
+    window.location.href = window.location.pathname + '?' + params.toString();
+}
+
+function applyBookingFilters() {
+    const etdStart = document.getElementById('etd_start_booking')?.value || '';
+    const etdEnd = document.getElementById('etd_end_booking')?.value || '';
+    
+    const params = new URLSearchParams();
+    if (etdStart) params.append('etd_start', etdStart);
+    if (etdEnd) params.append('etd_end', etdEnd);
+    
+    window.location.href = window.location.pathname + '?' + params.toString();
+}
+</script>
 {% endblock %}
 
 {% block body %}

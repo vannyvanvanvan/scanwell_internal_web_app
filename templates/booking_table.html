@@ -3,9 +3,24 @@
   <h3>Your Bookings</h3>
   <div class="border rounded">
     <div class="p-2">
+      <div class="row g-2 mb-2">
+        <div class="col-md-4">
+          <label for="etd_start_booking" class="form-label">ETD Start Date</label>
+          <input type="date" class="form-control" id="etd_start_booking" name="etd_start_booking" 
+                 value="{% if etd_start %}{{ etd_start.strftime('%Y-%m-%d') }}{% endif %}"
+                 onchange="applyBookingFilters()" />
+        </div>
+        <div class="col-md-4">
+          <label for="etd_end_booking" class="form-label">ETD End Date</label>
+          <input type="date" class="form-control" id="etd_end_booking" name="etd_end_booking" 
+                 value="{% if etd_end %}{{ etd_end.strftime('%Y-%m-%d') }}{% endif %}"
+                 onchange="applyBookingFilters()" />
+        </div>
+      </div>
       <input type="text" class="form-control" placeholder="Search..." name="q"
         hx-get="{{ url_for('search.search_sales_booking') }}" hx-trigger="keyup changed delay:500ms"
-        hx-target="#results-booking" hx-indicator="#loading" />
+        hx-target="#results-booking" hx-indicator="#loading"
+        hx-include="[name='etd_start_booking'], [name='etd_end_booking']" />
       <div id="loading" style="display: none;">Loading...</div>
     </div>
 {% endif %}
