@@ -21,10 +21,12 @@ function applyFilters() {
 function applyReserveFilters() {
     const etdStart = document.getElementById('etd_start_reserve')?.value || '';
     const etdEnd = document.getElementById('etd_end_reserve')?.value || '';
+    const voidFilter = document.getElementById('void_reserve_filter')?.value || '';
     
     const params = new URLSearchParams();
     if (etdStart) params.append('etd_start', etdStart);
     if (etdEnd) params.append('etd_end', etdEnd);
+    if (voidFilter) params.append('void', voidFilter);
     
     window.location.href = window.location.pathname + '?' + params.toString();
 }
@@ -32,10 +34,12 @@ function applyReserveFilters() {
 function applyBookingFilters() {
     const etdStart = document.getElementById('etd_start_booking')?.value || '';
     const etdEnd = document.getElementById('etd_end_booking')?.value || '';
+    const voidFilter = document.getElementById('void_booking_filter')?.value || '';
     
     const params = new URLSearchParams();
     if (etdStart) params.append('etd_start', etdStart);
     if (etdEnd) params.append('etd_end', etdEnd);
+    if (voidFilter) params.append('void', voidFilter);
     
     window.location.href = window.location.pathname + '?' + params.toString();
 }

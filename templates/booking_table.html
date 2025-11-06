@@ -16,11 +16,19 @@
                  value="{% if etd_end %}{{ etd_end.strftime('%Y-%m-%d') }}{% endif %}"
                  onchange="applyBookingFilters()" />
         </div>
+        <div class="col-md-4">
+          <label for="void_booking_filter" class="form-label">Void</label>
+          <select class="form-control" id="void_booking_filter" name="void" onchange="applyBookingFilters()">
+            <option value="">All</option>
+            <option value="yes" {% if request.args.get('void') == 'yes' %}selected{% endif %}>Yes</option>
+            <option value="no" {% if request.args.get('void') == 'no' %}selected{% endif %}>No</option>
+          </select>
+        </div>
       </div>
       <input type="text" class="form-control" placeholder="Search..." name="q"
         hx-get="{{ url_for('search.search_sales_booking') }}" hx-trigger="keyup changed delay:500ms"
         hx-target="#results-booking" hx-indicator="#loading"
-        hx-include="[name='etd_start_booking'], [name='etd_end_booking']" />
+        hx-include="[name='etd_start_booking'], [name='etd_end_booking'], [name='void']" />
       <div id="loading" style="display: none;">Loading...</div>
     </div>
 {% endif %}
