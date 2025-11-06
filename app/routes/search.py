@@ -17,7 +17,11 @@ search_routes = Blueprint("search", __name__)
 @role_required(["admin", "cs"])
 def search_all():
     query = request.args.get("q", "").strip().lower()
-    return search_all_results(query)
+    etd_start = request.args.get("etd_start", "").strip()
+    etd_end = request.args.get("etd_end", "").strip()
+    space_status = request.args.get("space_status", "").strip()
+    sales_filter = request.args.get("sales_filter", "").strip()
+    return search_all_results(query, etd_start, etd_end, space_status, sales_filter)
 
 
 @search_routes.route("/sales_reserve", methods=["GET"])
@@ -25,7 +29,9 @@ def search_all():
 @role_required(["sales"])
 def search_sales_reserve():
     query = request.args.get("q", "").strip().lower()
-    return search_sales_reserve_results(query)
+    etd_start = request.args.get("etd_start", "").strip()
+    etd_end = request.args.get("etd_end", "").strip()
+    return search_sales_reserve_results(query, etd_start, etd_end)
 
 
 @search_routes.route("/sales_booking", methods=["GET"])
@@ -33,7 +39,9 @@ def search_sales_reserve():
 @role_required(["sales"])
 def search_sales_booking():
     query = request.args.get("q", "").strip().lower()
-    return search_sales_booking_results(query)
+    etd_start = request.args.get("etd_start", "").strip()
+    etd_end = request.args.get("etd_end", "").strip()
+    return search_sales_booking_results(query, etd_start, etd_end)
 
 
 @search_routes.route("/search_available_spaces", methods=["GET"])

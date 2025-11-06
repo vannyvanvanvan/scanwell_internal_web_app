@@ -92,14 +92,87 @@ def sort_schedules(schedules: list) -> list:
             space.bookings.sort()
 
 
-def search_all_results(query: str):
-    results = find_all_match(query)
-    sort_schedules(results)
-    return schedule_table_results(results)
+def search_all_results(query: str, etd_start: str = "", etd_end: str = "", space_status: str = "", sales_filter: str = ""):
+    if query:
+        results = find_all_match(query)
+    else:
+        results = Schedule.query.all()
+    
+    filtered_results = []
+    for schedule in results:
+        etd_match = True
+        if etd_start:
+            try:
+                etd_start_date = datetime.strptime(etd_start, "%Y-%m-%d")
+                if schedule.etd < etd_start_date:
+                    etd_match = False
+            except ValueError:
+                pass
+        if etd_end and etd_match:
+            try:
+                etd_end_date = datetime.strptime(etd_end, "%Y-%m-%d")
+                etd_end_date = etd_end_date.replace(hour=23, minute=59, second=59)
+                if schedule.etd > etd_end_date:
+                    etd_match = False
+            except ValueError:
+                pass
+        
+        if not etd_match:
+            continue
+        
+        if space_status or sales_filter:
+            has_matching_space = False
+            for space in schedule.spaces:
+                space_matches = True
+                
+                if space_status and space.spcstatus != space_status:
+                    space_matches = False
+                
+                if space_matches and sales_filter:
+                    space_has_sales = False
+                    for reserve in space.reserves:
+                        if str(reserve.owner) == sales_filter:
+                            space_has_sales = True
+                            break
+                    if not space_has_sales:
+                        for booking in space.bookings:
+                            if booking.sales and str(booking.sales) == sales_filter:
+                                space_has_sales = True
+                                break
+                    if not space_has_sales:
+                        space_matches = False
+                
+                if space_matches:
+                    has_matching_space = True
+                    break
+            
+            if not has_matching_space:
+                continue
+        
+        filtered_results.append(schedule)
+    
+    sort_schedules(filtered_results)
+    return schedule_table_results(filtered_results)
 
 
-def search_sales_reserve_results(query: str):
-    all_reserves = get_sales_reserve(current_user.id)
+def search_sales_reserve_results(query: str, etd_start: str = "", etd_end: str = ""):
+    etd_start_date = None
+    etd_end_date = None
+    
+    if etd_start:
+        try:
+            etd_start_date = datetime.strptime(etd_start, "%Y-%m-%d")
+        except ValueError:
+            pass
+    
+    if etd_end:
+        try:
+            etd_end_date = datetime.strptime(etd_end, "%Y-%m-%d")
+            etd_end_date = etd_end_date.replace(hour=23, minute=59, second=59)
+        except ValueError:
+            pass
+    
+    all_reserves = get_sales_reserve(current_user.id, etd_start=etd_start_date, etd_end=etd_end_date)
     results = []
 
     if not query:
@@ -120,8 +193,24 @@ def search_sales_reserve_results(query: str):
     return reserve_table_results(results)
 
 
-def search_sales_booking_results(query: str):
-    all_bookings = get_sales_booking(current_user.id)
+def search_sales_booking_results(query: str, etd_start: str = "", etd_end: str = ""):
+    etd_start_date = None
+    etd_end_date = None
+    
+    if etd_start:
+        try:
+            etd_start_date = datetime.strptime(etd_start, "%Y-%m-%d")
+        except ValueError:
+            pass
+    
+    if etd_end:
+        try:
+            etd_end_date = datetime.strptime(etd_end, "%Y-%m-%d")
+            etd_end_date = etd_end_date.replace(hour=23, minute=59, second=59)
+        except ValueError:
+            pass
+    
+    all_bookings = get_sales_booking(current_user.id, etd_start=etd_start_date, etd_end=etd_end_date)
     all_bookings.sort()
     results = []
 
