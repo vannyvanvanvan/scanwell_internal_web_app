@@ -1,14 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+from typing import List, Optional
 from app.functions.searching import sort_schedules
 from app.model import Schedule
 
 
 def get_all_schedules(
-    etd_start: datetime = None,
-    etd_end: datetime = None,
-    space_status: str | None = None,
-    sales_user_id: int | None = None,
-) -> list:
+    etd_start: Optional[datetime] = None,
+    etd_end: Optional[datetime] = None,
+    space_status: Optional[str] = None,
+    sales_user_id: Optional[int] = None,
+) -> List[Schedule]:
     query = Schedule.query
 
     if etd_start:
@@ -20,7 +21,7 @@ def get_all_schedules(
 
     # memory filters for space_status and sales_user_id
     if space_status or sales_user_id:
-        filtered: list[Schedule] = []
+        filtered: List[Schedule] = []
         for schedule in schedules:
             has_match = False
             for space in schedule.spaces:

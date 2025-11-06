@@ -91,8 +91,23 @@ def cs_home_page(highlighted: dict) -> str:
 
 def sales_home_page(highlighted: dict) -> str:
     etd_start, etd_end = get_etd_filter_dates()
-    sales_reserves = get_sales_reserve(current_user.id, etd_start=etd_start, etd_end=etd_end)
-    sales_bookings = get_sales_booking(current_user.id, etd_start=etd_start, etd_end=etd_end)
+    void_str = request.args.get("void", "").strip().lower()
+    void_val = None
+    if void_str in ("yes", "no"):
+        void_val = (void_str == "yes")
+
+    sales_reserves = get_sales_reserve(
+        current_user.id,
+        etd_start=etd_start,
+        etd_end=etd_end,
+        void=void_val,
+    )
+    sales_bookings = get_sales_booking(
+        current_user.id,
+        etd_start=etd_start,
+        etd_end=etd_end,
+        void=void_val,
+    )
     return render_template(
         "home_page.html",
         current_user=current_user,

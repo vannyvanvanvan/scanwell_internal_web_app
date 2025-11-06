@@ -48,21 +48,7 @@
          */ });
   }
 
-  var lastRefreshAt = {
-    schedule: 0,    
-    space: 0,
-    reserve: 0,
-    booking: 0,
 
-  };
-  var REFRESH_COOLDOWN_MS = 2000;
-
-  function shouldRefresh(kind) {
-    var now = Date.now();
-    if (now - lastRefreshAt[kind] < REFRESH_COOLDOWN_MS) return false;
-    lastRefreshAt[kind] = now;
-    return true;
-  }
 
   function currentQueryParams() {
     // Reuse current URL query to preserve filters across SSE refreshes

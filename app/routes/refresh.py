@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request
+from datetime import datetime
+from typing import Optional, Tuple
 from flask_login import login_required, current_user
 from app.functions.permissions import role_required
 from app.functions.schedule.get import get_all_schedules
@@ -20,17 +22,14 @@ def refresh_schedule():
     space_status = request.args.get("space_status", "").strip() or None
     sales_filter = request.args.get("sales_filter", "").strip()
 
-    etd_start_dt = None
-    etd_end_dt = None
+    etd_start_dt, etd_end_dt = (None, None)
     if etd_start:
         try:
-            from datetime import datetime
             etd_start_dt = datetime.strptime(etd_start, "%Y-%m-%d")
         except ValueError:
             pass
     if etd_end:
         try:
-            from datetime import datetime
             etd_end_dt = datetime.strptime(etd_end, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
         except ValueError:
             pass
@@ -57,21 +56,22 @@ def refresh_space():
 def refresh_reserve():
     etd_start = request.args.get("etd_start", "").strip()
     etd_end = request.args.get("etd_end", "").strip()
-    etd_start_dt = None
-    etd_end_dt = None
+    void_str = request.args.get("void", "").strip().lower()
+    etd_start_dt, etd_end_dt = (None, None)
     if etd_start:
         try:
-            from datetime import datetime
             etd_start_dt = datetime.strptime(etd_start, "%Y-%m-%d")
         except ValueError:
             pass
     if etd_end:
         try:
-            from datetime import datetime
             etd_end_dt = datetime.strptime(etd_end, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
         except ValueError:
             pass
-    reserves = get_sales_reserve(current_user.id, etd_start=etd_start_dt, etd_end=etd_end_dt)
+    void_val = None
+    if void_str in ("yes", "no"):
+        void_val = (void_str == "yes")
+    reserves = get_sales_reserve(current_user.id, etd_start=etd_start_dt, etd_end=etd_end_dt, void=void_val)
     return reserve_table_results(reserves)
 
 
@@ -81,19 +81,20 @@ def refresh_reserve():
 def refresh_booking():
     etd_start = request.args.get("etd_start", "").strip()
     etd_end = request.args.get("etd_end", "").strip()
-    etd_start_dt = None
-    etd_end_dt = None
+    void_str = request.args.get("void", "").strip().lower()
+    etd_start_dt, etd_end_dt = (None, None)
     if etd_start:
         try:
-            from datetime import datetime
             etd_start_dt = datetime.strptime(etd_start, "%Y-%m-%d")
         except ValueError:
             pass
     if etd_end:
         try:
-            from datetime import datetime
             etd_end_dt = datetime.strptime(etd_end, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
         except ValueError:
             pass
-    bookings = get_sales_booking(current_user.id, etd_start=etd_start_dt, etd_end=etd_end_dt)
+    void_val = None
+    if void_str in ("yes", "no"):
+        void_val = (void_str == "yes")
+    bookings = get_sales_booking(current_user.id, etd_start=etd_start_dt, etd_end=etd_end_dt, void=void_val)
     return booking_table_results(bookings)
