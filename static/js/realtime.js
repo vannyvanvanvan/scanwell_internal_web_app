@@ -64,6 +64,24 @@
     return true;
   }
 
+  function currentQueryParams() {
+    // Reuse current URL query to preserve filters across SSE refreshes
+    return window.location.search || "";
+  }
+
+  function buildUrlWithParams(baseUrl, extraParams) {
+    var params = new URLSearchParams(window.location.search);
+    if (extraParams) {
+      Object.keys(extraParams).forEach(function (k) {
+        if (extraParams[k] !== undefined && extraParams[k] !== null && extraParams[k] !== "") {
+          params.set(k, extraParams[k]);
+        }
+      });
+    }
+    var qs = params.toString();
+    return qs ? (baseUrl + "?" + qs) : baseUrl;
+  }
+
   function onEvent(message) {
     try {
       var data = JSON.parse(message.data);
@@ -79,21 +97,43 @@
 
       // Admin/CS schedule table shows nested spaces/reserves/bookings, so refresh on all related changes
       if (hasSchedule && (type === "schedule_changed" || type === "space_changed" || type === "reserve_changed" || type === "booking_changed")) {
-        // Always refresh schedule immediately to reflect nested changes
-        fetchAndSwap("/refresh/schedule", "#results");
+        // If search box has value, re-run search with filters; otherwise refresh table preserving filters
+        var qInput = document.querySelector('input[name="q"]');
+        var qVal = qInput && qInput.value ? qInput.value.trim() : "";
+        if (qVal) {
+          var searchUrl = buildUrlWithParams("/search/all", { q: qVal });
+          fetchAndSwap(searchUrl, "#results");
+        } else {
+          var refreshUrl = buildUrlWithParams("/refresh/schedule");
+          fetchAndSwap(refreshUrl, "#results");
+        }
       }
 
       if (hasSpaces && (type === "space_changed" || type === "schedule_changed")) {
-        fetchAndSwap("/refresh/space", "#results-spaces");
+        var spaceUrl = buildUrlWithParams("/refresh/space");
+        fetchAndSwap(spaceUrl, "#results-spaces");
       }
 
       if (hasReserve && (type === "reserve_changed" || type === "space_changed" || type === "booking_changed")) {
-        // immediate refresh for reserves
-        fetchAndSwap("/refresh/reserve", "#results-reserve");
+        var qReserve = document.querySelector('#results-reserve') ? (document.querySelector('input[name="q"]')?.value || "").trim() : "";
+        if (qReserve) {
+          var rUrl = buildUrlWithParams("/search/sales_reserve", { q: qReserve });
+          fetchAndSwap(rUrl, "#results-reserve");
+        } else {
+          var rrUrl = buildUrlWithParams("/refresh/reserve");
+          fetchAndSwap(rrUrl, "#results-reserve");
+        }
       }
 
       if (hasBooking && (type === "booking_changed" || type === "space_changed")) {
-        fetchAndSwap("/refresh/booking", "#results-booking");
+        var qBooking = document.querySelector('#results-booking') ? (document.querySelector('input[name="q"]')?.value || "").trim() : "";
+        if (qBooking) {
+          var bUrl = buildUrlWithParams("/search/sales_booking", { q: qBooking });
+          fetchAndSwap(bUrl, "#results-booking");
+        } else {
+          var rbUrl = buildUrlWithParams("/refresh/booking");
+          fetchAndSwap(rbUrl, "#results-booking");
+        }
       }
 
     } catch (_) {
