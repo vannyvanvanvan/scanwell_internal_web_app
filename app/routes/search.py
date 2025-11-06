@@ -31,7 +31,8 @@ def search_sales_reserve():
     query = request.args.get("q", "").strip().lower()
     etd_start = request.args.get("etd_start", "").strip()
     etd_end = request.args.get("etd_end", "").strip()
-    return search_sales_reserve_results(query, etd_start, etd_end)
+    void_str = request.args.get("void", "").strip().lower()
+    return search_sales_reserve_results(query, etd_start, etd_end, void_str)
 
 
 @search_routes.route("/sales_booking", methods=["GET"])
@@ -41,7 +42,8 @@ def search_sales_booking():
     query = request.args.get("q", "").strip().lower()
     etd_start = request.args.get("etd_start", "").strip()
     etd_end = request.args.get("etd_end", "").strip()
-    return search_sales_booking_results(query, etd_start, etd_end)
+    void_str = request.args.get("void", "").strip().lower()
+    return search_sales_booking_results(query, etd_start, etd_end, void_str)
 
 
 @search_routes.route("/search_available_spaces", methods=["GET"])

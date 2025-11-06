@@ -155,7 +155,7 @@ def search_all_results(query: str, etd_start: str = "", etd_end: str = "", space
     return schedule_table_results(filtered_results)
 
 
-def search_sales_reserve_results(query: str, etd_start: str = "", etd_end: str = ""):
+def search_sales_reserve_results(query: str, etd_start: str = "", etd_end: str = "", void: str = ""):
     etd_start_date = None
     etd_end_date = None
     
@@ -172,7 +172,11 @@ def search_sales_reserve_results(query: str, etd_start: str = "", etd_end: str =
         except ValueError:
             pass
     
-    all_reserves = get_sales_reserve(current_user.id, etd_start=etd_start_date, etd_end=etd_end_date)
+    void_val = None
+    if void in ("yes", "no"):
+        void_val = (void == "yes")
+
+    all_reserves = get_sales_reserve(current_user.id, etd_start=etd_start_date, etd_end=etd_end_date, void=void_val)
     results = []
 
     if not query:
@@ -193,7 +197,7 @@ def search_sales_reserve_results(query: str, etd_start: str = "", etd_end: str =
     return reserve_table_results(results)
 
 
-def search_sales_booking_results(query: str, etd_start: str = "", etd_end: str = ""):
+def search_sales_booking_results(query: str, etd_start: str = "", etd_end: str = "", void: str = ""):
     etd_start_date = None
     etd_end_date = None
     
@@ -210,7 +214,11 @@ def search_sales_booking_results(query: str, etd_start: str = "", etd_end: str =
         except ValueError:
             pass
     
-    all_bookings = get_sales_booking(current_user.id, etd_start=etd_start_date, etd_end=etd_end_date)
+    void_val = None
+    if void in ("yes", "no"):
+        void_val = (void == "yes")
+
+    all_bookings = get_sales_booking(current_user.id, etd_start=etd_start_date, etd_end=etd_end_date, void=void_val)
     all_bookings.sort()
     results = []
 
