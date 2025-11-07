@@ -1,4 +1,8 @@
-from app.model import db, User, Role
+from typing import Optional
+
+from sqlalchemy.exc import SQLAlchemyError
+
+from app.model import db, User, Role, LoginStatus
 from app.functions.hashing import hash_string
 
 
@@ -7,7 +11,8 @@ def get_user(user_id: int):
 
 # Could be extended to check for other roles in the future
 # For now, only have 'admin', 'cs', and 'sales'
-EXISTING_RANKS = {"admin", "cs", "sales"}
+AVAILABLE_RANKS = ("admin", "cs", "sales")
+EXISTING_RANKS = set(AVAILABLE_RANKS)
 
 def update_user_detail(
     user_id: int,
@@ -54,3 +59,45 @@ def update_user_detail(
     return True, "User updated successfully"
 
 
+
+def create_user(
+    username: str,
+    friendly_name: Optional[str],
+    rank: str,
+    password: str,
+):
+    normalized_username = (username or "").strip()
+    normalized_rank = (rank or "").strip().lower()
+    normalized_name = (friendly_name or "").strip() or None
+    raw_password = password or ""
+
+    if not normalized_username:
+        return False, "Username is required"
+
+    if not raw_password:
+        return False, "New password is required"
+
+    if normalized_rank not in EXISTING_RANKS:
+        return False, "Invalid role rank"
+
+    username_taken = User.query.filter_by(username=normalized_username).first()
+    if username_taken is not None:
+        return False, "Username already exists"
+
+    new_user = User(
+        username=normalized_username,
+        password=hash_string(raw_password),
+        friendly_name=normalized_name,
+    )
+    new_user.role = Role(rank=normalized_rank)
+    new_user.login_status = LoginStatus()
+
+    db.session.add(new_user)
+
+    try:
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return False, "Unable to create user. Please try again."
+
+    return True, "User created successfully"

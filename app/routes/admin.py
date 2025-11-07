@@ -6,7 +6,12 @@ from app.functions.auth_utils import lock_user, unlock_user
 from flask import jsonify
 from app.functions.redis_config import redis_client
 from app.functions.user.get import get_all_users
-from app.functions.admin.manage import get_user, update_user_detail
+from app.functions.admin.manage import (
+    AVAILABLE_RANKS,
+    create_user,
+    get_user,
+    update_user_detail,
+)
 
 
 
@@ -22,12 +27,37 @@ def admin_home():
     return render_template('admin/home.html')
 
 # Users list
-@admin_routes.route('/users', methods=['GET'])
+@admin_routes.route('/users', methods=['GET', 'POST'])
 @login_required
 @role_required(["admin"])
 def admin_users_list():
+    form_data = None
+
+    if request.method == 'POST':
+        username = request.form.get('username', '')
+        friendly_name = request.form.get('friendly_name', '')
+        rank = request.form.get('rank', '')
+        password = request.form.get('password', '')
+
+        success, message = create_user(username, friendly_name, rank, password)
+        flash(message, 'success' if success else 'danger')
+
+        if success:
+            return redirect(url_for('admin.admin_users_list'))
+
+        form_data = {
+            'username': (username or '').strip(),
+            'friendly_name': (friendly_name or '').strip(),
+            'rank': (rank or '').strip().lower(),
+        }
+
     users = get_all_users()
-    return render_template('admin/users_list.html', users=users)
+    return render_template(
+        'admin/users_list.html',
+        users=users,
+        form_data=form_data,
+        available_ranks=AVAILABLE_RANKS,
+    )
 
 # View user
 @admin_routes.route('/users/<int:user_id>', methods=['GET'])

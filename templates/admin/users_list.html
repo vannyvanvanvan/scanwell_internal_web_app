@@ -11,6 +11,62 @@
 <div class="container mt-4">
   <h1>Users</h1>
   {% include 'flash.html' %}
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h5 mb-3">Create New User</h2>
+      {% set ranks = available_ranks if available_ranks is defined else ['admin', 'cs', 'sales'] %}
+      <form method="post" novalidate>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label" for="username">Username</label>
+            <input
+              id="username"
+              class="form-control"
+              type="text"
+              name="username"
+              value="{{ form_data.username if form_data else '' }}"
+              required
+              autocomplete="username"
+            />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="friendly_name">Name</label>
+            <input
+              id="friendly_name"
+              class="form-control"
+              type="text"
+              name="friendly_name"
+              value="{{ form_data.friendly_name if form_data else '' }}"
+              autocomplete="name"
+            />
+          </div>
+          <div class="col-md-2">
+            <label class="form-label" for="rank">Role</label>
+            <select id="rank" class="form-select" name="rank" required>
+              <option value="" disabled {{ '' if form_data else 'selected' }}>Select role</option>
+              {% for role in ranks %}
+              <option value="{{ role }}" {{ 'selected' if form_data and form_data.rank == role else '' }}>{{ role }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="password">New Password</label>
+            <input
+              id="password"
+              class="form-control"
+              type="password"
+              name="password"
+              required
+              autocomplete="new-password"
+            />
+          </div>
+          <div class="col-md-1 d-flex align-items-end">
+            <button class="btn btn-primary w-100" type="submit">Add</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
   <table class="table table-striped">
     <thead>
       <tr>
