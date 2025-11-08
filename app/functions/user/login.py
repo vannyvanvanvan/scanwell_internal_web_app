@@ -28,14 +28,14 @@ class LoginForm(FlaskForm):
 def validate_login(form: LoginForm):
 
     # Pulling data from db to match with the request
-    _form_username = form.request_username.data
-    _form_password = form.request_password.data
+    _form_username = (form.request_username.data or "").strip()
+    _form_password = form.request_password.data or ""
 
     # Look for matching user in db
     matched_user = (
         db.session.query(User)
         .options(joinedload(User.role), joinedload(User.login_status))
-        .filter_by(username=_form_username)
+        .filter(db.func.lower(User.username) == _form_username.lower())
         .first()
     )
 
@@ -62,7 +62,7 @@ def validate_login(form: LoginForm):
         return render_template("login.html", login_detail=form)
 
     # Successful login
-    elif _form_username == matched_user.username and _password_hash == matched_user.password and matched_user.login_status.lock_status == "unlocked":
+    elif _password_hash == matched_user.password and matched_user.login_status.lock_status == "unlocked":
 
         if matched_user.login_status:
             # Update last login time

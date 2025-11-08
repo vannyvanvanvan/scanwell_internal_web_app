@@ -29,8 +29,12 @@ def update_user_detail(
     # Changing username
     if new_username is not None and new_username.strip() != "":
         requested_username = new_username.strip()
+        lower_requested_username = requested_username.lower()
         username_taken = (
-            User.query.filter(User.username == requested_username, User.id != user_id).first()
+            User.query.filter(
+                db.func.lower(User.username) == lower_requested_username,
+                User.id != user_id,
+            ).first()
             is not None
         )
         if username_taken:
@@ -70,6 +74,7 @@ def create_user(
     normalized_rank = (rank or "").strip().lower()
     normalized_name = (friendly_name or "").strip() or None
     raw_password = password or ""
+    normalized_username_lower = normalized_username.lower()
 
     if not normalized_username:
         return False, "Username is required"
@@ -80,7 +85,9 @@ def create_user(
     if normalized_rank not in EXISTING_RANKS:
         return False, "Invalid role rank"
 
-    username_taken = User.query.filter_by(username=normalized_username).first()
+    username_taken = (
+        User.query.filter(db.func.lower(User.username) == normalized_username_lower).first()
+    )
     if username_taken is not None:
         return False, "Username already exists"
 
