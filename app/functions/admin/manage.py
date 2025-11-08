@@ -10,8 +10,8 @@ def get_user(user_id: int):
     return User.query.get(user_id)
 
 # Could be extended to check for other roles in the future
-# For now, only have 'admin', 'cs', and 'sales'
-AVAILABLE_RANKS = ("admin", "cs", "sales")
+# For now, support admin, cs, sales, and cs_sales hybrid role
+AVAILABLE_RANKS = ("admin", "cs", "sales", "cs_sales")
 EXISTING_RANKS = set(AVAILABLE_RANKS)
 
 def update_user_detail(

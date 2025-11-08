@@ -1,4 +1,5 @@
-{% if current_user.role.rank == 'sales' %}
+{% set sales_roles = ['sales', 'cs_sales'] %}
+{% if current_user.role.rank in sales_roles %}
 <div class="container p-4">
   <h3>Your Reserves</h3>
   <div class="border rounded">
@@ -44,7 +45,7 @@
         {% if current_user.role.rank == 'admin' %}
         <th>ID</th>
         {% endif %}
-        {% if current_user.role.rank == 'sales' %}
+        {% if current_user.role.rank in sales_roles %}
         <th>Service</th>
         <th>Vessel Name</th>
         <th>Voyage</th>
@@ -52,7 +53,7 @@
         <th>POD</th>
         <th>ETD</th>
         {% endif %}
-        {% if current_user.role.rank != 'sales' %}
+        {% if current_user.role.rank not in sales_roles %}
         <th>Sales</th>
         {% endif %}
         <th>Sale Price</th>

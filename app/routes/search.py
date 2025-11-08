@@ -26,7 +26,7 @@ def search_all():
 
 @search_routes.route("/sales_reserve", methods=["GET"])
 @login_required
-@role_required(["sales"])
+@role_required(["sales", "cs_sales"])
 def search_sales_reserve():
     query = request.args.get("q", "").strip().lower()
     etd_start = request.args.get("etd_start", "").strip()
@@ -37,7 +37,7 @@ def search_sales_reserve():
 
 @search_routes.route("/sales_booking", methods=["GET"])
 @login_required
-@role_required(["sales"])
+@role_required(["sales", "cs_sales"])
 def search_sales_booking():
     query = request.args.get("q", "").strip().lower()
     etd_start = request.args.get("etd_start", "").strip()
@@ -48,7 +48,7 @@ def search_sales_booking():
 
 @search_routes.route("/search_available_spaces", methods=["GET"])
 @login_required
-@role_required(["sales"])
+@role_required(["sales", "cs_sales"])
 def search_available_spaces():
     filters = {
         "service": request.args.get("service_filter", "").strip(),

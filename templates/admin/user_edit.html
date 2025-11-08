@@ -22,11 +22,18 @@
     </div>
     <div class="mb-3">
       <label class="form-label">Role</label>
+      {% set current_rank = user.role.rank if user.role else '' %}
+      {% set ranks = ['admin', 'cs', 'sales', 'cs_sales'] %}
+      {% set rank_labels = {
+        'admin': 'admin',
+        'cs': 'cs',
+        'sales': 'sales',
+        'cs_sales': 'CS_Sales'
+      } %}
       <select class="form-select" name="rank">
-        {% set current_rank = user.role.rank if user.role else '' %}
-        <option value="admin" {{ 'selected' if current_rank=='admin' else '' }}>admin</option>
-        <option value="cs" {{ 'selected' if current_rank=='cs' else '' }}>cs</option>
-        <option value="sales" {{ 'selected' if current_rank=='sales' else '' }}>sales</option>
+        {% for role in ranks %}
+        <option value="{{ role }}" {{ 'selected' if current_rank==role else '' }}>{{ rank_labels.get(role, role) }}</option>
+        {% endfor %}
       </select>
     </div>
     <div class="mb-3">

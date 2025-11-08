@@ -1,4 +1,4 @@
-{% if current_user.role.rank == 'sales' %}
+{% if current_user.role.rank in ['sales', 'cs_sales'] %}
 <div class="container p-4">
   <h3>Your Bookings</h3>
   <div class="border rounded">

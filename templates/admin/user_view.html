@@ -11,13 +11,20 @@
 <div class="container mt-4">
   <h1>User ID: {{ user.id }}</h1>
   {% include 'flash.html' %}
+  {% set rank_labels = {
+    'admin': 'admin',
+    'cs': 'cs',
+    'sales': 'sales',
+    'cs_sales': 'CS_Sales'
+  } %}
   <dl class="row">
     <dt class="col-sm-3">Username</dt>
     <dd class="col-sm-9">{{ user.username }}</dd>
     <dt class="col-sm-3">Name</dt>
     <dd class="col-sm-9">{{ user.friendly_name or '' }}</dd>
     <dt class="col-sm-3">Role</dt>
-    <dd class="col-sm-9">{{ user.role.rank if user.role else '—' }}</dd>
+    {% set role_value = user.role.rank if user.role else None %}
+    <dd class="col-sm-9">{{ rank_labels.get(role_value, role_value or '—') }}</dd>
     <dt class="col-sm-3">Created</dt>
     <dd class="col-sm-9">{{ user.date_created.strftime('%Y-%m-%d %H:%M') if user.date_created else '' }}</dd>
     <dt class="col-sm-3">Login status</dt>

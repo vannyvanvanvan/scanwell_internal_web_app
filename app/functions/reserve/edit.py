@@ -14,12 +14,14 @@ from app.functions.validate import (
 )
 
 
+SALES_ROLES = {"sales", "cs_sales"}
+
+
 def edit_reserve_page(rsv_id: int) -> str:
     try:
         reserve = Reserve.query.get_or_404(rsv_id)
         
-        # Pass user role to template to control field editing
-        is_sales_user = current_user.role.rank == "sales"
+        is_sales_user = current_user.role and current_user.role.rank in SALES_ROLES
         
         return render_template(
             "shipping_reserve.html", 
@@ -41,7 +43,7 @@ def invalid_reserve_page(rsv_id: int, form: dict) -> str:
         flash("Some of your changes are invalid. Please try again.", "danger")
         
         # Pass user role to template to control field editing
-        is_sales_user = current_user.role.rank == "sales"
+        is_sales_user = current_user.role and current_user.role.rank in SALES_ROLES
         
         return render_template(
             "shipping_reserve.html",
@@ -77,7 +79,7 @@ def edit_reserve(rsv_id: int) -> str:
     try:
         reserve_to_edit = Reserve.query.get_or_404(rsv_id)
         
-        if current_user.role.rank == "sales":
+        if current_user.role and current_user.role.rank in SALES_ROLES:
             # Sales can only edit saleprice and remark
             reserve_to_edit.saleprice = int(request.form["saleprice"])
             reserve_to_edit.remark = request.form["remark"]

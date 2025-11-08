@@ -1,6 +1,7 @@
 {% if bookings %}
 {% for booking in bookings %}
-{% set is_sales = (current_user.role.rank == 'sales') %}
+{% set sales_roles = ['sales', 'cs_sales'] %}
+{% set is_sales = (current_user.role.rank in sales_roles) %}
 {% set is_red = booking.void or booking.space.spcstatus in ['BK_CANCEL','INVALID'] %}
 {% set is_green = (booking.space.spcstatus == 'BK_CONFIRM' and not booking.void) %}
 {% if highlighted and highlighted["booking"] and highlighted["booking"]==booking.bk_id %}

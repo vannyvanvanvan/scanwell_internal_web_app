@@ -45,14 +45,14 @@ def refresh_schedule():
     return schedule_table_results(schedules)
 @refresh_routes.route("/space", methods=["GET"])
 @login_required
-@role_required(["admin", "cs", "sales"]) 
+@role_required(["admin", "cs", "sales", "cs_sales"])
 def refresh_space():
     spaces = get_usable_spaces()
     return render_template("available_space_results.html", spaces=spaces)
 
 @refresh_routes.route("/reserve", methods=["GET"])
 @login_required
-@role_required(["sales"]) 
+@role_required(["sales", "cs_sales"])
 def refresh_reserve():
     etd_start = request.args.get("etd_start", "").strip()
     etd_end = request.args.get("etd_end", "").strip()
@@ -77,7 +77,7 @@ def refresh_reserve():
 
 @refresh_routes.route("/booking", methods=["GET"])
 @login_required
-@role_required(["sales"]) 
+@role_required(["sales", "cs_sales"])
 def refresh_booking():
     etd_start = request.args.get("etd_start", "").strip()
     etd_end = request.args.get("etd_end", "").strip()

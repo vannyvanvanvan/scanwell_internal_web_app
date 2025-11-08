@@ -1,6 +1,7 @@
 {% if reserves %}
 {% for reserve in reserves %}
-{% set is_sales = (current_user.role.rank == 'sales') %}
+{% set sales_roles = ['sales', 'cs_sales'] %}
+{% set is_sales = (current_user.role.rank in sales_roles) %}
 {% set is_red = reserve.void or reserve.space.spcstatus in ['BK_CANCEL','RV_CANCEL','INVALID'] %}
 {% set is_green = (not reserve.void and reserve.space.spcstatus in ['RV_CONFIRM','BK_CONFIRM','BK_PENDING']) %}
 {% if highlighted and highlighted["reserve"] and highlighted["reserve"]==reserve.rsv_id %}
@@ -11,7 +12,7 @@
   {% if current_user.role.rank == 'admin' %}
   <td>{{ reserve.rsv_id }}</td>
   {% endif %}
-  {% if current_user.role.rank == 'sales' %}
+  {% if current_user.role.rank in sales_roles %}
   <td>{{ reserve.space.schedule.service }}</td>
   <td>{{ reserve.space.schedule.vessel_name or '-' }}</td>
   <td>{{ reserve.space.schedule.voyage or '-' }}</td>
@@ -19,7 +20,7 @@
   <td>{{ reserve.space.schedule.pod }}</td>
   <td>{{ reserve.space.schedule.etd.strftime('%Y-%m-%d') }}</td>
   {% endif %}
-  {% if current_user.role.rank != 'sales' %}
+  {% if current_user.role.rank not in sales_roles %}
   <td>{{ users.get(reserve.owner, '') | capitalize }}</td>
   {% endif %}
   <td>{{ reserve.saleprice }}</td>
@@ -69,7 +70,7 @@
         {% endif %}
       {% endif %}
       
-      {% if (current_user.role.rank == 'sales' or current_user.role.rank == 'admin') and current_user.id == reserve.owner %}
+      {% if (current_user.role.rank in sales_roles or current_user.role.rank == 'admin') and current_user.id == reserve.owner %}
         {% if reserve.space.spcstatus == 'RV_SUBMIT' and not reserve.cfm_cs and not reserve.void %}
           <form action="{{ url_for('reserve.reserve_cancel', rsv_id=reserve.rsv_id) }}" method="POST" class="d-inline">
             <button data-bs-toggle="tooltip" data-bs-title="Cancel reserve" type="submit" class="btn btn-secondary"

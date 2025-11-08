@@ -25,7 +25,7 @@ def home_page() -> str:
         return admin_home_page(highlighted=highlighted)
     elif current_user.role.rank == "cs":
         return cs_home_page(highlighted=highlighted)
-    elif current_user.role.rank == "sales":
+    elif current_user.role.rank in ("sales", "cs_sales"):
         return sales_home_page(highlighted=highlighted)
     else:
         return "Please contain the admin to get a proper role to access this page."

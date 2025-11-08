@@ -279,6 +279,10 @@ def search_available_spaces_results(filters):
         is_proport = filters["proport"] == "yes"
         query = query.filter(Space.proport == is_proport)
 
-    query = query.filter(Space.spcstatus == "USABLE")
+    accessible_statuses = ["USABLE"]
+    if current_user.role and current_user.role.rank == "cs_sales":
+        accessible_statuses.append("BK_RESERVED")
+
+    query = query.filter(Space.spcstatus.in_(accessible_statuses))
 
     return query.all()

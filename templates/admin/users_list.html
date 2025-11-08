@@ -11,10 +11,16 @@
 <div class="container mt-4">
   <h1>Users</h1>
   {% include 'flash.html' %}
+  {% set rank_labels = {
+    'admin': 'admin',
+    'cs': 'cs',
+    'sales': 'sales',
+    'cs_sales': 'CS_Sales'
+  } %}
   <div class="card mb-4">
     <div class="card-body">
       <h2 class="h5 mb-3">Create New User</h2>
-      {% set ranks = available_ranks if available_ranks is defined else ['admin', 'cs', 'sales'] %}
+      {% set ranks = available_ranks if available_ranks is defined else ['admin', 'cs', 'sales', 'cs_sales'] %}
       <form method="post" novalidate>
         <div class="row g-3">
           <div class="col-md-3">
@@ -45,7 +51,7 @@
             <select id="rank" class="form-select" name="rank" required>
               <option value="" disabled {{ '' if form_data else 'selected' }}>Select role</option>
               {% for role in ranks %}
-              <option value="{{ role }}" {{ 'selected' if form_data and form_data.rank == role else '' }}>{{ role }}</option>
+              <option value="{{ role }}" {{ 'selected' if form_data and form_data.rank == role else '' }}>{{ rank_labels.get(role, role) }}</option>
               {% endfor %}
             </select>
           </div>
@@ -84,7 +90,8 @@
         <td>{{ user.id }}</td>
         <td>{{ user.username }}</td>
         <td>{{ user.friendly_name or '' }}</td>
-        <td>{{ user.role.rank if user.role else '—' }}</td>
+        {% set rank_value = user.role.rank if user.role else None %}
+        <td>{{ rank_labels.get(rank_value, rank_value or '—') }}</td>
         <td>{{ user.date_created.strftime('%Y-%m-%d %H:%M') if user.date_created else '' }}</td>
         <td>
           <a class="btn btn-sm btn-primary" href="{{ url_for('admin.admin_user_view', user_id=user.id) }}">View</a>

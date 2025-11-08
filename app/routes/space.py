@@ -49,14 +49,14 @@ def space_delete(spc_id: int):
 
 @space_routes.route("/list", methods=["GET"])
 @login_required
-@role_required(["admin", "cs", "sales"])
+@role_required(["admin", "cs", "sales", "cs_sales"])
 def space_list():
     return space_list_page()
 
 
 @space_routes.route("/reserve/<int:spc_id>", methods=["GET", "POST"])
 @login_required
-@role_required(["admin", "cs", "sales"])
+@role_required(["admin", "cs", "sales", "cs_sales"])
 def space_reserve(spc_id: int):
     if request.method == "POST":
         success = reserve_space(form=request.form, spc_id=spc_id)

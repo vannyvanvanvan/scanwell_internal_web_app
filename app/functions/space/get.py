@@ -7,8 +7,11 @@ from app.model import Space, Schedule, db
 
 def get_usable_spaces() -> list:    
     space_auto_invalid()
-    usable_spaces = Space.query.filter(Space.spcstatus == "USABLE").all()
-    # Need to accompany usable spaces with scheduled POL, POD, ETD
+    accessible_statuses = ["USABLE"]
+    if current_user.role and current_user.role.rank == "cs_sales":
+        accessible_statuses.append("BK_RESERVED")
+
+    usable_spaces = Space.query.filter(Space.spcstatus.in_(accessible_statuses)).all()
     results = []
     for space in usable_spaces:
         schedule = get_schedule_pol_pod_etd(space.sch_id)

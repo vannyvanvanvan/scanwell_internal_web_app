@@ -45,7 +45,7 @@
           <th></th>
         </thead>
 
-        {% if current_user.role.rank == 'sales' %}
+        {% if current_user.role.rank in ['sales', 'cs_sales'] %}
         <!-- Added this -->
           <tr class="p-2">
             <td>
